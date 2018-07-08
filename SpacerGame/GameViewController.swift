@@ -11,13 +11,16 @@ import SpriteKit
 import GameplayKit
 
 class GameViewController: UIViewController {
+    
+    
+    public var test:Int = 15
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         
         if let view = self.view as! SKView? {
-            if let scene = SKScene(fileNamed: "GameScene") { // загружаем сцену игры из 'Scene.sks'
+            if let scene = SKScene(fileNamed: "GameScene") { // загружаем сцену игры из *.sks-файла
                 scene.anchorPoint = CGPoint(x:0, y:0)
                 
                 scene.scaleMode = .aspectFill
