@@ -15,13 +15,15 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         if let view = self.view as! SKView? {
-            // Load the SKScene from 'GameScene.sks'
-            if let scene = SKScene(fileNamed: "GameScene") {
-                // Set the scale mode to scale to fit the window
+            if let scene = SKScene(fileNamed: "GameScene") { // загружаем сцену игры из 'Scene.sks'
+                scene.anchorPoint = CGPoint(x:0, y:0)
+                
                 scene.scaleMode = .aspectFill
                 
-                // Present the scene
+                scene.size = UIScreen.main.bounds.size // размеры сцены должны быть по размеру экрана устройства
+                
                 view.presentScene(scene)
             }
             
@@ -36,6 +38,7 @@ class GameViewController: UIViewController {
         return true
     }
 
+    
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
             return .allButUpsideDown
@@ -44,11 +47,9 @@ class GameViewController: UIViewController {
         }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Release any cached data, images, etc that aren't in use.
-    }
 
+    
+    
     override var prefersStatusBarHidden: Bool {
         return true
     }
