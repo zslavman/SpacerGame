@@ -45,6 +45,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         self.removeAllChildren()
         
+        // любой рандомайзер всегда на что-то операется, в данном случае на время, потому при каждом запуске оно будет разное
+        srand48(time(nil)) // для того чтоб сид был разный
+        
         physicsWorld.contactDelegate = self
         physicsWorld.gravity = CGVector(dx: 0.0, dy: -0.8) // гравитация - вектор, направленный сверху-вниз с ускорением -9,8
         
@@ -117,14 +120,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             let dist = distanceCalc(a: spaceShip.position, b: touchLocation)
             let time = timeToTravelDistance(distance: dist, speed: ship_speed)
-            
 //            print("distance = \(dist)")
 //            print("time = \(time)")
             let moveAction = SKAction.move(to: touchLocation, duration: time)
             
+            // добавим релистичности движения корабля (плавный старт и остановка)
+            moveAction.timingMode = .easeInEaseOut
+            
             spaceShip.run(moveAction)
             
-            // аля параллакс эффект при движении корабля (100 - в 100 раз меньше движения корабля)
+            // экшн-параллакс эффект при движении корабля (100 - в 100 раз меньше движения корабля)
             let bgMoveAction = SKAction.move(to: CGPoint(x: -touchLocation.x / 100, y: -touchLocation.y / 100), duration: time)
             stageBacking.run(bgMoveAction)
             
@@ -136,7 +141,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // создаем астероид
     private func createAsteroid() -> SKSpriteNode{
         
-        let asteroid = SKSpriteNode(imageNamed: "asteroid2")
+        let asterSkinsArray:Array = ["asteroid", "asteroid2"]
+        
+        let randomIndex = random(0, asterSkinsArray.count - 1)
+        
+        let asteroid = SKSpriteNode(imageNamed: asterSkinsArray[randomIndex])
         asteroid.position.x = CGFloat(arc4random()).truncatingRemainder(dividingBy: frame.size.width) // truncatingRemainder - равносильно остатку "%"
         asteroid.position.y = frame.size.height + asteroid.size.height
         
@@ -154,6 +163,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         asteroid.physicsBody?.categoryBitMask = asterCategory
         asteroid.physicsBody?.collisionBitMask = chipCategory | asterCategory // астероид может сталкиваться с кораблем и с астероидами
         asteroid.physicsBody?.contactTestBitMask = chipCategory
+        
+        // добавим угловой скорости астероиду (рад/с)
+        asteroid.physicsBody?.angularVelocity = CGFloat(drand48() * 2 - 1) * 3 // в итоге итерация будет в диапазоне [-1 ; 1] * 3
+        let speedX:CGFloat = 100.0
+        asteroid.physicsBody?.velocity.dx = CGFloat(drand48() * 2 - 1) * speedX
+        // вращение вокруг собственной оси
+        asteroid.physicsBody?.angularDamping = CGFloat(drand48() * 2 - 1)
         
         return asteroid
     }

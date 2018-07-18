@@ -14,7 +14,8 @@ class GameViewController: UIViewController {
     
     
     public var test:Int = 15
-
+ 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -22,7 +23,7 @@ class GameViewController: UIViewController {
         if let view = self.view as! SKView? {
             if let scene = SKScene(fileNamed: "GameScene") { // загружаем сцену игры из *.sks-файла
                 scene.anchorPoint = CGPoint(x:0, y:0)
-                
+                scene.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
                 scene.scaleMode = .aspectFill
                 
                 scene.size = UIScreen.main.bounds.size // размеры сцены должны быть по размеру экрана устройства
