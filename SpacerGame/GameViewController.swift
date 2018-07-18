@@ -30,7 +30,7 @@ class GameViewController: UIViewController {
                 view.presentScene(scene)
             }
             
-            view.ignoresSiblingOrder = true
+            view.ignoresSiblingOrder = true // игнорировать очередность добавления элементов на сцену (порядок слоев)
             
             view.showsFPS = true
             view.showsNodeCount = true
