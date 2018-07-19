@@ -58,11 +58,11 @@
 		5678337920F170A100B4520A /* SpacerGame */ = {
 			isa = PBXGroup;
 			children = (
+				5678338420F170A100B4520A /* Main.storyboard */,
 				5678337C20F170A100B4520A /* GameScene.sks */,
 				5678337A20F170A100B4520A /* AppDelegate.swift */,
 				5678338020F170A100B4520A /* GameScene.swift */,
 				5678338220F170A100B4520A /* GameViewController.swift */,
-				5678338420F170A100B4520A /* Main.storyboard */,
 				5678338720F170A100B4520A /* Assets.xcassets */,
 				5678338920F170A100B4520A /* LaunchScreen.storyboard */,
 				5678338C20F170A100B4520A /* Info.plist */,

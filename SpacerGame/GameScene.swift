@@ -55,7 +55,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         stageBacking = SKSpriteNode(imageNamed: "background")
         stageBacking.anchorPoint = CGPoint(x: 0, y: 0)
         //stageBacking.size = UIScreen.main.bounds.size
-        stageBacking.size = CGSize(width: frame.size.width + 8, height: frame.size.height + 12)
+        stageBacking.size = CGSize(width: frame.size.width * 1.2, height: frame.size.height * 1.2)
         stageBacking.zPosition = 0
         addChild(stageBacking)
         
@@ -79,6 +79,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //scoreLabel.calculateAccumulatedFrame().height - собственная высота лейбла
         scoreLabel.position = CGPoint(x: frame.size.width / 2, y: frame.size.height - scoreLabel.calculateAccumulatedFrame().height - 15)
         scoreLabel.zPosition = 2
+        scoreLabel.fontName = "Arial"
+        scoreLabel.fontSize = 17
         addChild(scoreLabel)
         
         
@@ -130,7 +132,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             spaceShip.run(moveAction)
             
             // экшн-параллакс эффект при движении корабля (100 - в 100 раз меньше движения корабля)
-            let bgMoveAction = SKAction.move(to: CGPoint(x: -touchLocation.x / 100, y: -touchLocation.y / 100), duration: time)
+            let bgMoveAction = SKAction.move(to: CGPoint(x: -touchLocation.x / 25, y: -touchLocation.y / 25), duration: time)
             stageBacking.run(bgMoveAction)
             
         }
