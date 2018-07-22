@@ -8,6 +8,7 @@
 
 import SpriteKit
 import GameplayKit
+import CoreMotion
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -24,6 +25,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var _score:Int = 0
     
     public var stageBacking:SKSpriteNode!
+    private var scoreLabel:SKLabelNode! // лейба с очками игрока
     public var score:Int {
         get { return _score }
         set {
@@ -31,12 +33,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             scoreLabel.text = "Очки: \(_score)"
         }
     }
+    
+    // мигание корабля
+    private var _flashingShip:Bool = false
+    private var colorActionRepeat:SKAction!
+    public var flashingShip:Bool {
+        get {
+            return _flashingShip
+        }
+        set {
+            if newValue {
+                if (!_flashingShip){
+                    _flashingShip = true
+                    spaceShip.run(colorActionRepeat, completion: {
+                        self._flashingShip = false
+                    })
+                }
+            }
+            else {
+                spaceShip.removeAllActions()
+                _flashingShip = false
+            }
+        }
+        
+    }
+    
+       
 
+    private var motionManager: CMMotionManager!
     
     
     
-    
-    private var scoreLabel:SKLabelNode!
     
     
     
@@ -46,7 +73,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.removeAllChildren()
         
         // любой рандомайзер всегда на что-то операется, в данном случае на время, потому при каждом запуске оно будет разное
-        srand48(time(nil)) // для того чтоб сид был разный
+        srand48(time(nil)) // "для того чтоб сид был разный"
         
         physicsWorld.contactDelegate = self
         physicsWorld.gravity = CGVector(dx: 0.0, dy: -0.8) // гравитация - вектор, направленный сверху-вниз с ускорением -9,8
@@ -55,7 +82,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         stageBacking = SKSpriteNode(imageNamed: "background")
         stageBacking.anchorPoint = CGPoint(x: 0, y: 0)
         //stageBacking.size = UIScreen.main.bounds.size
-        stageBacking.size = CGSize(width: frame.size.width * 1.2, height: frame.size.height * 1.2)
+        stageBacking.size = CGSize(width: frame.size.width * 1.5, height: frame.size.height * 1.5)
         stageBacking.zPosition = 0
         addChild(stageBacking)
         
@@ -105,10 +132,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // запускаем всю эту шнягу
         run(asteroidRunAction)
         
+        // запускаем считывание акселерометра
+        motionManager = CMMotionManager()
+        motionManager.accelerometerUpdateInterval = 0.15
+        motionManager.startAccelerometerUpdates()
+        
+        
+        // для мигания корабля
+        let colorAct1 = SKAction.colorize(with: #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1), colorBlendFactor: 1, duration: 0.2)
+        let colorAct2 = SKAction.colorize(with: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), colorBlendFactor: 0, duration: 0.2)
+        let colorSequenceAnimation = SKAction.sequence([colorAct1, colorAct2])
+        colorActionRepeat = SKAction.repeat(colorSequenceAnimation, count: 4)
+        
     }
     
 
-    
+
     
 
 
@@ -132,8 +171,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             spaceShip.run(moveAction)
             
             // экшн-параллакс эффект при движении корабля (100 - в 100 раз меньше движения корабля)
-            let bgMoveAction = SKAction.move(to: CGPoint(x: -touchLocation.x / 25, y: -touchLocation.y / 25), duration: time)
+            let bgMoveAction = SKAction.move(to: CGPoint(x: -touchLocation.x / 10, y: -touchLocation.y / 10), duration: time)
             stageBacking.run(bgMoveAction)
+            
+            isPaused = !isPaused
             
         }
     }
@@ -184,6 +225,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         enumerateChildNodes(withName: "asteroid1") {
             (node:SKNode, stop:UnsafeMutablePointer<ObjCBool>) in
+            
             if node.position.y < -20 {
                 node.removeFromParent()
                 self.score += 1
@@ -202,8 +244,76 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         
-//        let aster = createAsteroid()
-//        addChild(aster)
+        // поправка для корабля
+        if spaceShip.position.x < 0 {
+            spaceShip.position.x = 0
+        }
+        if spaceShip.position.x > frame.size.width {
+            spaceShip.position.x = frame.size.width
+        }
+        if spaceShip.position.y - spaceShip.frame.height / 2 < 0 {
+            spaceShip.position.y = spaceShip.frame.height / 2
+        }
+        if spaceShip.position.y + spaceShip.frame.height / 2 > frame.size.height {
+            spaceShip.position.y = frame.size.height - spaceShip.frame.height / 2
+        }
+        
+        // поправка для фона
+        if stageBacking.position.x > -1 {
+            stageBacking.position.x = -1
+        }
+        if stageBacking.position.x < (frame.width - stageBacking.frame.width + 1) {
+            stageBacking.position.x = frame.width - stageBacking.frame.width + 1
+        }
+        if stageBacking.position.y > -1 {
+            stageBacking.position.y = -1
+        }
+        if stageBacking.position.y < (frame.height - stageBacking.frame.height + 1) {
+            stageBacking.position.y = frame.height - stageBacking.frame.height + 1
+        }
+        
+        
+        
+        if let acelerometerData = motionManager.accelerometerData {
+
+            var motionVector:CGVector = CGVector(dx: acelerometerData.acceleration.x * 25, dy: acelerometerData.acceleration.y * 25)
+            
+            if abs(motionVector.dx) < 0.2 && abs(motionVector.dy) < 0.2 {
+                return
+            }
+            
+            //***********************
+            // ограничения движения *
+            //***********************
+            
+            // влево
+            if (spaceShip.position.x <= 0 && motionVector.dx < 0) {
+                motionVector.dx = 0
+            }
+            // вправо
+            if (spaceShip.position.x >= frame.size.width && motionVector.dx > 0) {
+                motionVector.dx = 0
+            }
+            // вниз
+            if (spaceShip.position.y + spaceShip.frame.height / 2 >= frame.size.height && motionVector.dy > 0) {
+                motionVector.dy = 0
+            }
+            // вверх
+            if (spaceShip.position.y - spaceShip.frame.height / 2 <= 0 && motionVector.dy < 0) {
+                motionVector.dy = 0
+            }
+            
+            
+            let replaceAction = SKAction.move(by: motionVector, duration: 0.1)
+            spaceShip.run(replaceAction)
+            
+            
+            // двигаем фон
+            let newVector:CGVector = CGVector(dx: (motionVector.dx / 10) * -1, dy: (motionVector.dy / 10) * -1)
+            let parallaxAction = SKAction.move(by: newVector, duration: 0.1)
+            stageBacking.run(parallaxAction)
+            
+        }
     }
     
     
@@ -244,7 +354,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func didBegin(_ contact: SKPhysicsContact) {
         
         if (contact.bodyA.categoryBitMask == chipCategory && contact.bodyB.categoryBitMask == asterCategory || contact.bodyB.categoryBitMask == chipCategory && contact.bodyA.categoryBitMask == asterCategory){
-            score = 0
+            if !flashingShip {
+                score = 0
+                flashingShip = true
+            }
         }
     }
         
