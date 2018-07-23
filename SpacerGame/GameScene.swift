@@ -12,6 +12,11 @@ import CoreMotion
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
+    
+    
+    
+    
+    
     private var spaceShip:SKSpriteNode!
     private let w = UIScreen.main.bounds.size.width
     private let h = UIScreen.main.bounds.size.height
@@ -150,19 +155,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     
 
+    public func resetGame(){
+        isPaused = false
+        score = 0
+    }
+    
+    public func pauseGame(){
+        isPaused = true
+    }
+    
+    public func playGame(){
+        isPaused = false
+    }
+
+    
+    
+    
+    
 
     
     // клик по экрану
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        if let touch = touches.first{
+
+        if let touch = touches.first, !isPaused {
             let touchLocation = touch.location(in: self)
-            
             
             let dist = distanceCalc(a: spaceShip.position, b: touchLocation)
             let time = timeToTravelDistance(distance: dist, speed: ship_speed)
-//            print("distance = \(dist)")
-//            print("time = \(time)")
+
             let moveAction = SKAction.move(to: touchLocation, duration: time)
             
             // добавим релистичности движения корабля (плавный старт и остановка)
@@ -173,8 +193,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // экшн-параллакс эффект при движении корабля (100 - в 100 раз меньше движения корабля)
             let bgMoveAction = SKAction.move(to: CGPoint(x: -touchLocation.x / 10, y: -touchLocation.y / 10), duration: time)
             stageBacking.run(bgMoveAction)
-            
-            isPaused = !isPaused
             
         }
     }
@@ -275,8 +293,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         if let acelerometerData = motionManager.accelerometerData {
+            
+            let force = 25.0 // усиление
+            let dy_lean_correction = (acelerometerData.acceleration.y + 0.4) * force // коррекция наклона устройства для нормального держания в руках
 
-            var motionVector:CGVector = CGVector(dx: acelerometerData.acceleration.x * 25, dy: acelerometerData.acceleration.y * 25)
+            var motionVector:CGVector = CGVector(dx: acelerometerData.acceleration.x * force, dy: dy_lean_correction)
             
             if abs(motionVector.dx) < 0.2 && abs(motionVector.dy) < 0.2 {
                 return
