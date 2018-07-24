@@ -18,9 +18,33 @@ class GameViewController: UIViewController {
     public var gameScene:GameScene!
  
     
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        onLoad()
+        
+    }
+
+    
+    // событие поворота экрана
+//    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+//        super.viewWillTransition(to: size, with: coordinator)
+//        
+//        if UIDevice.current.orientation.isLandscape {
+//            print("Landscape")
+//        }
+//        else {
+//            print("Portrait")
+//        }
+//        onLoad()
+//    }
+    
+    
+
+    
+    
+    private func onLoad(){
         
         if let view = self.view as! SKView? {
             if let scene = GameScene(fileNamed: "GameScene") { // загружаем сцену игры из *.sks-файла
@@ -42,6 +66,9 @@ class GameViewController: UIViewController {
             view.showsNodeCount = true
         }
     }
+    
+    
+    
     
     
     // нажали на Play/Pause

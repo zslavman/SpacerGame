@@ -63,10 +63,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-       
-
     private var motionManager: CMMotionManager!
-    
+    private var dy_lean_correction:Double = 0.4 // коррекция на наклон устройства
     
     
     
@@ -82,6 +80,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         physicsWorld.gravity = CGVector(dx: 0.0, dy: -0.8) // гравитация - вектор, направленный сверху-вниз с ускорением -9,8
+        
         
         // бэкграунг сцены
         stageBacking = SKSpriteNode(imageNamed: "background")
@@ -142,6 +141,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         motionManager.accelerometerUpdateInterval = 0.15
         motionManager.startAccelerometerUpdates()
         
+//        dy_lean_correction = motionManager.accelerometerData!.acceleration.y
+        
         
         // для мигания корабля
         let colorAct1 = SKAction.colorize(with: #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1), colorBlendFactor: 1, duration: 0.2)
@@ -162,14 +163,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     public func pauseGame(){
         isPaused = true
+        spaceShip.removeAction(forKey: "move")
+        //        physicsWorld.speed = 0
     }
     
     public func playGame(){
+        dy_lean_correction = (motionManager.accelerometerData?.acceleration.y)!
+        print("dy_lean_correction = \(dy_lean_correction)")
         isPaused = false
+        //        physicsWorld.speed = 1
     }
 
-    
-    
     
     
 
@@ -188,7 +192,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // добавим релистичности движения корабля (плавный старт и остановка)
             moveAction.timingMode = .easeInEaseOut
             
-            spaceShip.run(moveAction)
+            spaceShip.run(moveAction, withKey: "move")
             
             // экшн-параллакс эффект при движении корабля (100 - в 100 раз меньше движения корабля)
             let bgMoveAction = SKAction.move(to: CGPoint(x: -touchLocation.x / 10, y: -touchLocation.y / 10), duration: time)
@@ -262,6 +266,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         
+        
         // поправка для корабля
         if spaceShip.position.x < 0 {
             spaceShip.position.x = 0
@@ -295,9 +300,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if let acelerometerData = motionManager.accelerometerData {
             
             let force = 25.0 // усиление
-            let dy_lean_correction = (acelerometerData.acceleration.y + 0.4) * force // коррекция наклона устройства для нормального держания в руках
+            //let dy_lean_correction = (acelerometerData.acceleration.y + 0.4) * force // коррекция наклона устройства для нормального держания в руках
+            
 
-            var motionVector:CGVector = CGVector(dx: acelerometerData.acceleration.x * force, dy: dy_lean_correction)
+            var motionVector:CGVector = CGVector(dx: acelerometerData.acceleration.x * force, dy: (acelerometerData.acceleration.y + abs(dy_lean_correction)) * force)
             
             if abs(motionVector.dx) < 0.2 && abs(motionVector.dy) < 0.2 {
                 return
