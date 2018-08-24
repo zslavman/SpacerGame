@@ -14,9 +14,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     
-    
-    
-    
     private var spaceShip:SKSpriteNode!
     private let w = UIScreen.main.bounds.size.width
     private let h = UIScreen.main.bounds.size.height
@@ -65,8 +62,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private var motionManager: CMMotionManager!
     private var dy_lean_correction:Double = 0.4 // коррекция на наклон устройства
-    
-    
+    private var starsLayer:SKNode!              // слой звезд
+    private var spaceShipContainer:SKNode!      // контейнер для корабля и его огня от двигателей
     
     
     
@@ -87,16 +84,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         stageBacking.anchorPoint = CGPoint(x: 0, y: 0)
         //stageBacking.size = UIScreen.main.bounds.size
         stageBacking.size = CGSize(width: frame.size.width * 1.5, height: frame.size.height * 1.5)
-        stageBacking.zPosition = 0
         addChild(stageBacking)
         
+        // создаем слой звезд
+        let starsPath:String = Bundle.main.path(forResource: "stars", ofType: "sks")!
+        let starsEmitter = NSKeyedUnarchiver.unarchiveObject(withFile: starsPath) as! SKEmitterNode
+        starsEmitter.position = CGPoint(x: self.frame.midX, y: self.frame.height)
+        starsEmitter.particlePositionRange.dx = self.frame.width
+        starsEmitter.advanceSimulationTime(20) // сколько должна уже идти симуляция до запуска приложения
+        
+        starsLayer = SKNode()
+        addChild(starsLayer)
+        starsLayer.addChild(starsEmitter)
         
         // космич. корабль
         spaceShip = SKSpriteNode(imageNamed: "picSpaceShip")
         spaceShip.position = CGPoint(x: w/2, y: spaceShip.frame.size.height/2 + 10)
         spaceShip.physicsBody = SKPhysicsBody(texture: spaceShip.texture!, size: spaceShip.size)
         spaceShip.physicsBody?.isDynamic = false // гравитация не должна утягивать корабль вниз
-        spaceShip.zPosition = 1
         
         // определяем с кем корабль будет сталкиваться
         spaceShip.physicsBody?.categoryBitMask = chipCategory
@@ -105,21 +110,43 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         addChild(spaceShip)
         
-        // добавляем лейблу очков
+        // левый двигатель
+        let enginePath:String = Bundle.main.path(forResource: "fireParticles", ofType: "sks")!
+        let engine1 = NSKeyedUnarchiver.unarchiveObject(withFile: enginePath) as! SKEmitterNode
+        engine1.advanceSimulationTime(5)
+        spaceShip.addChild(engine1)
+        engine1.position = CGPoint(x: -28, y: -spaceShip.frame.height/2 + 5)
+        engine1.zPosition = spaceShip.self.zPosition - 1
+        
+        // правый двигатель
+        let engine2 = NSKeyedUnarchiver.unarchiveObject(withFile: enginePath) as! SKEmitterNode
+        engine2.advanceSimulationTime(5)
+        spaceShip.addChild(engine2)
+        engine2.position = CGPoint(x: 28, y: -spaceShip.frame.height/2 + 5)
+        engine2.zPosition = spaceShip.self.zPosition - 1
+//        engine2.targetNode = self // оставляет шлейф за огнем
+        
+        // лейблу очков
         scoreLabel = SKLabelNode(text: "Очки: \(score)")
         //scoreLabel.calculateAccumulatedFrame().height - собственная высота лейбла
         scoreLabel.position = CGPoint(x: frame.size.width / 2, y: frame.size.height - scoreLabel.calculateAccumulatedFrame().height - 15)
-        scoreLabel.zPosition = 2
         scoreLabel.fontName = "Arial"
         scoreLabel.fontSize = 17
         addChild(scoreLabel)
         
         
         
+        
+        stageBacking.zPosition = 0
+        starsLayer.zPosition = 1
+        spaceShip.zPosition = 2
+        scoreLabel.zPosition = 3
+        
+        
         // генерируем астероиды
         let asteroidCreateAction = SKAction.run { 
             let asteroid = self.createAsteroid()
-            asteroid.zPosition = 1
+            asteroid.zPosition = 2
             self.addChild(asteroid)
         }
         
@@ -168,7 +195,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     public func playGame(){
-        dy_lean_correction = (motionManager.accelerometerData?.acceleration.y)!
+        if motionManager.accelerometerData != nil {
+            dy_lean_correction = (motionManager.accelerometerData?.acceleration.y)!
+        }
         print("dy_lean_correction = \(dy_lean_correction)")
         isPaused = false
         //        physicsWorld.speed = 1
@@ -197,7 +226,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // экшн-параллакс эффект при движении корабля (100 - в 100 раз меньше движения корабля)
             let bgMoveAction = SKAction.move(to: CGPoint(x: -touchLocation.x / 10, y: -touchLocation.y / 10), duration: time)
             stageBacking.run(bgMoveAction)
-            
+            starsLayer.run(bgMoveAction)
         }
     }
     

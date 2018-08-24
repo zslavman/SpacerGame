@@ -1,12 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
-    <device id="retina4_0" orientation="portrait">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="KSn-n4-Exp">
+    <device id="retina3_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -19,7 +21,7 @@
                         <viewControllerLayoutGuide type="bottom" id="qHh-Mt-9TT"/>
                     </layoutGuides>
                     <view key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" id="3se-qz-xqx" customClass="SKView">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FgD-SQ-GhN">
@@ -48,8 +50,72 @@
             </objects>
             <point key="canvasLocation" x="24.375" y="36.971830985915496"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="FgS-bX-Cp5">
+            <objects>
+                <viewController storyboardIdentifier="pauseView" id="KSn-n4-Exp" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="gHv-Xf-4Ur"/>
+                        <viewControllerLayoutGuide type="bottom" id="bz2-il-s77"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="veU-qK-K3d">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="menu_PausedTitle" translatesAutoresizingMaskIntoConstraints="NO" id="qkI-CJ-Gx7">
+                                <rect key="frame" x="66" y="124" width="188" height="46"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="qkI-CJ-Gx7" secondAttribute="height" multiplier="49:12" id="PIP-Pq-ot9"/>
+                                </constraints>
+                            </imageView>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="8Oe-hl-mI9">
+                                <rect key="frame" x="47" y="185" width="226" height="62"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="P1A-ZP-XsZ">
+                                        <rect key="frame" x="0.0" y="0.0" width="62" height="62"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="P1A-ZP-XsZ" secondAttribute="height" multiplier="1:1" id="jDA-C1-dJQ"/>
+                                        </constraints>
+                                        <state key="normal" image="menu_PlayBttn"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I9k-O2-eWM">
+                                        <rect key="frame" x="82" y="0.0" width="62.5" height="62"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="I9k-O2-eWM" secondAttribute="height" multiplier="1:1" id="0EZ-de-iUG"/>
+                                        </constraints>
+                                        <state key="normal" image="menu_MenuBttn"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kcS-f1-d63">
+                                        <rect key="frame" x="164.5" y="0.0" width="61.5" height="62"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="kcS-f1-d63" secondAttribute="height" multiplier="1:1" id="iGB-JF-852"/>
+                                        </constraints>
+                                        <state key="normal" image="menu_StoreBttn"/>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="qkI-CJ-Gx7" firstAttribute="centerX" secondItem="veU-qK-K3d" secondAttribute="centerX" id="3gE-cA-5py"/>
+                            <constraint firstItem="qkI-CJ-Gx7" firstAttribute="width" secondItem="veU-qK-K3d" secondAttribute="width" multiplier="245:568" constant="49.971830985915489" id="QNL-3B-ybC"/>
+                            <constraint firstItem="8Oe-hl-mI9" firstAttribute="centerY" secondItem="veU-qK-K3d" secondAttribute="centerY" constant="-24" id="QTj-DH-3ai"/>
+                            <constraint firstItem="qkI-CJ-Gx7" firstAttribute="top" secondItem="gHv-Xf-4Ur" secondAttribute="bottom" constant="104" id="YV8-Gr-hoR"/>
+                            <constraint firstItem="8Oe-hl-mI9" firstAttribute="leading" secondItem="veU-qK-K3d" secondAttribute="leadingMargin" constant="31" id="fWI-px-UIt"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="8Oe-hl-mI9" secondAttribute="trailing" constant="31" id="xQQ-8O-K2T"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IG7-GG-fAx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="751.875" y="34.859154929577464"/>
+        </scene>
     </scenes>
     <resources>
+        <image name="menu_MenuBttn" width="80" height="80"/>
+        <image name="menu_PausedTitle" width="400" height="98"/>
+        <image name="menu_PlayBttn" width="80" height="80"/>
+        <image name="menu_StoreBttn" width="80" height="80"/>
         <image name="pauseBttn" width="40" height="40"/>
     </resources>
 </document>

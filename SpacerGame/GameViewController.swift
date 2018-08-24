@@ -16,15 +16,16 @@ class GameViewController: UIViewController {
     @IBOutlet weak var ppBttn: UIButton! // кнопка для упрпвления ее видом
     
     public var gameScene:GameScene!
- 
+    public var pauseView:UIViewController!
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        pauseView = storyboard?.instantiateViewController(withIdentifier: "pauseView")
         onLoad()
-        
     }
+    
 
     
     // событие поворота экрана
@@ -69,6 +70,12 @@ class GameViewController: UIViewController {
     
     
     
+    public func showPauseCsreen(_ vc:UIViewController){
+        addChildViewController(vc)  // добавляем к существующему ВК дочерний ВК
+        view.addSubview(vc.view)    // во вьюшку существующего ВК добавляем вьюшку нового(дочернего) ВК
+        vc.view.frame = view.bounds // определяем размер новой вьюшки  = размеру родительской вьюшки
+    }
+    
     
     
     // нажали на Play/Pause
@@ -79,6 +86,7 @@ class GameViewController: UIViewController {
             ppBttn.setImage(UIImage(named: "pauseBttn"), for: .normal)
         }
         else{
+            showPauseCsreen(pauseView)
             gameScene.pauseGame()
             ppBttn.setImage(UIImage(named: "playBttn"), for: .normal)
         }
