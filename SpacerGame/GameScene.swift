@@ -9,10 +9,13 @@
 import SpriteKit
 import GameplayKit
 import CoreMotion
+import AVFoundation
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
+    private var soundChanel:AVAudioPlayer!
+    private var soundHits:AVAudioPlayer!
     
     private var spaceShip:SKSpriteNode!
     private let w = UIScreen.main.bounds.size.width
@@ -66,6 +69,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var spaceShipContainer:SKNode!      // контейнер для корабля и его огня от двигателей
     
     
+    
+    private func playBackMusic(){
+        let musicURL = Bundle.main.url(forResource: "backgroundMusic", withExtension: "m4a")!
+        soundChanel = try! AVAudioPlayer(contentsOf: musicURL, fileTypeHint: nil)
+        soundChanel.numberOfLoops = -1
+        soundChanel.volume = 0.25
+        soundChanel.play()
+    }
+    
+    private func playHitSound(){
+//        if soundHits != nil && soundHits.isPlaying{
+//            return
+//        }
+        let musicURL = Bundle.main.url(forResource: "hitSound", withExtension: "wav")!
+        soundHits = try! AVAudioPlayer(contentsOf: musicURL, fileTypeHint: nil)
+        soundHits.volume = 0.4
+        soundHits.play()
+    }
     
     
     override func didMove(to view: SKView) {
@@ -177,7 +198,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let colorSequenceAnimation = SKAction.sequence([colorAct1, colorAct2])
         colorActionRepeat = SKAction.repeat(colorSequenceAnimation, count: 4)
         
+        playBackMusic()
     }
+    
     
 
 
@@ -191,7 +214,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     public func pauseGame(){
         isPaused = true
         spaceShip.removeAction(forKey: "move")
-        //        physicsWorld.speed = 0
     }
     
     public func playGame(){
@@ -200,7 +222,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         print("dy_lean_correction = \(dy_lean_correction)")
         isPaused = false
-        //        physicsWorld.speed = 1
     }
 
     
@@ -414,6 +435,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score = 0
                 flashingShip = true
             }
+            
+            // звук удара камня о корабль || НЕ РАБОТАЕТ ГРОМКОСТЬ!!!
+//            let hitSound = SKAction.playSoundFileNamed("hitSound", waitForCompletion: true)
+//            let reduseSoundVolume = SKAction.changeVolume(by: 0, duration: 1)
+//            let groupActions = SKAction.group([hitSound, reduseSoundVolume])
+//            run(groupActions)
+            
+            playHitSound()
+
         }
     }
         

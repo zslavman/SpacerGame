@@ -10,19 +10,35 @@ import UIKit
 import SpriteKit
 import GameplayKit
 
+
+extension GameViewController: PauseViewDelegate {
+    
+    func pauseView_ResumeClicked(_ vc:PauseView){
+        hidePauseScreen(pauseView)
+    }
+    func pauseView_MenuClicked(_ vc:PauseView){
+        
+    }
+    func pauseView_StoreClicked(_ vc:PauseView){
+    
+    }
+}
+
+
 class GameViewController: UIViewController {
     
     
     @IBOutlet weak var ppBttn: UIButton! // кнопка для упрпвления ее видом
     
     public var gameScene:GameScene!
-    public var pauseView:UIViewController!
+    public var pauseView:PauseView!
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        pauseView = storyboard?.instantiateViewController(withIdentifier: "pauseView")
+        pauseView = storyboard?.instantiateViewController(withIdentifier: "pauseView") as! PauseView
+        pauseView.delegate = self
         onLoad()
     }
     
@@ -70,27 +86,48 @@ class GameViewController: UIViewController {
     
     
     
-    public func showPauseCsreen(_ vc:UIViewController){
+    public func showPauseScreen(_ vc:PauseView){
         addChildViewController(vc)  // добавляем к существующему ВК дочерний ВК
         view.addSubview(vc.view)    // во вьюшку существующего ВК добавляем вьюшку нового(дочернего) ВК
         vc.view.frame = view.bounds // определяем размер новой вьюшки  = размеру родительской вьюшки
+        
+        vc.view.alpha = 0
+        UIView.animate(withDuration: 0.65) {
+            vc.view.alpha = 1
+        }
+        
     }
     
     
+    public func hidePauseScreen(_ vc:PauseView){
+        vc.willMove(toParentViewController: nil) // для удаления ВК из контейнера
+        vc.removeFromParentViewController()
+//        vc.view.removeFromSuperview()
+        
+        vc.view.alpha = 1
+        UIView.animate(withDuration: 0.65, animations: {
+            vc.view.alpha = 0
+        }, completion: {
+            (_) in
+            vc.view.removeFromSuperview()
+            self.onPP_Click(nil)
+        })
+    }
+    
     
     // нажали на Play/Pause
-    @IBAction func onPP_Click(_ sender: UIButton) {
-        
+    @IBAction func onPP_Click(_ sender: UIButton?) {
+
         if gameScene.isPaused{
             gameScene.playGame()
             ppBttn.setImage(UIImage(named: "pauseBttn"), for: .normal)
         }
         else{
-            showPauseCsreen(pauseView)
+            showPauseScreen(pauseView)
             gameScene.pauseGame()
             ppBttn.setImage(UIImage(named: "playBttn"), for: .normal)
         }
-       
+
     }
     
     
