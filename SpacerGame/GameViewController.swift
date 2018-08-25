@@ -139,8 +139,13 @@ class GameViewController: UIViewController {
     
     
 //    func music_On_Off(){
-//        
+//        GameScene.userDefaults.set(GameScene.music_flag, forKey: "music")
+//        GameScene.userDefaults.synchronize()
 //    }
+    
+    
+
+    
     
     
 

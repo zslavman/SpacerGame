@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="KSn-n4-Exp">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -115,7 +115,7 @@
                                 <rect key="frame" x="22" y="379" width="276" height="27"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="menu_sound" translatesAutoresizingMaskIntoConstraints="NO" id="SRo-J6-dGn">
-                                        <rect key="frame" x="0.0" y="0.0" width="112.5" height="27"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="113" height="27"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="SRo-J6-dGn" secondAttribute="height" multiplier="113:27" id="XwO-gq-fvZ"/>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="113" id="YwX-e7-ub9"/>
@@ -123,7 +123,7 @@
                                         </constraints>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jSf-y4-8xJ">
-                                        <rect key="frame" x="233.5" y="0.0" width="42.5" height="27"/>
+                                        <rect key="frame" x="233" y="0.0" width="43" height="27"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="43" id="Scm-Uz-XOQ"/>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="27" id="jII-gU-sp2"/>
@@ -131,7 +131,7 @@
                                         </constraints>
                                         <state key="normal" image="menu_on"/>
                                         <connections>
-                                            <action selector="onSoundClick:" destination="veU-qK-K3d" eventType="touchUpInside" id="V1a-Cg-qtS"/>
+                                            <action selector="onSoundClick:" destination="KSn-n4-Exp" eventType="touchUpInside" id="nop-iU-AZv"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -143,7 +143,7 @@
                                 <rect key="frame" x="22" y="430" width="276" height="27"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="menu_music" translatesAutoresizingMaskIntoConstraints="NO" id="N3F-j3-vAN">
-                                        <rect key="frame" x="0.0" y="2" width="88" height="23"/>
+                                        <rect key="frame" x="0.0" y="2" width="88.5" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="88" id="4rF-Vl-nsZ"/>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="23" id="YMy-LP-JiK"/>
@@ -151,13 +151,13 @@
                                         </constraints>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XoV-Lf-qsB">
-                                        <rect key="frame" x="233" y="0.0" width="43" height="27"/>
+                                        <rect key="frame" x="233.5" y="0.0" width="42.5" height="27"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="XoV-Lf-qsB" secondAttribute="height" multiplier="43:27" id="Tbc-FH-2VJ"/>
                                         </constraints>
                                         <state key="normal" image="menu_on"/>
                                         <connections>
-                                            <action selector="onMusicClick:" destination="veU-qK-K3d" eventType="touchUpInside" id="ItC-aT-VNS"/>
+                                            <action selector="onMusicClick:" destination="KSn-n4-Exp" eventType="touchUpInside" id="VaB-3e-iSx"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -181,14 +181,12 @@
                             <constraint firstAttribute="trailingMargin" secondItem="dve-Xk-N37" secondAttribute="trailing" constant="6" id="gP6-KV-4fH"/>
                             <constraint firstItem="9FP-Pa-XQ1" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="veU-qK-K3d" secondAttribute="leadingMargin" constant="6" id="jMH-8A-aZi"/>
                         </constraints>
-                        <connections>
-                            <outlet property="music_bttn" destination="XoV-Lf-qsB" id="fGZ-Ho-zPR"/>
-                            <outlet property="sounds_bttn" destination="jSf-y4-8xJ" id="ybU-ui-ZIs"/>
-                        </connections>
                     </view>
                     <connections>
                         <outlet property="menu_bttn" destination="I9k-O2-eWM" id="eB2-JT-rvs"/>
+                        <outlet property="music_bttn" destination="XoV-Lf-qsB" id="Tn3-js-jTk"/>
                         <outlet property="resumePlay_bttn" destination="P1A-ZP-XsZ" id="6F9-V7-GZo"/>
+                        <outlet property="sounds_bttn" destination="jSf-y4-8xJ" id="YTx-ST-fzt"/>
                         <outlet property="store_bttn" destination="kcS-f1-d63" id="oLE-jA-1dV"/>
                     </connections>
                 </viewController>

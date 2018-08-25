@@ -14,7 +14,7 @@ import AVFoundation
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
-    private var soundChanel:AVAudioPlayer!
+    public var soundChanel:AVAudioPlayer!
     
     private var spaceShip:SKSpriteNode!
     private let w = UIScreen.main.bounds.size.width
@@ -63,11 +63,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     private var motionManager: CMMotionManager!
-    private var dy_lean_correction:Double = 0.4 // коррекция на наклон устройства
+    private var dY_lean_correction:Double = 0.4 // коррекция на наклон устройства
     private var starsLayer:SKNode!              // слой звезд
     private var spaceShipContainer:SKNode!      // контейнер для корабля и его огня от двигателей
     
-//    let userDefaults = UserDefaults.standard
     public static var music_flag:Bool = true
     public static var sound_flag:Bool = true
     
@@ -191,32 +190,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let colorAct2 = SKAction.colorize(with: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), colorBlendFactor: 0, duration: 0.2)
         let colorSequenceAnimation = SKAction.sequence([colorAct1, colorAct2])
         colorActionRepeat = SKAction.repeat(colorSequenceAnimation, count: 4)
-        
-        
-        // проверяем, включена ли музыка
-        // если первый запуск, то получим значение false
-//        music_flag = userDefaults.bool(forKey: "music")
-        
-        
+		
+		// проверяем, включена ли музыка
+		let s_flag = UserDefaults.standard.object(forKey: "music")
+		GameScene.music_flag = (s_flag == nil) ? true : s_flag as! Bool
+		// проверяем, включены ли звуки
+		let m_flag = UserDefaults.standard.object(forKey: "sound")
+		GameScene.sound_flag = (m_flag == nil) ? true : m_flag as! Bool
+		
+		
         if GameScene.music_flag {
             playBackMusic()
         }
         
     }
     
-    
-
-    
-    /* =================================================*/
-    /* ============= СОХРАНЕНИЕ ДАННЫХ =================*/
-    /* =================================================*/
-//    func saveData(_ arg:Bool) -> Void {
-//
-//        userDefaults.set(arg, forKey: "music")
-//        userDefaults.synchronize()
-//
-//    }
-
     
     
     
@@ -229,16 +217,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     public func pauseGame(){
         isPaused = true
         spaceShip.removeAction(forKey: "move")
-        soundChanel.pause()
+        if (soundChanel != nil) {
+            soundChanel.pause()
+        }
     }
     
     public func playGame(){
         if motionManager.accelerometerData != nil {
-            dy_lean_correction = (motionManager.accelerometerData?.acceleration.y)!
+            dY_lean_correction = (motionManager.accelerometerData?.acceleration.y)!
         }
-        print("dy_lean_correction = \(dy_lean_correction)")
+        print("dy_lean_correction = \(dY_lean_correction)")
         isPaused = false
-        soundChanel.play()
+        
+        if (GameScene.music_flag){
+            if (soundChanel != nil) {
+                soundChanel.play()
+            }
+            else {
+                playBackMusic()
+            }
+        }
+        
     }
 
     
@@ -370,7 +369,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //let dy_lean_correction = (acelerometerData.acceleration.y + 0.4) * force // коррекция наклона устройства для нормального держания в руках
             
 
-            var motionVector:CGVector = CGVector(dx: acelerometerData.acceleration.x * force, dy: (acelerometerData.acceleration.y + abs(dy_lean_correction)) * force)
+            var motionVector:CGVector = CGVector(dx: acelerometerData.acceleration.x * force, dy: (acelerometerData.acceleration.y + abs(dY_lean_correction)) * force)
             
             if abs(motionVector.dx) < 0.2 && abs(motionVector.dy) < 0.2 {
                 return
@@ -451,11 +450,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score = 0
                 flashingShip = true
             }
-            let hitSound = SKAction.playSoundFileNamed("hitSound", waitForCompletion: true)
-//            let reduseSoundVolume = SKAction.changeVolume(by: 0.01, duration: 1)
-//            let groupActions = SKAction.group([hitSound, reduseSoundVolume])
-            removeAction(forKey: "die-shortHit")
-            run(hitSound, withKey:"shortHit")
+            if (GameScene.sound_flag){
+                let hitSound = SKAction.playSoundFileNamed("hitSound", waitForCompletion: true)
+                //let reduseSoundVolume = SKAction.changeVolume(by: 0.01, duration: 1)
+                //let groupActions = SKAction.group([hitSound, reduseSoundVolume])
+                removeAction(forKey: "die-shortHit")
+                run(hitSound, withKey:"shortHit")
+            }
         }
     }
         

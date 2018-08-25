@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5630711D2132132500FD8DA3 /* createPop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5630711C2132132500FD8DA3 /* createPop.mp3 */; };
+		5630711F2132146800FD8DA3 /* robocop4.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5630711E2132146800FD8DA3 /* robocop4.mp3 */; };
 		56347B8621307E04004D46E0 /* PauseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56347B8521307E04004D46E0 /* PauseView.swift */; };
 		56367869213033E800CD9B9C /* fireParticles.sks in Resources */ = {isa = PBXBuildFile; fileRef = 56367868213033E800CD9B9C /* fireParticles.sks */; };
 		5670CFED2130123A003B708C /* stars.sks in Resources */ = {isa = PBXBuildFile; fileRef = 5670CFEC2130123A003B708C /* stars.sks */; };
@@ -22,6 +24,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5630711C2132132500FD8DA3 /* createPop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = createPop.mp3; sourceTree = "<group>"; };
+		5630711E2132146800FD8DA3 /* robocop4.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = robocop4.mp3; sourceTree = "<group>"; };
 		56347B8521307E04004D46E0 /* PauseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PauseView.swift; sourceTree = "<group>"; };
 		56367868213033E800CD9B9C /* fireParticles.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fireParticles.sks; sourceTree = "<group>"; };
 		5670CFEC2130123A003B708C /* stars.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = stars.sks; sourceTree = "<group>"; };
@@ -96,6 +100,8 @@
 			isa = PBXGroup;
 			children = (
 				56FB569C2130B7B4003B8743 /* backgroundMusic.m4a */,
+				5630711E2132146800FD8DA3 /* robocop4.mp3 */,
+				5630711C2132132500FD8DA3 /* createPop.mp3 */,
 				56C27E952130CEDB008B4438 /* hitSound.wav */,
 			);
 			name = Sounds;
@@ -162,9 +168,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5630711D2132132500FD8DA3 /* createPop.mp3 in Resources */,
 				5678338620F170A100B4520A /* Main.storyboard in Resources */,
 				56367869213033E800CD9B9C /* fireParticles.sks in Resources */,
 				5678337D20F170A100B4520A /* GameScene.sks in Resources */,
+				5630711F2132146800FD8DA3 /* robocop4.mp3 in Resources */,
 				5678338820F170A100B4520A /* Assets.xcassets in Resources */,
 				56FB569E2130B7B4003B8743 /* backgroundMusic.m4a in Resources */,
 				5670CFED2130123A003B708C /* stars.sks in Resources */,
