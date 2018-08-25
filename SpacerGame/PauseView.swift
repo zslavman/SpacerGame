@@ -13,6 +13,9 @@ protocol PauseViewDelegate {
     func pauseView_ResumeClicked(_ vc:PauseView)
     func pauseView_MenuClicked(_ vc:PauseView)
     func pauseView_StoreClicked(_ vc:PauseView)
+    
+//    func pauseView_onSoundClick()
+//    func pauseView_onMusicClick()
 }
 
 
@@ -25,8 +28,16 @@ class PauseView: UIViewController {
     @IBOutlet weak var store_bttn: UIButton!
     public var delegate:PauseViewDelegate!
     
+    @IBOutlet weak var sounds_bttn: UIButton!
+    @IBOutlet weak var music_bttn: UIButton!
+    
+    
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        
+//        changeButtonView_music(sounds_bttn)
+//        changeButtonView_music(music_bttn)
         
         let buttonArray = [resumePlay_bttn, menu_bttn, store_bttn]
         
@@ -48,19 +59,37 @@ class PauseView: UIViewController {
     @IBAction func onResumeClick(_ sender: UIButton) {
         delegate.pauseView_ResumeClicked(self)
     }
-    
-    
     @IBAction func onMenuClick(_ sender: UIButton) {
         delegate.pauseView_MenuClicked(self)
-        
     }
-    
     @IBAction func onStoreClick(_ sender: UIButton) {
         delegate.pauseView_StoreClicked(self)
-        
     }
     
     
+    @IBAction func onSoundClick(_ sender: UIButton) {
+//        GameScene.sound_flag = !GameScene.sound_flag
+//        changeButtonView_music(sender)
+//        delegate.pauseView_onSoundClick()
+    }
+
+    @IBAction func onMusicClick(_ sender: UIButton) {
+//        GameScene.music_flag = !GameScene.music_flag
+//        changeButtonView_music(sender)
+//        delegate.pauseView_onMusicClick()
+    }
+    
+    
+    
+    
+    // установка картинки кнопки в зависимости от режима - включено/выключено
+//    func changeButtonView_music(_ button:UIButton){
+//        
+//        let boolFlag:Bool = (button == music_bttn) ? GameScene.music_flag : GameScene.sound_flag
+//        
+//        let str:String = (boolFlag) ? "menu_on" : "menu_off"
+//        button.setImage(UIImage(named: str), for: .normal)
+//    }
     
     
     

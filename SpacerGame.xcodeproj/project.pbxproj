@@ -17,7 +17,7 @@
 		5678338620F170A100B4520A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5678338420F170A100B4520A /* Main.storyboard */; };
 		5678338820F170A100B4520A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5678338720F170A100B4520A /* Assets.xcassets */; };
 		5678338B20F170A100B4520A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5678338920F170A100B4520A /* LaunchScreen.storyboard */; };
-		56FB569D2130B7B4003B8743 /* hitSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 56FB569B2130B7B4003B8743 /* hitSound.wav */; };
+		56C27E962130CEDC008B4438 /* hitSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 56C27E952130CEDB008B4438 /* hitSound.wav */; };
 		56FB569E2130B7B4003B8743 /* backgroundMusic.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 56FB569C2130B7B4003B8743 /* backgroundMusic.m4a */; };
 /* End PBXBuildFile section */
 
@@ -34,7 +34,7 @@
 		5678338720F170A100B4520A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5678338A20F170A100B4520A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5678338C20F170A100B4520A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		56FB569B2130B7B4003B8743 /* hitSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hitSound.wav; sourceTree = "<group>"; };
+		56C27E952130CEDB008B4438 /* hitSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hitSound.wav; sourceTree = "<group>"; };
 		56FB569C2130B7B4003B8743 /* backgroundMusic.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = backgroundMusic.m4a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -71,8 +71,8 @@
 				5678338420F170A100B4520A /* Main.storyboard */,
 				5678337C20F170A100B4520A /* GameScene.sks */,
 				5678337A20F170A100B4520A /* AppDelegate.swift */,
-				5678338020F170A100B4520A /* GameScene.swift */,
 				5678338220F170A100B4520A /* GameViewController.swift */,
+				5678338020F170A100B4520A /* GameScene.swift */,
 				56347B8521307E04004D46E0 /* PauseView.swift */,
 				5678338720F170A100B4520A /* Assets.xcassets */,
 				56FB56982130B647003B8743 /* Sounds */,
@@ -96,7 +96,7 @@
 			isa = PBXGroup;
 			children = (
 				56FB569C2130B7B4003B8743 /* backgroundMusic.m4a */,
-				56FB569B2130B7B4003B8743 /* hitSound.wav */,
+				56C27E952130CEDB008B4438 /* hitSound.wav */,
 			);
 			name = Sounds;
 			sourceTree = "<group>";
@@ -167,8 +167,8 @@
 				5678337D20F170A100B4520A /* GameScene.sks in Resources */,
 				5678338820F170A100B4520A /* Assets.xcassets in Resources */,
 				56FB569E2130B7B4003B8743 /* backgroundMusic.m4a in Resources */,
-				56FB569D2130B7B4003B8743 /* hitSound.wav in Resources */,
 				5670CFED2130123A003B708C /* stars.sks in Resources */,
+				56C27E962130CEDC008B4438 /* hitSound.wav in Resources */,
 				5678338B20F170A100B4520A /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

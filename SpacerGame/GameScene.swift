@@ -15,7 +15,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     private var soundChanel:AVAudioPlayer!
-    private var soundHits:AVAudioPlayer!
     
     private var spaceShip:SKSpriteNode!
     private let w = UIScreen.main.bounds.size.width
@@ -68,25 +67,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var starsLayer:SKNode!              // слой звезд
     private var spaceShipContainer:SKNode!      // контейнер для корабля и его огня от двигателей
     
+//    let userDefaults = UserDefaults.standard
+    public static var music_flag:Bool = true
+    public static var sound_flag:Bool = true
+    
+    
     
     
     private func playBackMusic(){
         let musicURL = Bundle.main.url(forResource: "backgroundMusic", withExtension: "m4a")!
         soundChanel = try! AVAudioPlayer(contentsOf: musicURL, fileTypeHint: nil)
         soundChanel.numberOfLoops = -1
-        soundChanel.volume = 0.25
+        soundChanel.volume = 0.02
         soundChanel.play()
     }
     
-    private func playHitSound(){
-//        if soundHits != nil && soundHits.isPlaying{
-//            return
-//        }
-        let musicURL = Bundle.main.url(forResource: "hitSound", withExtension: "wav")!
-        soundHits = try! AVAudioPlayer(contentsOf: musicURL, fileTypeHint: nil)
-        soundHits.volume = 0.4
-        soundHits.play()
-    }
+
     
     
     override func didMove(to view: SKView) {
@@ -189,8 +185,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         motionManager.accelerometerUpdateInterval = 0.15
         motionManager.startAccelerometerUpdates()
         
-//        dy_lean_correction = motionManager.accelerometerData!.acceleration.y
-        
         
         // для мигания корабля
         let colorAct1 = SKAction.colorize(with: #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1), colorBlendFactor: 1, duration: 0.2)
@@ -198,12 +192,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let colorSequenceAnimation = SKAction.sequence([colorAct1, colorAct2])
         colorActionRepeat = SKAction.repeat(colorSequenceAnimation, count: 4)
         
-        playBackMusic()
+        
+        // проверяем, включена ли музыка
+        // если первый запуск, то получим значение false
+//        music_flag = userDefaults.bool(forKey: "music")
+        
+        
+        if GameScene.music_flag {
+            playBackMusic()
+        }
+        
     }
     
     
 
+    
+    /* =================================================*/
+    /* ============= СОХРАНЕНИЕ ДАННЫХ =================*/
+    /* =================================================*/
+//    func saveData(_ arg:Bool) -> Void {
+//
+//        userDefaults.set(arg, forKey: "music")
+//        userDefaults.synchronize()
+//
+//    }
 
+    
+    
     
 
     public func resetGame(){
@@ -214,6 +229,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     public func pauseGame(){
         isPaused = true
         spaceShip.removeAction(forKey: "move")
+        soundChanel.pause()
     }
     
     public func playGame(){
@@ -222,6 +238,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         print("dy_lean_correction = \(dy_lean_correction)")
         isPaused = false
+        soundChanel.play()
     }
 
     
@@ -426,7 +443,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     
-    
     // делегаты расширения SKPhysicsContactDelegate
     func didBegin(_ contact: SKPhysicsContact) {
         
@@ -435,18 +451,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score = 0
                 flashingShip = true
             }
-            
-            // звук удара камня о корабль || НЕ РАБОТАЕТ ГРОМКОСТЬ!!!
-//            let hitSound = SKAction.playSoundFileNamed("hitSound", waitForCompletion: true)
-//            let reduseSoundVolume = SKAction.changeVolume(by: 0, duration: 1)
+            let hitSound = SKAction.playSoundFileNamed("hitSound", waitForCompletion: true)
+//            let reduseSoundVolume = SKAction.changeVolume(by: 0.01, duration: 1)
 //            let groupActions = SKAction.group([hitSound, reduseSoundVolume])
-//            run(groupActions)
-            
-            playHitSound()
-
+            removeAction(forKey: "die-shortHit")
+            run(hitSound, withKey:"shortHit")
         }
     }
         
+    
     
     func didEnd(_ contact: SKPhysicsContact) {
         

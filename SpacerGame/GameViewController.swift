@@ -16,13 +16,19 @@ extension GameViewController: PauseViewDelegate {
     func pauseView_ResumeClicked(_ vc:PauseView){
         hidePauseScreen(pauseView)
     }
-    func pauseView_MenuClicked(_ vc:PauseView){
-        
-    }
-    func pauseView_StoreClicked(_ vc:PauseView){
+    func pauseView_MenuClicked(_ vc:PauseView){ }
+    func pauseView_StoreClicked(_ vc:PauseView){ }
     
-    }
+//    func pauseView_onMusicClick() {
+//        music_On_Off()
+//    }
+//    func pauseView_onSoundClick() {
+//
+//    }
 }
+
+
+
 
 
 class GameViewController: UIViewController {
@@ -127,10 +133,14 @@ class GameViewController: UIViewController {
             gameScene.pauseGame()
             ppBttn.setImage(UIImage(named: "playBttn"), for: .normal)
         }
-
     }
+
     
     
+    
+//    func music_On_Off(){
+//        
+//    }
     
     
 
