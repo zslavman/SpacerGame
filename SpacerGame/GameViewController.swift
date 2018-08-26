@@ -11,22 +11,6 @@ import SpriteKit
 import GameplayKit
 
 
-extension GameViewController: PauseViewDelegate {
-    
-    func pauseView_ResumeClicked(_ vc:PauseView){
-        hidePauseScreen(pauseView)
-    }
-    func pauseView_MenuClicked(_ vc:PauseView){ }
-    func pauseView_StoreClicked(_ vc:PauseView){ }
-    
-//    func pauseView_onMusicClick() {
-//        music_On_Off()
-//    }
-//    func pauseView_onSoundClick() {
-//
-//    }
-}
-
 
 
 
@@ -37,7 +21,8 @@ class GameViewController: UIViewController {
     @IBOutlet weak var ppBttn: UIButton! // кнопка для упрпвления ее видом
     
     public var gameScene:GameScene!
-    public var pauseView:PauseView!
+	public var pauseView:PauseView!
+    public var gameOverView:GameOverView!
     
 
     override func viewDidLoad() {
@@ -45,6 +30,10 @@ class GameViewController: UIViewController {
         
         pauseView = storyboard?.instantiateViewController(withIdentifier: "pauseView") as! PauseView
         pauseView.delegate = self
+		
+		gameOverView = storyboard?.instantiateViewController(withIdentifier: "goView") as! GameOverView
+		gameOverView.delegate = self
+		
         onLoad()
     }
     
@@ -101,8 +90,27 @@ class GameViewController: UIViewController {
         UIView.animate(withDuration: 0.65) {
             vc.view.alpha = 1
         }
-        
-    }
+	}
+	
+	
+	
+	
+	public func showGameOverScreen(){
+		
+		addChildViewController(gameOverView)
+		view.addSubview(gameOverView.view)
+		gameOverView.view.frame = view.bounds
+		
+		gameOverView.view.alpha = 0
+		UIView.animate(withDuration: 1) {
+			self.gameOverView.view.alpha = 1
+		}
+	}
+	
+	
+	
+	
+	
     
     
     public func hidePauseScreen(_ vc:PauseView){
@@ -172,9 +180,26 @@ class GameViewController: UIViewController {
 
 
 
+//MARK: расширение, чтоб добратся до этого класса из PauseView
+extension GameViewController: PauseViewDelegate {
+	
+	func pauseView_ResumeClicked(_ vc:PauseView){
+		hidePauseScreen(pauseView)
+	}
+	func pauseView_MenuClicked(_ vc:PauseView){ }
+	func pauseView_StoreClicked(_ vc:PauseView){ }
+}
 
 
-
+extension GameViewController: GameOverDelegate {
+	
+	func gameOver_onResetClick(){
+		gameScene.resetGame()
+	}
+	func gameOver_onMenuClick(){}
+	func gameOver_onTopClick(){}
+	
+}
 
 
 

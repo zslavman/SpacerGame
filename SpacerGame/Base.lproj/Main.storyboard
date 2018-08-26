@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="PIz-pv-snW">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -53,12 +53,12 @@
         <!--Pause View-->
         <scene sceneID="FgS-bX-Cp5">
             <objects>
-                <viewController storyboardIdentifier="pauseView" id="KSn-n4-Exp" customClass="PauseView" customModule="SpacerGame" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="pauseView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="KSn-n4-Exp" customClass="PauseView" customModule="SpacerGame" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="gHv-Xf-4Ur"/>
                         <viewControllerLayoutGuide type="bottom" id="bz2-il-s77"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="veU-qK-K3d" customClass="PauseView">
+                    <view key="view" contentMode="scaleToFill" id="veU-qK-K3d">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
@@ -195,10 +195,10 @@
             </objects>
             <point key="canvasLocation" x="776" y="37"/>
         </scene>
-        <!--View Controller-->
+        <!--Game Over View-->
         <scene sceneID="hdW-7w-8m5">
             <objects>
-                <viewController id="PIz-pv-snW" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="goView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="PIz-pv-snW" customClass="GameOverView" customModule="SpacerGame" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="0ZF-eL-EZv"/>
                         <viewControllerLayoutGuide type="bottom" id="8hk-Km-ANm"/>
@@ -250,6 +250,9 @@
                                             <constraint firstAttribute="height" constant="80" id="dbb-lY-eea"/>
                                         </constraints>
                                         <state key="normal" image="gover_resetBtn"/>
+                                        <connections>
+                                            <action selector="onResetClick:" destination="PIz-pv-snW" eventType="touchUpInside" id="rIQ-lG-R7E"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="udk-fz-9nb">
                                         <rect key="frame" x="100" y="0.0" width="80" height="80"/>
@@ -258,6 +261,9 @@
                                             <constraint firstAttribute="height" constant="80" id="mvg-C9-aQO"/>
                                         </constraints>
                                         <state key="normal" image="menu_MenuBttn"/>
+                                        <connections>
+                                            <action selector="onMenuClick:" destination="PIz-pv-snW" eventType="touchUpInside" id="PeN-dL-ulu"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mLm-Iw-gnp">
                                         <rect key="frame" x="200" y="0.0" width="80" height="80"/>
@@ -266,6 +272,9 @@
                                             <constraint firstAttribute="height" constant="80" id="UxZ-yb-wDL"/>
                                         </constraints>
                                         <state key="normal" image="gover_top"/>
+                                        <connections>
+                                            <action selector="onTopClick:" destination="PIz-pv-snW" eventType="touchUpInside" id="X20-wh-Ifh"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <constraints>
@@ -274,7 +283,7 @@
                                 </constraints>
                             </stackView>
                         </subviews>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="Gl9-rh-fBl" firstAttribute="centerY" secondItem="3pF-32-2AK" secondAttribute="centerY" constant="-20" id="AXu-sj-Vj7"/>
                             <constraint firstItem="Ahg-s5-pm9" firstAttribute="centerX" secondItem="3pF-32-2AK" secondAttribute="centerX" id="FzB-K3-Ff1"/>
@@ -289,6 +298,9 @@
                             <constraint firstItem="vov-9H-eIh" firstAttribute="width" secondItem="3pF-32-2AK" secondAttribute="width" multiplier="255:568" constant="88.338028169014081" id="opN-S2-Ja7"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="scoreTF" destination="zgt-IQ-I1C" id="tYx-5t-R9Z"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="r5n-Gq-9cq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

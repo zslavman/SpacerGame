@@ -23,17 +23,17 @@ class PauseView: UIViewController {
     @IBOutlet weak var resumePlay_bttn: UIButton!
     @IBOutlet weak var menu_bttn: UIButton!
     @IBOutlet weak var store_bttn: UIButton!
-    public var delegate:PauseViewDelegate!
-    
+    public var delegate:PauseViewDelegate! // делегат протокола PauseViewDelegate
+
     @IBOutlet weak var sounds_bttn: UIButton!
     @IBOutlet weak var music_bttn: UIButton!
     private var opened:Bool = false
-	
-	let clickSound = Bundle.main.url(forResource: "createPop", withExtension: "mp3")
-	let robocopSound = Bundle.main.url(forResource: "robocop4", withExtension: "mp3")
-	
-	var audioPlayer = AVAudioPlayer()
-	var audioPlayerBack = AVAudioPlayer()
+
+    let clickSound          = Bundle.main.url(forResource: "createPop", withExtension: "mp3")
+    let robocopSound        = Bundle.main.url(forResource: "robocop4", withExtension: "mp3")
+
+    var audioPlayer         = AVAudioPlayer()
+	var audioPlayerBack 	= AVAudioPlayer()
 	
 	
 
@@ -59,6 +59,7 @@ class PauseView: UIViewController {
                 }, completion: nil)
             }
             opened = true
+			UIApplication.shared.isIdleTimerDisabled = false
 			
 			audioPlayerBack = try! AVAudioPlayer(contentsOf: robocopSound!)
 			audioPlayerBack.volume = 0.3
@@ -87,6 +88,7 @@ class PauseView: UIViewController {
     
     @IBAction func onResumeClick(_ sender: UIButton) {
         delegate.pauseView_ResumeClicked(self)
+		UIApplication.shared.isIdleTimerDisabled = true
 		getClickSound()
     }
     @IBAction func onMenuClick(_ sender: UIButton) {

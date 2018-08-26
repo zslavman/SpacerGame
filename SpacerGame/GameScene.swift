@@ -29,12 +29,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var _score:Int                = 0
 
 	private var motionManager: CMMotionManager!
-    private var dY_lean_correction:Double = 0.4// коррекция на наклон устройства
 	private var starsLayer:SKNode!              // слой звезд
-	private var spaceShipContainer:SKNode!      // контейнер для корабля и его огня от двигателей
+	private var dY_lean_correction:Double = 0.4// коррекция на наклон устройства
 
     public static var music_flag:Bool     = true
-	public static var sound_flag:Bool 		= true
+	public static var sound_flag:Bool     = true
 
     public var stageBacking:SKSpriteNode!
 	private var scoreLabel:SKLabelNode! // лейба с очками игрока
@@ -89,8 +88,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	
     override func didMove(to view: SKView) {
         
-        self.removeAllChildren()
-        
+//        self.removeAllChildren() // очистка сцены от всего
+		
         // любой рандомайзер всегда на что-то операется, в данном случае на время, потому при каждом запуске оно будет разное
         srand48(time(nil)) // "для того чтоб сид был разный"
         
@@ -152,8 +151,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel.fontName = "Arial"
         scoreLabel.fontSize = 17
         addChild(scoreLabel)
-        
-        
         
         
         stageBacking.zPosition = 0
@@ -459,6 +456,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if !flashingShip {
                 score = 0
                 flashingShip = true
+				
             }
             if (GameScene.sound_flag){
                 let hitSound = SKAction.playSoundFileNamed("hitSound", waitForCompletion: true)
