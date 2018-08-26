@@ -143,7 +143,7 @@
                                 <rect key="frame" x="22" y="430" width="276" height="27"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="menu_music" translatesAutoresizingMaskIntoConstraints="NO" id="N3F-j3-vAN">
-                                        <rect key="frame" x="0.0" y="2" width="88.5" height="23"/>
+                                        <rect key="frame" x="0.0" y="2" width="88" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="88" id="4rF-Vl-nsZ"/>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="23" id="YMy-LP-JiK"/>
@@ -151,7 +151,7 @@
                                         </constraints>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XoV-Lf-qsB">
-                                        <rect key="frame" x="233.5" y="0.0" width="42.5" height="27"/>
+                                        <rect key="frame" x="233" y="0.0" width="43" height="27"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="XoV-Lf-qsB" secondAttribute="height" multiplier="43:27" id="Tbc-FH-2VJ"/>
                                         </constraints>
@@ -193,10 +193,114 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IG7-GG-fAx" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="F6d-Am-3BN" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="759" y="37"/>
+            <point key="canvasLocation" x="776" y="37"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="hdW-7w-8m5">
+            <objects>
+                <viewController id="PIz-pv-snW" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="0ZF-eL-EZv"/>
+                        <viewControllerLayoutGuide type="bottom" id="8hk-Km-ANm"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="3pF-32-2AK">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gover_gameOver" translatesAutoresizingMaskIntoConstraints="NO" id="vov-9H-eIh">
+                                <rect key="frame" x="43" y="70" width="232" height="36"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="vov-9H-eIh" secondAttribute="height" multiplier="51:8" constant="2.5" id="F4P-q0-SbC"/>
+                                </constraints>
+                            </imageView>
+                            <stackView opaque="NO" contentMode="bottomLeft" axis="vertical" distribution="equalCentering" alignment="center" spacing="17" translatesAutoresizingMaskIntoConstraints="NO" id="Gl9-rh-fBl" userLabel="You have 1000 scores">
+                                <rect key="frame" x="77" y="192.5" width="166" height="143"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gover_youHave" translatesAutoresizingMaskIntoConstraints="NO" id="2aX-AY-1SP">
+                                        <rect key="frame" x="0.0" y="0.0" width="166" height="34"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="2aX-AY-1SP" secondAttribute="height" multiplier="83:17" id="LoH-sP-szR"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1000" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999999999999996" translatesAutoresizingMaskIntoConstraints="NO" id="zgt-IQ-I1C">
+                                        <rect key="frame" x="42.5" y="51" width="81" height="43"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="zgt-IQ-I1C" secondAttribute="height" multiplier="81:43" id="nhv-5n-xdy"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="AppleSDGothicNeo-Bold" family="Apple SD Gothic Neo" pointSize="35"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gover_scores" translatesAutoresizingMaskIntoConstraints="NO" id="orM-ER-RLg">
+                                        <rect key="frame" x="17.5" y="113.5" width="131" height="29.5"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="orM-ER-RLg" secondAttribute="height" multiplier="129:29" id="Db5-5C-I0m"/>
+                                            <constraint firstAttribute="width" constant="131" id="ZMp-xx-9nH"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                            </stackView>
+                            <stackView opaque="NO" contentMode="scaleAspectFit" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="Ahg-s5-pm9">
+                                <rect key="frame" x="20" y="410" width="280" height="80"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="miM-Pa-hmY">
+                                        <rect key="frame" x="0.0" y="0.0" width="80" height="80"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="80" id="TTk-4U-nZT"/>
+                                            <constraint firstAttribute="height" constant="80" id="dbb-lY-eea"/>
+                                        </constraints>
+                                        <state key="normal" image="gover_resetBtn"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="udk-fz-9nb">
+                                        <rect key="frame" x="100" y="0.0" width="80" height="80"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="80" id="4j4-ap-8rh"/>
+                                            <constraint firstAttribute="height" constant="80" id="mvg-C9-aQO"/>
+                                        </constraints>
+                                        <state key="normal" image="menu_MenuBttn"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mLm-Iw-gnp">
+                                        <rect key="frame" x="200" y="0.0" width="80" height="80"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="80" id="AXe-hS-Kfq"/>
+                                            <constraint firstAttribute="height" constant="80" id="UxZ-yb-wDL"/>
+                                        </constraints>
+                                        <state key="normal" image="gover_top"/>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Ahg-s5-pm9" secondAttribute="height" multiplier="7:2" id="HZo-XH-A21"/>
+                                    <constraint firstAttribute="width" secondItem="Ahg-s5-pm9" secondAttribute="height" multiplier="7:2" id="Jsh-EV-BNU"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Gl9-rh-fBl" firstAttribute="centerY" secondItem="3pF-32-2AK" secondAttribute="centerY" constant="-20" id="AXu-sj-Vj7"/>
+                            <constraint firstItem="Ahg-s5-pm9" firstAttribute="centerX" secondItem="3pF-32-2AK" secondAttribute="centerX" id="FzB-K3-Ff1"/>
+                            <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="Ahg-s5-pm9" secondAttribute="trailing" constant="4" id="JBp-qm-K4a"/>
+                            <constraint firstItem="8hk-Km-ANm" firstAttribute="top" secondItem="Ahg-s5-pm9" secondAttribute="bottom" constant="78" id="LKU-Ob-8RX"/>
+                            <constraint firstItem="Ahg-s5-pm9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="3pF-32-2AK" secondAttribute="leadingMargin" constant="4" id="OFw-Jc-EnB"/>
+                            <constraint firstItem="vov-9H-eIh" firstAttribute="centerX" secondItem="3pF-32-2AK" secondAttribute="centerX" constant="-1" id="VwS-dH-zot"/>
+                            <constraint firstItem="vov-9H-eIh" firstAttribute="top" secondItem="0ZF-eL-EZv" secondAttribute="bottom" constant="50" id="edD-N3-fdl"/>
+                            <constraint firstItem="Gl9-rh-fBl" firstAttribute="centerX" secondItem="3pF-32-2AK" secondAttribute="centerX" id="hv7-qc-l9e"/>
+                            <constraint firstItem="Gl9-rh-fBl" firstAttribute="leading" secondItem="3pF-32-2AK" secondAttribute="leadingMargin" constant="61" id="jFX-gZ-k8q"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Gl9-rh-fBl" secondAttribute="trailing" constant="61" id="n62-H6-oLE"/>
+                            <constraint firstItem="vov-9H-eIh" firstAttribute="width" secondItem="3pF-32-2AK" secondAttribute="width" multiplier="255:568" constant="88.338028169014081" id="opN-S2-Ja7"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="r5n-Gq-9cq" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1560" y="36.971830985915496"/>
         </scene>
     </scenes>
     <resources>
+        <image name="gover_gameOver" width="552" height="87"/>
+        <image name="gover_resetBtn" width="80" height="80"/>
+        <image name="gover_scores" width="166" height="38"/>
+        <image name="gover_top" width="80" height="80"/>
+        <image name="gover_youHave" width="166" height="34"/>
         <image name="menu_MenuBttn" width="80" height="80"/>
         <image name="menu_PausedTitle" width="400" height="98"/>
         <image name="menu_PlayBttn" width="80" height="80"/>

@@ -15,31 +15,39 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     public var soundChanel:AVAudioPlayer!
-    
+
     private var spaceShip:SKSpriteNode!
-    private let w = UIScreen.main.bounds.size.width
-    private let h = UIScreen.main.bounds.size.height
-    
-    private let ship_speed:CGFloat = 600    // поинтов в секунду
-    private let asterPerSecond:Double = 2   // кол-во астероидов в сек
-    
+    private let w                         = UIScreen.main.bounds.size.width
+    private let h                         = UIScreen.main.bounds.size.height
+
+    private let ship_speed:CGFloat        = 600// поинтов в секунду
+    private let asterPerSecond:Double     = 2// кол-во астероидов в сек
+
     // идентификаторы столкновений (битовые маски)
-    private let chipCategory:UInt32     = 0x1 << 0 // 0000..01
-    private let asterCategory:UInt32    = 0x1 << 1 // 0000..10
-    private var _score:Int = 0
-    
+    private let chipCategory:UInt32       = 0x1 << 0// 0000..01
+    private let asterCategory:UInt32      = 0x1 << 1// 0000..10
+    private var _score:Int                = 0
+
+	private var motionManager: CMMotionManager!
+    private var dY_lean_correction:Double = 0.4// коррекция на наклон устройства
+	private var starsLayer:SKNode!              // слой звезд
+	private var spaceShipContainer:SKNode!      // контейнер для корабля и его огня от двигателей
+
+    public static var music_flag:Bool     = true
+	public static var sound_flag:Bool 		= true
+
     public var stageBacking:SKSpriteNode!
-    private var scoreLabel:SKLabelNode! // лейба с очками игрока
-    public var score:Int {
-        get { return _score }
-        set {
-            _score = newValue
-            scoreLabel.text = "Очки: \(_score)"
-        }
-    }
-    
+	private var scoreLabel:SKLabelNode! // лейба с очками игрока
+	public var score:Int {
+		get { return _score }
+		set {
+			_score  		= newValue
+			scoreLabel.text = "Очки: \(_score)"
+		}
+	}
+
     // мигание корабля
-    private var _flashingShip:Bool = false
+    private var _flashingShip:Bool    = false
     private var colorActionRepeat:SKAction!
     public var flashingShip:Bool {
         get {
@@ -62,17 +70,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    private var motionManager: CMMotionManager!
-    private var dY_lean_correction:Double = 0.4 // коррекция на наклон устройства
-    private var starsLayer:SKNode!              // слой звезд
-    private var spaceShipContainer:SKNode!      // контейнер для корабля и его огня от двигателей
-    
-    public static var music_flag:Bool = true
-    public static var sound_flag:Bool = true
+	
     
     
     
     
+    /// Включение фоновой музыки
     private func playBackMusic(){
         let musicURL = Bundle.main.url(forResource: "backgroundMusic", withExtension: "m4a")!
         soundChanel = try! AVAudioPlayer(contentsOf: musicURL, fileTypeHint: nil)
@@ -83,7 +86,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
 
     
-    
+	
     override func didMove(to view: SKView) {
         
         self.removeAllChildren()
@@ -221,8 +224,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             soundChanel.pause()
         }
     }
-    
-    public func playGame(){
+	
+	
+	
+	/// Возврат к игре после отжатия паузы
+	public func playGame(){
         if motionManager.accelerometerData != nil {
             dY_lean_correction = (motionManager.accelerometerData?.acceleration.y)!
         }
@@ -330,9 +336,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     
+    /// Аля ENTERFRAME
+    ///
+    /// - Parameter currentTime: время
     override func update(_ currentTime: TimeInterval) {
-        
-        
+
         // поправка для корабля
         if spaceShip.position.x < 0 {
             spaceShip.position.x = 0
@@ -361,14 +369,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             stageBacking.position.y = frame.height - stageBacking.frame.height + 1
         }
         
-        
-        
         if let acelerometerData = motionManager.accelerometerData {
             
             let force = 25.0 // усиление
             //let dy_lean_correction = (acelerometerData.acceleration.y + 0.4) * force // коррекция наклона устройства для нормального держания в руках
             
-
             var motionVector:CGVector = CGVector(dx: acelerometerData.acceleration.x * force, dy: (acelerometerData.acceleration.y + abs(dY_lean_correction)) * force)
             
             if abs(motionVector.dx) < 0.2 && abs(motionVector.dy) < 0.2 {
@@ -442,7 +447,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     
-    // делегаты расширения SKPhysicsContactDelegate
+    //MARK: делегаты расширения SKPhysicsContactDelegate
+
+	
+    /// Столкновения (начало контакта)
+    ///
+    /// - Parameter contact: 111
     func didBegin(_ contact: SKPhysicsContact) {
         
         if (contact.bodyA.categoryBitMask == chipCategory && contact.bodyB.categoryBitMask == asterCategory || contact.bodyB.categoryBitMask == chipCategory && contact.bodyA.categoryBitMask == asterCategory){
