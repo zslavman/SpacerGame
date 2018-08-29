@@ -11,9 +11,15 @@ import GameplayKit
 import CoreMotion
 import AVFoundation
 
+// для передачи очков из этого класса в GameOverView
+protocol PGameDelegate {
+	func gameDelegateUpdateScore(score:Int)
+	func gameDelegateGameOver(score:Int) // будет передавать очки
+}
+
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
-    
+	public var pgameDelegate:PGameDelegate? // делегат протокола PGameDelegate
     public var soundChanel:AVAudioPlayer!
 
     private var spaceShip:SKSpriteNode!
@@ -457,6 +463,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score = 0
                 flashingShip = true
 				
+				pauseGame()
+				pgameDelegate?.gameDelegateGameOver(score: score)
             }
             if (GameScene.sound_flag){
                 let hitSound = SKAction.playSoundFileNamed("hitSound", waitForCompletion: true)

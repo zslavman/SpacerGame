@@ -70,8 +70,8 @@ class GameViewController: UIViewController {
                 
                 // мост в класс GameScene
                 gameScene = scene
-            }
-            
+				gameScene.pgameDelegate = self
+			}
             view.ignoresSiblingOrder = true // игнорировать очередность добавления элементов на сцену (порядок слоев)
             
             view.showsFPS = true
@@ -80,53 +80,52 @@ class GameViewController: UIViewController {
     }
     
     
-    
-    public func showPauseScreen(_ vc:PauseView){
-        addChildViewController(vc)  // добавляем к существующему ВК дочерний ВК
-        view.addSubview(vc.view)    // во вьюшку существующего ВК добавляем вьюшку нового(дочернего) ВК
-        vc.view.frame = view.bounds // определяем размер новой вьюшки  = размеру родительской вьюшки
-        
-        vc.view.alpha = 0
-        UIView.animate(withDuration: 0.65) {
-            vc.view.alpha = 1
-        }
-	}
+
 	
-	
-	
-	
-	public func showGameOverScreen(){
+	/// Показываем переданный экран
+	///
+	/// - Parameter vc: экран-контроллер
+	public func showXScreen<T>(_ vc:T){
 		
-		addChildViewController(gameOverView)
-		view.addSubview(gameOverView.view)
-		gameOverView.view.frame = view.bounds
+		let newView = vc as! UIViewController
 		
-		gameOverView.view.alpha = 0
-		UIView.animate(withDuration: 1) {
-			self.gameOverView.view.alpha = 1
+		addChildViewController(newView)  // добавляем к существующему ВК дочерний ВК
+		view.addSubview(newView.view)    // во вьюшку существующего ВК добавляем вьюшку нового(дочернего) ВК
+		newView.view.frame = view.bounds // определяем размер новой вьюшки  = размеру родительской вьюшки
+		
+		newView.view.alpha = 0
+		UIView.animate(withDuration: 0.65) {
+			newView.view.alpha = 1
 		}
 	}
 	
+
+	
+	
+	/// Прячем переданный экран
+	///
+	/// - Parameter vc: экран-контроллер
+	public func hideXScreen<T>(_ vc:T){
+		
+		let newView = vc as! UIViewController
+		
+		newView.willMove(toParentViewController: nil) // для удаления ВК из контейнера
+		newView.removeFromParentViewController()
+		
+		newView.view.alpha = 1
+		UIView.animate(withDuration: 0.65, animations: {
+			newView.view.alpha = 0
+		}, completion: {
+			(_) in
+			newView.view.removeFromSuperview()
+			if (newView is PauseView){
+				self.onPP_Click(nil)
+			}
+		})
+	}
 	
 	
 	
-	
-    
-    
-    public func hidePauseScreen(_ vc:PauseView){
-        vc.willMove(toParentViewController: nil) // для удаления ВК из контейнера
-        vc.removeFromParentViewController()
-//        vc.view.removeFromSuperview()
-        
-        vc.view.alpha = 1
-        UIView.animate(withDuration: 0.65, animations: {
-            vc.view.alpha = 0
-        }, completion: {
-            (_) in
-            vc.view.removeFromSuperview()
-            self.onPP_Click(nil)
-        })
-    }
     
     
     // нажали на Play/Pause
@@ -137,7 +136,7 @@ class GameViewController: UIViewController {
             ppBttn.setImage(UIImage(named: "pauseBttn"), for: .normal)
         }
         else{
-            showPauseScreen(pauseView)
+            showXScreen(pauseView)
             gameScene.pauseGame()
             ppBttn.setImage(UIImage(named: "playBttn"), for: .normal)
         }
@@ -145,13 +144,7 @@ class GameViewController: UIViewController {
 
     
     
-    
-//    func music_On_Off(){
-//        GameScene.userDefaults.set(GameScene.music_flag, forKey: "music")
-//        GameScene.userDefaults.synchronize()
-//    }
-    
-    
+	
 
     
     
@@ -184,7 +177,7 @@ class GameViewController: UIViewController {
 extension GameViewController: PauseViewDelegate {
 	
 	func pauseView_ResumeClicked(_ vc:PauseView){
-		hidePauseScreen(pauseView)
+		hideXScreen(pauseView)
 	}
 	func pauseView_MenuClicked(_ vc:PauseView){ }
 	func pauseView_StoreClicked(_ vc:PauseView){ }
@@ -195,12 +188,21 @@ extension GameViewController: GameOverDelegate {
 	
 	func gameOver_onResetClick(){
 		gameScene.resetGame()
+		hideXScreen(gameOverView)
 	}
 	func gameOver_onMenuClick(){}
 	func gameOver_onTopClick(){}
-	
 }
 
+
+extension GameViewController: PGameDelegate {
+
+	func gameDelegateUpdateScore(score:Int){}
+	func gameDelegateGameOver(score:Int){
+		print("Трындец!")
+		showXScreen(gameOverView)
+	}
+}
 
 
 
