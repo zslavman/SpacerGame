@@ -23,23 +23,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     public var soundChanel:AVAudioPlayer!
 
     private var spaceShip:SKSpriteNode!
-    private let w                         = UIScreen.main.bounds.size.width
-    private let h                         = UIScreen.main.bounds.size.height
+    private let w 							= UIScreen.main.bounds.size.width
+    private let h							= UIScreen.main.bounds.size.height
 
-    private let ship_speed:CGFloat        = 600// поинтов в секунду
-    private let asterPerSecond:Double     = 2// кол-во астероидов в сек
+    private let ship_speed:CGFloat			= 600// поинтов в секунду
+    private let asterPerSecond:Double		= 2// кол-во астероидов в сек
 
     // идентификаторы столкновений (битовые маски)
-    private let chipCategory:UInt32       = 0x1 << 0// 0000..01
-    private let asterCategory:UInt32      = 0x1 << 1// 0000..10
-    private var _score:Int                = 0
+    private let chipCategory:UInt32			= 0x1 << 0// 0000..01
+    private let asterCategory:UInt32		= 0x1 << 1// 0000..10
+    private var _score:Int					= 0
+	private var gameFinished:Bool			= false // gameOver
 
 	private var motionManager: CMMotionManager!
 	private var starsLayer:SKNode!              // слой звезд
-	private var dY_lean_correction:Double = 0.4// коррекция на наклон устройства
+	private var asteroidLayer:SKNode = SKNode() // слой астероидов
+	private var dY_lean_correction:Double	= 0.4// коррекция на наклон устройства
 
-    public static var music_flag:Bool     = true
-	public static var sound_flag:Bool     = true
+    public static var music_flag:Bool		= true
+	public static var sound_flag:Bool		= true
 
     public var stageBacking:SKSpriteNode!
 	private var scoreLabel:SKLabelNode! // лейба с очками игрока
@@ -123,7 +125,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // космич. корабль
         spaceShip = SKSpriteNode(imageNamed: "picSpaceShip")
-        spaceShip.position = CGPoint(x: w/2, y: spaceShip.frame.size.height/2 + 10)
         spaceShip.physicsBody = SKPhysicsBody(texture: spaceShip.texture!, size: spaceShip.size)
         spaceShip.physicsBody?.isDynamic = false // гравитация не должна утягивать корабль вниз
         
@@ -163,11 +164,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         starsLayer.zPosition = 1
         spaceShip.zPosition = 2
         scoreLabel.zPosition = 3
-        
-        
+		
+		// так не работает слежение вылетом за экран!!!
+		// addChild(asteroidLayer)
+		// self.asteroidLayer.zPosition = 2
+		
         // генерируем астероиды
         let asteroidCreateAction = SKAction.run { 
             let asteroid = self.createAsteroid()
+			//self.asteroidLayer.addChild(asteroid)
             asteroid.zPosition = 2
             self.addChild(asteroid)
         }
@@ -204,6 +209,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		let m_flag = UserDefaults.standard.object(forKey: "sound")
 		GameScene.sound_flag = (m_flag == nil) ? true : m_flag as! Bool
 		
+		resetGame()
 		
         if GameScene.music_flag {
             playBackMusic()
@@ -218,7 +224,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     public func resetGame(){
         isPaused = false
         score = 0
-    }
+		gameFinished = false
+		// удаляем все астероиды
+		enumerateChildNodes(withName: "asteroid_out_marker") {
+			(node:SKNode, nil) in
+			node.removeFromParent()
+		}
+		spaceShip.position = CGPoint(x: w/2, y: spaceShip.frame.size.height/2 + 10)
+	}
+
+	
     
     public func pauseGame(){
         isPaused = true
@@ -298,7 +313,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // назначаем астероиду физическое тело для взаимодействия. Метод ниже определяет физ.тело на основе прозрачности слоя
         asteroid.physicsBody = SKPhysicsBody(texture: asteroid.texture!, size: asteroid.size)
-        asteroid.name = "asteroid1" // дали имя для отлавливания вылета за сцену
+        asteroid.name = "asteroid_out_marker" // дали имя для отлавливания вылета за сцену
         
         asteroid.physicsBody?.categoryBitMask = asterCategory
         asteroid.physicsBody?.collisionBitMask = chipCategory | asterCategory // астероид может сталкиваться с кораблем и с астероидами
@@ -320,14 +335,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // stop - прекращает работу метода/перебора нодов
     override func didSimulatePhysics() {
         
-        enumerateChildNodes(withName: "asteroid1") {
-            (node:SKNode, stop:UnsafeMutablePointer<ObjCBool>) in
-            
+        enumerateChildNodes(withName: "asteroid_out_marker") {
+			//(node:SKNode, stop:UnsafeMutablePointer<ObjCBool>) in
+            (node:SKNode, nil) in
+			
             if node.position.y < -20 {
                 node.removeFromParent()
                 self.score += 1
             }
         }
+		
+		
     }
     
     
@@ -463,14 +481,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score = 0
                 flashingShip = true
 				
-				pauseGame()
-				pgameDelegate?.gameDelegateGameOver(score: score)
+				if (!gameFinished){
+					
+					// определяем анимаюци столкновения с астероидом
+					
+					
+					
+					
+					
+					pauseGame()
+					pgameDelegate?.gameDelegateGameOver(score: score)
+					gameFinished = true
+				}
             }
             if (GameScene.sound_flag){
                 let hitSound = SKAction.playSoundFileNamed("hitSound", waitForCompletion: true)
                 //let reduseSoundVolume = SKAction.changeVolume(by: 0.01, duration: 1)
                 //let groupActions = SKAction.group([hitSound, reduseSoundVolume])
-                removeAction(forKey: "die-shortHit")
+                removeAction(forKey: "shortHit")
                 run(hitSound, withKey:"shortHit")
             }
         }

@@ -121,6 +121,9 @@ class GameViewController: UIViewController {
 			if (newView is PauseView){
 				self.onPP_Click(nil)
 			}
+			else {
+				self.gameScene.playGame()
+			}
 		})
 	}
 	
