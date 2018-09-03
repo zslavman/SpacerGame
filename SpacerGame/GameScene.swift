@@ -271,7 +271,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // клик по экрану
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
-        if let touch = touches.first, !isPaused {
+        if let touch = touches.first, !isPaused, !gameFinished {
             let touchLocation = touch.location(in: self)
             
             let dist = distanceCalc(a: spaceShip.position, b: touchLocation)
@@ -478,20 +478,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if (contact.bodyA.categoryBitMask == chipCategory && contact.bodyB.categoryBitMask == asterCategory || contact.bodyB.categoryBitMask == chipCategory && contact.bodyA.categoryBitMask == asterCategory){
             if !flashingShip {
-                score = 0
+//                score = 0
                 flashingShip = true
 				
 				if (!gameFinished){
+					gameFinished = true
 					
 					// определяем анимаюци столкновения с астероидом
+					let fadeOutAction = SKAction.fadeOut(withDuration: 0.1) // исчезает
+					fadeOutAction.timingMode = SKActionTimingMode.easeOut
 					
+					let fadeInAction = SKAction.fadeIn(withDuration: 0.1) // появляется
+					fadeInAction.timingMode = SKActionTimingMode.easeOut
 					
+					let blinkAction = SKAction.sequence([fadeOutAction, fadeInAction]) // одно моргание на основе действий выше
+					let blinkRepeatAction = SKAction.repeat(blinkAction, count: 4) // 3 моргания
 					
+					let delayAction = SKAction.wait(forDuration: 0.3) // ожидание 0,2с
 					
+					let gameOverAction = SKAction.run {
+						self.pgameDelegate?.gameDelegateGameOver(score: self.score)
+						self.pauseGame()
+					}
 					
-					pauseGame()
-					pgameDelegate?.gameDelegateGameOver(score: score)
-					gameFinished = true
+					let gameOverSequance = SKAction.sequence([blinkRepeatAction, delayAction, gameOverAction])
+					
+					spaceShip.run(gameOverSequance)
 				}
             }
             if (GameScene.sound_flag){
