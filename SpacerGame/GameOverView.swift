@@ -23,15 +23,20 @@ class GameOverView: UIViewController {
 	@IBOutlet weak var scoreTF: UILabel!
 	
 	public var delegate:GameOverDelegate! // делегат протокола GameOverDelegate
-	
+	public var settings:Settings!
 	
 	
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
     }
 
+	
+	override func viewDidAppear(_ animated: Bool) {
+		scoreTF.text = String(settings.currentScore)
+		
+		super.viewDidAppear(animated)
+	}
 	
 	@IBAction func onResetClick(_ sender: UIButton) {
 		delegate.gameOver_onResetClick()
@@ -45,6 +50,20 @@ class GameOverView: UIViewController {
 	@IBAction func onTopClick(_ sender: UIButton) {
 		delegate.gameOver_onTopClick()
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 }

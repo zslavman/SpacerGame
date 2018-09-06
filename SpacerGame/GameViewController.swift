@@ -18,7 +18,8 @@ import GameplayKit
 class GameViewController: UIViewController {
     
     
-    @IBOutlet weak var ppBttn: UIButton! // кнопка для упрпвления ее видом
+	@IBOutlet weak var scoreLabel_TF: UILabel! // лейбл очков
+	@IBOutlet weak var ppBttn: UIButton! // кнопка для упрпвления ее видом
     
     public var gameScene:GameScene!
 	public var pauseView:PauseView!
@@ -29,9 +30,14 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
+		scoreLabel_TF.text = "0"
+		
 		settingsInstance = Settings()
+		
+//		для проверки
 //		print(settingsInstance)
-//		settingsInstance.recordScores(score: 99)
+//		settingsInstance.recordScores(score: 777)
+//		settingsInstance.highScore = 1
 //		print(settingsInstance)
 		
 		
@@ -41,26 +47,13 @@ class GameViewController: UIViewController {
 		gameOverView = storyboard?.instantiateViewController(withIdentifier: "goView") as! GameOverView
 		gameOverView.delegate = self
 		
+		gameOverView.settings = settingsInstance
+		
         onLoad()
     }
     
 
-    
-    // событие поворота экрана
-//    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-//        super.viewWillTransition(to: size, with: coordinator)
-//        
-//        if UIDevice.current.orientation.isLandscape {
-//            print("Landscape")
-//        }
-//        else {
-//            print("Portrait")
-//        }
-//        onLoad()
-//    }
-    
-    
-
+	
     
     
     private func onLoad(){
@@ -78,6 +71,8 @@ class GameViewController: UIViewController {
                 // мост в класс GameScene
                 gameScene = scene
 				gameScene.pgameDelegate = self
+				
+				gameScene.settings = settingsInstance
 			}
             view.ignoresSiblingOrder = true // игнорировать очередность добавления элементов на сцену (порядок слоев)
             
@@ -207,10 +202,17 @@ extension GameViewController: GameOverDelegate {
 
 extension GameViewController: PGameDelegate {
 
-	func gameDelegateUpdateScore(score:Int){}
 	func gameDelegateGameOver(score:Int){
-		print("Трындец!")
+		print("Ты попал!")
 		showXScreen(gameOverView)
+	}
+	
+	// сейчас последующие 2 метода выполняют одно и тоже, но в дальнейшем можно добавить функционал
+	func gameDelegateDidUpdateScore(score:Int){
+		scoreLabel_TF.text = String(self.settingsInstance.currentScore)
+	}
+	func gameDelegateReset() {
+		scoreLabel_TF.text = String(self.settingsInstance.currentScore)
 	}
 }
 

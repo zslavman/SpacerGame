@@ -35,15 +35,29 @@
                                     <action selector="onPP_Click:" destination="BV1-FR-VrT" eventType="touchUpInside" id="9Sr-WS-SzV"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999999999999996" translatesAutoresizingMaskIntoConstraints="NO" id="bYw-ka-n1o">
+                                <rect key="frame" x="131.5" y="28" width="57" height="30"/>
+                                <color key="backgroundColor" red="0.0" green="0.38039215686274508" blue="0.51372549019607838" alpha="0.68375880281690138" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="l99-7V-VKw"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="57" id="p4w-Rd-99y"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="25"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="bYw-ka-n1o" firstAttribute="top" secondItem="8aa-yV-Osq" secondAttribute="bottom" constant="8" id="6AD-jQ-r0l"/>
+                            <constraint firstItem="bYw-ka-n1o" firstAttribute="centerX" secondItem="3se-qz-xqx" secondAttribute="centerX" id="CGZ-gD-U5q"/>
                             <constraint firstItem="FgD-SQ-GhN" firstAttribute="top" secondItem="8aa-yV-Osq" secondAttribute="bottom" constant="8" id="VIs-fi-6Vx"/>
                             <constraint firstAttribute="trailingMargin" secondItem="FgD-SQ-GhN" secondAttribute="trailing" id="VON-GY-ORZ"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="ppBttn" destination="FgD-SQ-GhN" id="X15-cO-tk7"/>
+                        <outlet property="scoreLabel_TF" destination="bYw-ka-n1o" id="Jt7-jL-2W2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
@@ -115,7 +129,7 @@
                                 <rect key="frame" x="22" y="379" width="276" height="27"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="menu_sound" translatesAutoresizingMaskIntoConstraints="NO" id="SRo-J6-dGn">
-                                        <rect key="frame" x="0.0" y="0.0" width="113" height="27"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="113.5" height="27"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="SRo-J6-dGn" secondAttribute="height" multiplier="113:27" id="XwO-gq-fvZ"/>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="113" id="YwX-e7-ub9"/>
@@ -123,7 +137,7 @@
                                         </constraints>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jSf-y4-8xJ">
-                                        <rect key="frame" x="233" y="0.0" width="43" height="27"/>
+                                        <rect key="frame" x="233.5" y="0.0" width="42.5" height="27"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="43" id="Scm-Uz-XOQ"/>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="27" id="jII-gU-sp2"/>

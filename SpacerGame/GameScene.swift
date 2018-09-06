@@ -13,8 +13,9 @@ import AVFoundation
 
 // для передачи очков из этого класса в GameOverView
 protocol PGameDelegate {
-	func gameDelegateUpdateScore(score:Int)
+	func gameDelegateDidUpdateScore(score:Int)
 	func gameDelegateGameOver(score:Int) // будет передавать очки
+	func gameDelegateReset()
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -22,6 +23,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	public var pgameDelegate:PGameDelegate? // делегат протокола PGameDelegate
     public var soundChanel:AVAudioPlayer!
 	private var spaceShipOnFinger:Bool = false // флаг, что тач прикоснувшись попали на корабль
+	public var settings: Settings!
+	
 	
     private var spaceShip:SKSpriteNode!
     private let w 							= UIScreen.main.bounds.size.width
@@ -45,14 +48,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	public static var sound_flag:Bool		= true
 
     public var stageBacking:SKSpriteNode!
-	private var scoreLabel:SKLabelNode! // лейба с очками игрока
-	public var score:Int {
-		get { return _score }
-		set {
-			_score  		= newValue
-			scoreLabel.text = "Очки: \(_score)"
-		}
-	}
+//	private var scoreLabel:SKLabelNode! // лейба с очками игрока
+//	public var score:Int {
+//		get { return _score }
+//		set {
+//			_score  		= newValue
+//			scoreLabel.text = "Очки: \(_score)"
+//		}
+//	}
 
     // мигание корабля
     private var _flashingShip:Bool    = false
@@ -153,27 +156,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        engine2.targetNode = self // оставляет шлейф за огнем
         
         // лейблу очков
-        scoreLabel = SKLabelNode(text: "Очки: \(score)")
-        //scoreLabel.calculateAccumulatedFrame().height - собственная высота лейбла
-        scoreLabel.position = CGPoint(x: frame.size.width / 2, y: frame.size.height - scoreLabel.calculateAccumulatedFrame().height - 15)
-        scoreLabel.fontName = "Arial"
-        scoreLabel.fontSize = 17
-        addChild(scoreLabel)
-        
+//        scoreLabel = SKLabelNode(text: "Очки: \(score)")
+//        //scoreLabel.calculateAccumulatedFrame().height - собственная высота лейбла
+//        scoreLabel.position = CGPoint(x: frame.size.width / 2, y: frame.size.height - scoreLabel.calculateAccumulatedFrame().height - 15)
+//        scoreLabel.fontName = "Arial"
+//        scoreLabel.fontSize = 17
+//        addChild(scoreLabel)
+		
         
         stageBacking.zPosition = 0
         starsLayer.zPosition = 1
         spaceShip.zPosition = 2
-        scoreLabel.zPosition = 3
+//        scoreLabel.zPosition = 3
 		
-		// так не работает слежение вылетом за экран!!!
+		// так не работает отслеживание вылета за экран!!!
 		// addChild(asteroidLayer)
 		// self.asteroidLayer.zPosition = 2
 		
         // генерируем астероиды
         let asteroidCreateAction = SKAction.run { 
             let asteroid = self.createAsteroid()
-			//self.asteroidLayer.addChild(asteroid)
             asteroid.zPosition = 2
             self.addChild(asteroid)
         }
@@ -227,9 +229,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
 
     public func resetGame(){
-        isPaused = false
-        score = 0
+		
+		isPaused = false
 		gameFinished = false
+		if (settings != nil){
+			settings.reset()
+		}
+		pgameDelegate?.gameDelegateReset()
+		
 		// удаляем все астероиды
 		enumerateChildNodes(withName: "asteroid_out_marker") {
 			(node:SKNode, nil) in
@@ -296,10 +303,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			
 			// если тыкнули по кораблю
 			if (atPoint(touchLocation) == spaceShip) {
-//				spaceShip.position = touchLocation
 				// коррекция дёргания при косании
-//				spaceShip.position = CGPoint(x: touchLocation.x + (spaceShip.position.x - touchLocation.x), y: touchLocation.y + (spaceShip.position.y - touchLocation.y))
-				
 				lastTouchCoords = touchLocation
 				
 				spaceShipOnFinger = true
@@ -315,7 +319,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		if let touch = touches.first, !isPaused, !gameFinished {
 			let touchLocation = touch.location(in: self)
 			if (spaceShipOnFinger){
-//				spaceShip.position = touchLocation
 				let translation = CGPoint(x: touchLocation.x - lastTouchCoords.x, y: touchLocation.y - lastTouchCoords.y)
 				spaceShip.position.x += translation.x
 				spaceShip.position.y += translation.y
@@ -382,14 +385,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			
             if node.position.y < -20 {
                 node.removeFromParent()
-                self.score += 1
+                self.addPoints(points: 1)
             }
         }
-		
-		
-    }
+	}
+	
+	
     
-    
+	private func addPoints(points:Int){
+		settings.currentScore += points
+		pgameDelegate?.gameDelegateDidUpdateScore(score: self.settings.currentScore)
+	}
     
     
     
@@ -519,7 +525,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if (contact.bodyA.categoryBitMask == chipCategory && contact.bodyB.categoryBitMask == asterCategory || contact.bodyB.categoryBitMask == chipCategory && contact.bodyA.categoryBitMask == asterCategory){
             if !flashingShip {
-//                score = 0
+				
                 flashingShip = true
 				
 				if (!gameFinished){
@@ -538,7 +544,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 					let delayAction = SKAction.wait(forDuration: 0.3) // ожидание 0,2с
 					
 					let gameOverAction = SKAction.run {
-						self.pgameDelegate?.gameDelegateGameOver(score: self.score)
+						// передаем очки классу Settings
+						self.settings.recordScores(score: self.settings.currentScore)
+						// передаем очки экрану геймовер
+						self.pgameDelegate?.gameDelegateGameOver(score: self.settings.currentScore)
 						self.pauseGame()
 					}
 					
@@ -557,7 +566,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
         
-    
+	
     
     func didEnd(_ contact: SKPhysicsContact) {
         
