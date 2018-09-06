@@ -20,6 +20,7 @@
 		5678338620F170A100B4520A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5678338420F170A100B4520A /* Main.storyboard */; };
 		5678338820F170A100B4520A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5678338720F170A100B4520A /* Assets.xcassets */; };
 		5678338B20F170A100B4520A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5678338920F170A100B4520A /* LaunchScreen.storyboard */; };
+		567FE6D1214174B000ABA768 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 567FE6D0214174B000ABA768 /* Settings.swift */; };
 		56C27E962130CEDC008B4438 /* hitSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 56C27E952130CEDB008B4438 /* hitSound.wav */; };
 		56FB569E2130B7B4003B8743 /* backgroundMusic.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 56FB569C2130B7B4003B8743 /* backgroundMusic.m4a */; };
 /* End PBXBuildFile section */
@@ -40,6 +41,7 @@
 		5678338720F170A100B4520A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5678338A20F170A100B4520A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5678338C20F170A100B4520A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		567FE6D0214174B000ABA768 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		56C27E952130CEDB008B4438 /* hitSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hitSound.wav; sourceTree = "<group>"; };
 		56FB569C2130B7B4003B8743 /* backgroundMusic.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = backgroundMusic.m4a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -81,6 +83,7 @@
 				5678338020F170A100B4520A /* GameScene.swift */,
 				56347B8521307E04004D46E0 /* PauseView.swift */,
 				5636B21B2133387E00F97CBA /* GameOverView.swift */,
+				567FE6D0214174B000ABA768 /* Settings.swift */,
 				5678338720F170A100B4520A /* Assets.xcassets */,
 				56FB56982130B647003B8743 /* Sounds */,
 				56836F852107E3CC002F2FCD /* Particles */,
@@ -191,6 +194,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				567FE6D1214174B000ABA768 /* Settings.swift in Sources */,
 				5636B21C2133387E00F97CBA /* GameOverView.swift in Sources */,
 				5678338120F170A100B4520A /* GameScene.swift in Sources */,
 				56347B8621307E04004D46E0 /* PauseView.swift in Sources */,

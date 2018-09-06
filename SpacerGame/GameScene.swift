@@ -21,7 +21,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
 	public var pgameDelegate:PGameDelegate? // делегат протокола PGameDelegate
     public var soundChanel:AVAudioPlayer!
-
+	private var spaceShipOnFinger:Bool = false // флаг, что тач прикоснувшись попали на корабль
+	
     private var spaceShip:SKSpriteNode!
     private let w 							= UIScreen.main.bounds.size.width
     private let h							= UIScreen.main.bounds.size.height
@@ -77,7 +78,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-	
+	private var lastTouchCoords:CGPoint = CGPoint.zero // тут будут координаты корабля в момент касания = начало координат
     
     
     
@@ -218,7 +219,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     
-    
+	
+	
+	
+	
+	
     
 
     public func resetGame(){
@@ -274,22 +279,58 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if let touch = touches.first, !isPaused, !gameFinished {
             let touchLocation = touch.location(in: self)
             
-            let dist = distanceCalc(a: spaceShip.position, b: touchLocation)
-            let time = timeToTravelDistance(distance: dist, speed: ship_speed)
-
-            let moveAction = SKAction.move(to: touchLocation, duration: time)
-            
-            // добавим релистичности движения корабля (плавный старт и остановка)
-            moveAction.timingMode = .easeInEaseOut
-            
-            spaceShip.run(moveAction, withKey: "move")
-            
-            // экшн-параллакс эффект при движении корабля (100 - в 100 раз меньше движения корабля)
-            let bgMoveAction = SKAction.move(to: CGPoint(x: -touchLocation.x / 10, y: -touchLocation.y / 10), duration: time)
-            stageBacking.run(bgMoveAction)
-            starsLayer.run(bgMoveAction)
-        }
+//            let dist = distanceCalc(a: spaceShip.position, b: touchLocation)
+//            let time = timeToTravelDistance(distance: dist, speed: ship_speed)
+//
+//            let moveAction = SKAction.move(to: touchLocation, duration: time)
+//
+//            // добавим релистичности движения корабля (плавный старт и остановка)
+//            moveAction.timingMode = .easeInEaseOut
+//
+//            spaceShip.run(moveAction, withKey: "move")
+//
+//            // экшн-параллакс эффект при движении корабля (100 - в 100 раз меньше движения корабля)
+//            let bgMoveAction = SKAction.move(to: CGPoint(x: -touchLocation.x / 10, y: -touchLocation.y / 10), duration: time)
+//            stageBacking.run(bgMoveAction)
+//            starsLayer.run(bgMoveAction)
+			
+			// если тыкнули по кораблю
+			if (atPoint(touchLocation) == spaceShip) {
+//				spaceShip.position = touchLocation
+				// коррекция дёргания при косании
+//				spaceShip.position = CGPoint(x: touchLocation.x + (spaceShip.position.x - touchLocation.x), y: touchLocation.y + (spaceShip.position.y - touchLocation.y))
+				
+				lastTouchCoords = touchLocation
+				
+				spaceShipOnFinger = true
+				
+			}
+			
+		}
     }
+	
+	
+	
+	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if let touch = touches.first, !isPaused, !gameFinished {
+			let touchLocation = touch.location(in: self)
+			if (spaceShipOnFinger){
+//				spaceShip.position = touchLocation
+				let translation = CGPoint(x: touchLocation.x - lastTouchCoords.x, y: touchLocation.y - lastTouchCoords.y)
+				spaceShip.position.x += translation.x
+				spaceShip.position.y += translation.y
+				lastTouchCoords = touchLocation
+			}
+		}
+	}
+	
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		spaceShipOnFinger = false
+	}
+	
+	override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+		spaceShipOnFinger = false
+	}
     
     
     

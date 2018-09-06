@@ -23,11 +23,18 @@ class GameViewController: UIViewController {
     public var gameScene:GameScene!
 	public var pauseView:PauseView!
     public var gameOverView:GameOverView!
+	public var settingsInstance:Settings!
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+		
+		settingsInstance = Settings()
+//		print(settingsInstance)
+//		settingsInstance.recordScores(score: 99)
+//		print(settingsInstance)
+		
+		
         pauseView = storyboard?.instantiateViewController(withIdentifier: "pauseView") as! PauseView
         pauseView.delegate = self
 		
