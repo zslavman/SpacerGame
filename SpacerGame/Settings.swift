@@ -13,6 +13,8 @@ class Settings: NSObject {
 	var highScore:Int
 	var currentScore:Int
 	var lastScore:Int
+	var lives:Int
+	var startingLives:Int = 3
 	
 	let keyHighScore = "highScore"
 	let keyLastScore = "lastScore"
@@ -23,6 +25,7 @@ class Settings: NSObject {
 		highScore = 0
 		currentScore = 0
 		lastScore = 0
+		lives = startingLives
 		
 		super.init()
 		
@@ -70,6 +73,7 @@ class Settings: NSObject {
 	
 	public func reset(){
 		currentScore = 0
+		lives = startingLives
 	}
 	
 	

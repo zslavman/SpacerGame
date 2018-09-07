@@ -20,7 +20,12 @@ class GameViewController: UIViewController {
     
 	@IBOutlet weak var scoreLabel_TF: UILabel! // лейбл очков
 	@IBOutlet weak var ppBttn: UIButton! // кнопка для упрпвления ее видом
-    
+	
+	@IBOutlet weak var live1: UIImageView!
+	@IBOutlet weak var live2: UIImageView!
+	@IBOutlet weak var live3: UIImageView!
+	
+	
     public var gameScene:GameScene!
 	public var pauseView:PauseView!
     public var gameOverView:GameOverView!
@@ -201,6 +206,7 @@ extension GameViewController: GameOverDelegate {
 
 
 extension GameViewController: PGameDelegate {
+	
 
 	func gameDelegateGameOver(score:Int){
 		print("Ты попал!")
@@ -213,6 +219,31 @@ extension GameViewController: PGameDelegate {
 	}
 	func gameDelegateReset() {
 		scoreLabel_TF.text = String(self.settingsInstance.currentScore)
+		gameDelegateDidUpdateLives()
+	}
+	
+	
+	func gameDelegateDidUpdateLives() {
+		
+		UIView.animate(withDuration: 0.4) {
+			switch self.settingsInstance.lives {
+			case 0:
+				self.live1.alpha = 0.3
+				self.live2.alpha = 0.3
+				self.live3.alpha = 0.3
+			case 1:
+				self.live1.alpha = 0.3
+				self.live2.alpha = 0.3
+			case 2:
+				self.live1.alpha = 0.3
+			case 3:
+				self.live1.alpha = 1
+				self.live2.alpha = 1
+				self.live3.alpha = 1
+			default:
+				()
+			}
+		}
 	}
 }
 

@@ -16,6 +16,8 @@ protocol PGameDelegate {
 	func gameDelegateDidUpdateScore(score:Int)
 	func gameDelegateGameOver(score:Int) // будет передавать очки
 	func gameDelegateReset()
+	
+	func gameDelegateDidUpdateLives()
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -529,7 +531,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 flashingShip = true
 				
 				if (!gameFinished){
-					gameFinished = true
 					
 					// определяем анимаюци столкновения с астероидом
 					let fadeOutAction = SKAction.fadeOut(withDuration: 0.1) // исчезает
@@ -543,16 +544,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 					
 					let delayAction = SKAction.wait(forDuration: 0.3) // ожидание 0,2с
 					
-					let gameOverAction = SKAction.run {
-						// передаем очки классу Settings
-						self.settings.recordScores(score: self.settings.currentScore)
-						// передаем очки экрану геймовер
-						self.pgameDelegate?.gameDelegateGameOver(score: self.settings.currentScore)
-						self.pauseGame()
+					// отнимаем жизни сразу а не в кложере, который запускается с задержкой delayAction
+					if (settings.lives > 0){
+						settings.lives -= 1
+						pgameDelegate?.gameDelegateDidUpdateLives()
+						print("lives = \(settings.lives)")
 					}
 					
+					let gameOverAction = SKAction.run {
+						
+						if (self.settings.lives == 0){
+							self.gameFinished = true
+							// передаем очки классу Settings
+							self.settings.recordScores(score: self.settings.currentScore)
+							// передаем очки экрану геймовер
+							self.pgameDelegate?.gameDelegateGameOver(score: self.settings.currentScore)
+							self.pgameDelegate?.gameDelegateDidUpdateLives()
+							self.pauseGame()
+						}
+					}
 					let gameOverSequance = SKAction.sequence([blinkRepeatAction, delayAction, gameOverAction])
-					
 					spaceShip.run(gameOverSequance)
 				}
             }
