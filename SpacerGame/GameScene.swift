@@ -20,6 +20,26 @@ protocol PGameDelegate {
 	func gameDelegateDidUpdateLives()
 }
 
+// для доступа извне определяем битовые маски через struct/enum
+struct Collision {
+	public static let NONE 			: UInt32 = 0
+	public static let PLAYER_SHIP	: UInt32 = 0x1 << 0
+	public static let ASTEROID 		: UInt32 = 0x1 << 1
+	public static let ENEMY_SHIP 	: UInt32 = 0x1 << 2
+}
+
+// для использования энума, необходимо в конце добавлять rawValue, например:  ... = Collision.PLAYER_SHIP.rawValue
+//enum Collision: UInt32 { // кейсы - степени 2-ки начиная с 0-вой степени
+//	case NONE			= 1
+//	case PLAYER_SHIP 	= 2
+//	case ASTEROID		= 4
+//	case ENEMY_SHIP		= 8
+//}
+
+
+
+
+
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
 	public var pgameDelegate:PGameDelegate? // делегат протокола PGameDelegate
@@ -36,8 +56,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private let asterPerSecond:Double		= 2// кол-во астероидов в сек
 
     // идентификаторы столкновений (битовые маски)
-    private let chipCategory:UInt32			= 0x1 << 0// 0000..01
-    private let asterCategory:UInt32		= 0x1 << 1// 0000..10
+//    private let chipCategory:UInt32			= 0x1 << 0// 0000..01
+//    private let asterCategory:UInt32		= 0x1 << 1// 0000..10
     private var _score:Int					= 0
 	private var gameFinished:Bool			= false // gameOver
 
@@ -101,7 +121,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
 	
     override func didMove(to view: SKView) {
-        
+		
+		enemySpawn()
 //        self.removeAllChildren() // очистка сцены от всего
 		
         // любой рандомайзер всегда на что-то операется, в данном случае на время, потому при каждом запуске оно будет разное
@@ -135,9 +156,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         spaceShip.physicsBody?.isDynamic = false // гравитация не должна утягивать корабль вниз
         
         // определяем с кем корабль будет сталкиваться
-        spaceShip.physicsBody?.categoryBitMask = chipCategory
-        spaceShip.physicsBody?.collisionBitMask = asterCategory
-        spaceShip.physicsBody?.contactTestBitMask = asterCategory // на что мы должны получать уведомление
+        spaceShip.physicsBody?.categoryBitMask = Collision.PLAYER_SHIP
+        spaceShip.physicsBody?.collisionBitMask = Collision.ASTEROID
+        spaceShip.physicsBody?.contactTestBitMask = Collision.ASTEROID // на что мы должны получать уведомление
         
         addChild(spaceShip)
         
@@ -244,7 +265,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			(node:SKNode, nil) in
 			node.removeFromParent()
 		}
-		spaceShip.position = CGPoint(x: w/2, y: spaceShip.frame.size.height/2 + 10)
+		enumerateChildNodes(withName: "enemy_clear_marker") {
+			(node:SKNode, nil) in
+			node.removeFromParent()
+		}
+		spaceShip.position = CGPoint(x: w/2, y: spaceShip.frame.size.height/2 + 50)
 	}
 
 	
@@ -275,9 +300,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 playBackMusic()
             }
         }
-        
-    }
+	}
+	
 
+	
+	
+	public func enemySpawn(){
+		
+		let enemyAction = SKAction.run {
+			let enemy = Enemy()
+			enemy.zPosition = 2
+			self.addChild(enemy)
+			enemy.name = "enemy_clear_marker"
+			enemy.fly()
+		}
+		
+		let waitDuration = SKAction.wait(forDuration: 7, withRange: 3)
+		let enemySequence = SKAction.sequence([enemyAction, waitDuration])
+		let repeatSpawn	= SKAction.repeatForever(enemySequence)
+		
+		run(repeatSpawn, withKey: "enemySpawn")
+	}
+	
     
     
 
@@ -316,7 +360,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 	
 	
-	
+	// таскание нашего корабля пальцем
 	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
 		if let touch = touches.first, !isPaused, !gameFinished {
 			let touchLocation = touch.location(in: self)
@@ -344,13 +388,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let asterSkinsArray:Array = ["asteroid", "asteroid2"]
         
-        let randomIndex = random(0, asterSkinsArray.count - 1)
+		let randomIndex = GameScene.random(0, asterSkinsArray.count - 1)
         
         let asteroid = SKSpriteNode(imageNamed: asterSkinsArray[randomIndex])
         asteroid.position.x = CGFloat(arc4random()).truncatingRemainder(dividingBy: frame.size.width) // truncatingRemainder - равносильно остатку "%"
         asteroid.position.y = frame.size.height + asteroid.size.height
         
-        let randFloat = CGFloat(Float(random(3, 5)) / 10.0)
+		let randFloat = CGFloat(Float(GameScene.random(3, 5)) / 10.0)
 
         //asteroid.xScale = CGFloat(randFloatX)
         //asteroid.yScale = CGFloat(randFloatY)
@@ -361,9 +405,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         asteroid.physicsBody = SKPhysicsBody(texture: asteroid.texture!, size: asteroid.size)
         asteroid.name = "asteroid_out_marker" // дали имя для отлавливания вылета за сцену
         
-        asteroid.physicsBody?.categoryBitMask = asterCategory
-        asteroid.physicsBody?.collisionBitMask = chipCategory | asterCategory // астероид может сталкиваться с кораблем и с астероидами
-        asteroid.physicsBody?.contactTestBitMask = chipCategory
+        asteroid.physicsBody?.categoryBitMask = Collision.ASTEROID
+        asteroid.physicsBody?.collisionBitMask = Collision.PLAYER_SHIP | Collision.ASTEROID // астероид может сталкиваться с кораблем и с астероидами
+        asteroid.physicsBody?.contactTestBitMask = Collision.PLAYER_SHIP
         
         // добавим угловой скорости астероиду (рад/с)
         asteroid.physicsBody?.angularVelocity = CGFloat(drand48() * 2 - 1) * 3 // в итоге итерация будет в диапазоне [-1 ; 1] * 3
@@ -496,7 +540,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     
-    public func random(_ min: Int, _ max: Int) -> Int {
+    /// Рандом генератор
+    ///
+    /// - Parameters:
+    ///   - min: минимальное значение
+    ///   - max: максимальное значение
+    /// - Returns: число между min и max
+    public static func random(_ min: Int, _ max: Int) -> Int {
         guard min < max else {return min}
         return Int(arc4random_uniform(UInt32(1 + max - min))) + min
     }
@@ -525,7 +575,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /// - Parameter contact: 111
     func didBegin(_ contact: SKPhysicsContact) {
         
-        if (contact.bodyA.categoryBitMask == chipCategory && contact.bodyB.categoryBitMask == asterCategory || contact.bodyB.categoryBitMask == chipCategory && contact.bodyA.categoryBitMask == asterCategory){
+        if (contact.bodyA.categoryBitMask == Collision.PLAYER_SHIP && contact.bodyB.categoryBitMask == Collision.ASTEROID || contact.bodyB.categoryBitMask == Collision.PLAYER_SHIP && contact.bodyA.categoryBitMask == Collision.ASTEROID){
             if !flashingShip {
 				
                 flashingShip = true
