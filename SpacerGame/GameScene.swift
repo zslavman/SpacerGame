@@ -56,9 +56,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private let ship_speed:CGFloat			= 600// поинтов в секунду
     private let asterPerSecond:Double		= 2// кол-во астероидов в сек
 
-    // идентификаторы столкновений (битовые маски)
-//    private let chipCategory:UInt32			= 0x1 << 0// 0000..01
-//    private let asterCategory:UInt32		= 0x1 << 1// 0000..10
     private var _score:Int					= 0
 	private var gameFinished:Bool			= false // gameOver
 
@@ -71,14 +68,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	public static var sound_flag:Bool		= true
 
     public var stageBacking:SKSpriteNode!
-//	private var scoreLabel:SKLabelNode! // лейба с очками игрока
-//	public var score:Int {
-//		get { return _score }
-//		set {
-//			_score  		= newValue
-//			scoreLabel.text = "Очки: \(_score)"
-//		}
-//	}
+	private var lastTouchCoords:CGPoint 	= CGPoint.zero 	// тут будут координаты корабля в момент касания = начало координат
 
     // мигание корабля
     private var _flashingShip:Bool    = false
@@ -104,11 +94,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-	private var lastTouchCoords:CGPoint = CGPoint.zero 	// тут будут координаты корабля в момент касания = начало координат
-	private var playerImmortable:Bool = true 			// неуязвимость
+
+	
+	private var playerImmortable:Bool 		= false 		// неуязвимость
+	private var asteroidDestructible:Bool 	= true 			// астероиды разрушаются лазером
     
     
-    
+	
+	
+	
+	
+	
+	
     /// Включение фоновой музыки
     private func playBackMusic(){
         let musicURL = Bundle.main.url(forResource: "backgroundMusic", withExtension: "m4a")!
@@ -146,9 +143,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		redLaser.physicsBody?.affectedByGravity 	= false
 		redLaser.physicsBody?.isDynamic 			= false
 	
-		redLaser.physicsBody?.categoryBitMask 		= Collision.LASER 		// устанавливаем битмаску столкновений
-		redLaser.physicsBody?.contactTestBitMask 	= Collision.ENEMY_SHIP 	// от каких столкновений хотим получать уведомления (триггер столкновений)
-//		redLaser.physicsBody?.collisionBitMask 		= Collision.ENEMY_SHIP	// при каких столкновениях мы хотим чтоб лазер вел себя как физическое тело
+		redLaser.physicsBody?.categoryBitMask 		= Collision.LASER 								// устанавливаем битмаску столкновений
+		redLaser.physicsBody?.contactTestBitMask 	= Collision.ENEMY_SHIP | Collision.ASTEROID 	// от каких столкновений хотим получать уведомления (триггер столкновений)
+//		redLaser.physicsBody?.collisionBitMask 		= Collision.ENEMY_SHIP							// при каких столкновениях мы хотим чтоб лазер вел себя как физическое тело
 		
 		
 		redLaser.run(laserSequence)
@@ -696,8 +693,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
 		}
 		
-		// соприкосновение вражины с лазером
-		if (contact.bodyA.categoryBitMask == Collision.LASER && contact.bodyB.categoryBitMask == Collision.ENEMY_SHIP || contact.bodyB.categoryBitMask == Collision.LASER && contact.bodyA.categoryBitMask == Collision.ENEMY_SHIP){
+		// проверка на столкновение лазера с камнем (если задан флаг)
+		var destructTest:Bool = false
+		if (asteroidDestructible && (contact.bodyA.categoryBitMask == Collision.LASER && contact.bodyB.categoryBitMask == Collision.ASTEROID || contact.bodyB.categoryBitMask == Collision.LASER && contact.bodyA.categoryBitMask == Collision.ASTEROID)){
+			destructTest = true
+		}
+
+		// соприкосновение вражины/камня с лазером
+		if ((contact.bodyA.categoryBitMask == Collision.LASER && contact.bodyB.categoryBitMask == Collision.ENEMY_SHIP || contact.bodyB.categoryBitMask == Collision.LASER && contact.bodyA.categoryBitMask == Collision.ENEMY_SHIP) || destructTest){
 			
 			// любое тело контакта будет удалено со сцены
 			let firstBody = contact.bodyA.node
@@ -711,10 +714,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			secondBody!.removeFromParent()
 			addPoints(points: 5)
 		}
-		
-		
-		
-    }
+	}
+	
+	
+	
         
 	
     

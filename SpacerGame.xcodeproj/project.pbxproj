@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		562E4EF421458475009B2CF6 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562E4EF321458475009B2CF6 /* StartScreen.swift */; };
 		5630711D2132132500FD8DA3 /* createPop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5630711C2132132500FD8DA3 /* createPop.mp3 */; };
 		5630711F2132146800FD8DA3 /* robocop4.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5630711E2132146800FD8DA3 /* robocop4.mp3 */; };
 		56347B8621307E04004D46E0 /* PauseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56347B8521307E04004D46E0 /* PauseView.swift */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		562E4EF321458475009B2CF6 /* StartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
 		5630711C2132132500FD8DA3 /* createPop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = createPop.mp3; sourceTree = "<group>"; };
 		5630711E2132146800FD8DA3 /* robocop4.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = robocop4.mp3; sourceTree = "<group>"; };
 		56347B8521307E04004D46E0 /* PauseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PauseView.swift; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 			children = (
 				5678338420F170A100B4520A /* Main.storyboard */,
 				5678337C20F170A100B4520A /* GameScene.sks */,
+				562E4EF321458475009B2CF6 /* StartScreen.swift */,
 				5678337A20F170A100B4520A /* AppDelegate.swift */,
 				5678338220F170A100B4520A /* GameViewController.swift */,
 				5678338020F170A100B4520A /* GameScene.swift */,
@@ -199,6 +202,7 @@
 			files = (
 				563E4A082142C2C7003140D3 /* Enemy.swift in Sources */,
 				567FE6D1214174B000ABA768 /* Settings.swift in Sources */,
+				562E4EF421458475009B2CF6 /* StartScreen.swift in Sources */,
 				5636B21C2133387E00F97CBA /* GameOverView.swift in Sources */,
 				5678338120F170A100B4520A /* GameScene.swift in Sources */,
 				56347B8621307E04004D46E0 /* PauseView.swift in Sources */,
