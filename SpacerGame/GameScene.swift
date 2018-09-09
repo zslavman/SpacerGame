@@ -26,6 +26,7 @@ struct Collision {
 	public static let PLAYER_SHIP	: UInt32 = 0x1 << 0
 	public static let ASTEROID 		: UInt32 = 0x1 << 1
 	public static let ENEMY_SHIP 	: UInt32 = 0x1 << 2
+	public static let LASER 		: UInt32 = 0x1 << 3
 }
 
 // для использования энума, необходимо в конце добавлять rawValue, например:  ... = Collision.PLAYER_SHIP.rawValue
@@ -103,8 +104,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-	private var lastTouchCoords:CGPoint = CGPoint.zero // тут будут координаты корабля в момент касания = начало координат
-    
+	private var lastTouchCoords:CGPoint = CGPoint.zero 	// тут будут координаты корабля в момент касания = начало координат
+	private var playerImmortable:Bool = true 			// неуязвимость
     
     
     
@@ -118,6 +119,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
 
+	
+	// стрелялка лазером
+	@objc func startFire(){
+		
+		let redLaser = SKSpriteNode(imageNamed: "redLaser")
+		redLaser.zPosition = spaceShip.zPosition - 1
+		redLaser.xScale = 0.5
+		redLaser.yScale = 0.5
+		redLaser.name = "laser"
+		
+		redLaser.position = CGPoint(x: spaceShip.position.x, y: spaceShip.position.y + 10)
+		
+		let moveAction = SKAction.move(by: CGVector(dx: 0, dy: self.frame.height + redLaser.frame.height), duration: 0.5)
+		let removeAction = SKAction.removeFromParent()
+		
+		let laserSequence = SKAction.sequence([moveAction, removeAction])
+		
+		addChild(redLaser)
+		
+		// задаем физическое тело
+		let laserTexture = SKTexture(imageNamed: "redLaser")
+		redLaser.physicsBody = SKPhysicsBody(texture: laserTexture, size: redLaser.size)
+		
+		// принебрегаем воздействием гравитации
+		redLaser.physicsBody?.affectedByGravity 	= false
+		redLaser.physicsBody?.isDynamic 			= false
+	
+		redLaser.physicsBody?.categoryBitMask 		= Collision.LASER 		// устанавливаем битмаску столкновений
+		redLaser.physicsBody?.contactTestBitMask 	= Collision.ENEMY_SHIP 	// от каких столкновений хотим получать уведомления (триггер столкновений)
+//		redLaser.physicsBody?.collisionBitMask 		= Collision.ENEMY_SHIP	// при каких столкновениях мы хотим чтоб лазер вел себя как физическое тело
+		
+		
+		redLaser.run(laserSequence)
+		
+	}
+	
+	
+	
+	
     
 	
     override func didMove(to view: SKView) {
@@ -240,7 +280,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if GameScene.music_flag {
             playBackMusic()
         }
-        
+		
+		
+		// таймер стрелялки лазером
+		// selector - метод который хотим вызвать
+		_ = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
+		
     }
     
     
@@ -265,7 +310,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			(node:SKNode, nil) in
 			node.removeFromParent()
 		}
+		// удаляем всех врагов
 		enumerateChildNodes(withName: "enemy_clear_marker") {
+			(node:SKNode, nil) in
+			node.removeFromParent()
+		}
+		// удаляем все лазерные выстрелы
+		enumerateChildNodes(withName: "laser") {
 			(node:SKNode, nil) in
 			node.removeFromParent()
 		}
@@ -406,7 +457,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         asteroid.name = "asteroid_out_marker" // дали имя для отлавливания вылета за сцену
         
         asteroid.physicsBody?.categoryBitMask = Collision.ASTEROID
-        asteroid.physicsBody?.collisionBitMask = Collision.PLAYER_SHIP | Collision.ASTEROID // астероид может сталкиваться с кораблем и с астероидами
+        asteroid.physicsBody?.collisionBitMask = Collision.PLAYER_SHIP | Collision.ASTEROID | Collision.ENEMY_SHIP // астероид может сталкиваться с кораблем и с астероидами
         asteroid.physicsBody?.contactTestBitMask = Collision.PLAYER_SHIP
         
         // добавим угловой скорости астероиду (рад/с)
@@ -424,9 +475,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // метод перебирает все ноды сцены c указанным именем;
     // stop - прекращает работу метода/перебора нодов
     override func didSimulatePhysics() {
-        
+		
+		// убиваем астероиды
         enumerateChildNodes(withName: "asteroid_out_marker") {
-			//(node:SKNode, stop:UnsafeMutablePointer<ObjCBool>) in
             (node:SKNode, nil) in
 			
             if node.position.y < -20 {
@@ -434,6 +485,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.addPoints(points: 1)
             }
         }
+		// убиваем вражеские корабли
+		enumerateChildNodes(withName: "enemy_clear_marker") {
+			(enemy:SKNode, nil) in
+			
+			if enemy.position.y < -20 {
+				enemy.removeFromParent()
+			}
+		}
+		
 	}
 	
 	
@@ -576,7 +636,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func didBegin(_ contact: SKPhysicsContact) {
         
         if (contact.bodyA.categoryBitMask == Collision.PLAYER_SHIP && contact.bodyB.categoryBitMask == Collision.ASTEROID || contact.bodyB.categoryBitMask == Collision.PLAYER_SHIP && contact.bodyA.categoryBitMask == Collision.ASTEROID){
-            if !flashingShip {
+			
+			// устраняем множественные косания
+			if (contact.bodyA.node?.name == "asteroid_out_marker"){
+				contact.bodyA.categoryBitMask = Collision.NONE
+			}
+			else if (contact.bodyB.node?.name == "asteroid_out_marker"){
+				contact.bodyB.categoryBitMask = Collision.NONE
+			}
+
+			
+			if !flashingShip && !playerImmortable {
 				
                 flashingShip = true
 				
@@ -624,7 +694,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 removeAction(forKey: "shortHit")
                 run(hitSound, withKey:"shortHit")
             }
-        }
+		}
+		
+		// соприкосновение вражины с лазером
+		if (contact.bodyA.categoryBitMask == Collision.LASER && contact.bodyB.categoryBitMask == Collision.ENEMY_SHIP || contact.bodyB.categoryBitMask == Collision.LASER && contact.bodyA.categoryBitMask == Collision.ENEMY_SHIP){
+			
+			// любое тело контакта будет удалено со сцены
+			let firstBody = contact.bodyA.node
+			let secondBody = contact.bodyB.node
+
+			// для устранения множественного контакта
+			firstBody?.physicsBody?.categoryBitMask = Collision.NONE
+			secondBody?.physicsBody?.categoryBitMask = Collision.NONE
+			
+			firstBody!.removeFromParent()
+			secondBody!.removeFromParent()
+			addPoints(points: 5)
+		}
+		
+		
+		
     }
         
 	

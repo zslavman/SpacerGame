@@ -25,9 +25,9 @@ class Enemy: SKSpriteNode {
 		// отключаем вращение (при ударении)
 		physicsBody?.allowsRotation 	= false
 		
-		physicsBody?.categoryBitMask 	= Collision.ENEMY_SHIP 	// устанавливаем битмаску столкновений
-		physicsBody?.contactTestBitMask = Collision.PLAYER_SHIP // от каких столкновений хотим получать уведомления (триггер столкновений)
-		physicsBody?.collisionBitMask 	= Collision.NONE	 	// при каких столкновениях мы хотим чтоб корабль вел себя как физическое тело
+		physicsBody?.categoryBitMask 	= Collision.ENEMY_SHIP 						// устанавливаем битмаску столкновений
+		physicsBody?.contactTestBitMask = Collision.PLAYER_SHIP | Collision.LASER 	// от каких столкновений хотим получать уведомления (триггер столкновений)
+		physicsBody?.collisionBitMask 	= Collision.ASTEROID | Collision.LASER		// при каких столкновениях мы хотим чтоб корабль вел себя как физическое тело
 		
 	}
 	
@@ -46,14 +46,41 @@ class Enemy: SKSpriteNode {
 			// по y спавним корабли сверху (за пределами экрана)
 			position.y = scene.size.height + size.height / 2
 			
-			let moveDown = SKAction.moveBy(x: 0, y: -100, duration: 2)
+			let wagDistance = GameScene.random(50, 200)
+			
+			// движения
+			let moveDown = SKAction.moveBy(x: 0, y: -100, duration: 2.0)
+			let moveLeft = SKAction.moveBy(x: CGFloat(-wagDistance), y: 0, duration: 2.0)
+			let moveRight = SKAction.moveBy(x: CGFloat(wagDistance), y: 0, duration: 2.0)
+			
+			// сглаживаем движения влево, вправо
+			moveLeft.timingMode = SKActionTimingMode.easeInEaseOut
+			moveRight.timingMode = SKActionTimingMode.easeInEaseOut
+			
+			let wagMovment = SKAction.sequence([moveLeft, moveRight])
+			let repeatWag = SKAction.repeatForever(wagMovment)
+			
 			let repeatMoveDown = SKAction.repeatForever(moveDown)
 			
-			run(repeatMoveDown)
+			let groupMovment = SKAction.group([repeatWag, repeatMoveDown])
+			
+			run(groupMovment)
 			
 			
 		}
-		
 	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }
