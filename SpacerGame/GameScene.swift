@@ -23,10 +23,11 @@ protocol PGameDelegate {
 // для доступа извне определяем битовые маски через struct/enum
 struct Collision {
 	public static let NONE 			: UInt32 = 0
-	public static let PLAYER_SHIP	: UInt32 = 0x1 << 0
-	public static let ASTEROID 		: UInt32 = 0x1 << 1
-	public static let ENEMY_SHIP 	: UInt32 = 0x1 << 2
-	public static let LASER 		: UInt32 = 0x1 << 3
+	public static let PLAYER_SHIP	: UInt32 = 0x1 << 0 // = 1
+	public static let ASTEROID 		: UInt32 = 0x1 << 1 // = 2
+	public static let ENEMY_SHIP 	: UInt32 = 0x1 << 2 // = 4
+	public static let LASER 		: UInt32 = 0x1 << 3 // = 8
+	public static let FEATURE 		: UInt32 = 0x1 << 4 // = 16
 }
 
 // для использования энума, необходимо в конце добавлять rawValue, например:  ... = Collision.PLAYER_SHIP.rawValue
@@ -96,9 +97,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
 
 	
-	private var playerImmortable:Bool 		= false 		// неуязвимость
+	private var playerImmortable:Bool 		= true 		// неуязвимость
 	private var asteroidDestructible:Bool 	= true 			// астероиды разрушаются лазером
-    
+    private let allFeatures:Array 			= ["health", "immortal", "red_laser", "green_laser"] // виды выпадающей амуниции
     
 	
 	
@@ -149,6 +150,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		
 		redLaser.run(laserSequence)
+//		playSound("red_laser_sound")
+		playSound("rail_gun")
 		
 	}
 	
@@ -160,6 +163,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func didMove(to view: SKView) {
 		
 		enemySpawn()
+		featureSpawn()
+		
 //        self.removeAllChildren() // очистка сцены от всего
 		
         // любой рандомайзер всегда на что-то операется, в данном случае на время, потому при каждом запуске оно будет разное
@@ -281,7 +286,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		// таймер стрелялки лазером
 		// selector - метод который хотим вызвать
-		_ = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
+//		_ = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
 		
     }
     
@@ -370,7 +375,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		run(repeatSpawn, withKey: "enemySpawn")
 	}
 	
-    
+	
+	
+	
+	
+	public func featureSpawn(){
+
+		let featureAction = SKAction.run {
+			let bonus = Feature(GameScene.randArrElemen(array: self.allFeatures))
+			bonus.zPosition = 2
+			self.addChild(bonus)
+			bonus.name = "enemy_clear_marker"
+			bonus.fly()
+		}
+
+		let waitDuration = SKAction.wait(forDuration: 7, withRange: 3)
+		let featureSequence = SKAction.sequence([featureAction, waitDuration])
+		let repeatSpawn	= SKAction.repeatForever(featureSequence)
+		
+		run(repeatSpawn, withKey: "featureSpawn")
+	}
+	
+	
+	
+	
+	
+	
     
 
     
@@ -620,18 +650,63 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         return TimeInterval(time)
     }
     
+	
+	
+	/// Возвращает рандомный элемент массива
+	///
+	/// - Parameter arr: массив
+	public static func randArrElemen<T>(array arr:Array<T>) -> T{
+		
+		let randomIndex = Int(arc4random_uniform(UInt32(arr.count)))
+		print("Рандомный элемент: \(arr[randomIndex])")
+		return arr[randomIndex]
+	}
     
-    
-    
-    
+	
+	
+	/// Проигрывает короткий звук (контакт с камнем, например)
+	///
+	/// - Parameter name: название звука, который нужно проиграть
+	private func playSound(_ name:String){
+		if (!GameScene.sound_flag){
+			return
+		}
+		let hitSound = SKAction.playSoundFileNamed(name, waitForCompletion: true)
+		removeAction(forKey: "shortHit")
+		run(hitSound, withKey:"shortHit")
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
     //MARK: делегаты расширения SKPhysicsContactDelegate
 
 	
     /// Столкновения (начало контакта)
     ///
-    /// - Parameter contact: 111
     func didBegin(_ contact: SKPhysicsContact) {
-        
+
+		let rate = contactRate(contact.bodyA.categoryBitMask, contact.bodyB.categoryBitMask)
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		// контакт корабля с астероидом
         if (contact.bodyA.categoryBitMask == Collision.PLAYER_SHIP && contact.bodyB.categoryBitMask == Collision.ASTEROID || contact.bodyB.categoryBitMask == Collision.PLAYER_SHIP && contact.bodyA.categoryBitMask == Collision.ASTEROID){
 			
 			// устраняем множественные косания
@@ -641,14 +716,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			else if (contact.bodyB.node?.name == "asteroid_out_marker"){
 				contact.bodyB.categoryBitMask = Collision.NONE
 			}
-
 			
 			if !flashingShip && !playerImmortable {
 				
                 flashingShip = true
 				
 				if (!gameFinished){
-					
 					// определяем анимаюци столкновения с астероидом
 					let fadeOutAction = SKAction.fadeOut(withDuration: 0.1) // исчезает
 					fadeOutAction.timingMode = SKActionTimingMode.easeOut
@@ -684,23 +757,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 					spaceShip.run(gameOverSequance)
 				}
             }
-            if (GameScene.sound_flag){
-                let hitSound = SKAction.playSoundFileNamed("hitSound", waitForCompletion: true)
-                //let reduseSoundVolume = SKAction.changeVolume(by: 0.01, duration: 1)
-                //let groupActions = SKAction.group([hitSound, reduseSoundVolume])
-                removeAction(forKey: "shortHit")
-                run(hitSound, withKey:"shortHit")
-            }
+			playSound("hitSound")
 		}
 		
 		// проверка на столкновение лазера с камнем (если задан флаг)
 		var destructTest:Bool = false
 		if (asteroidDestructible && (contact.bodyA.categoryBitMask == Collision.LASER && contact.bodyB.categoryBitMask == Collision.ASTEROID || contact.bodyB.categoryBitMask == Collision.LASER && contact.bodyA.categoryBitMask == Collision.ASTEROID)){
 			destructTest = true
+			playSound("asteroid_down")
 		}
 
 		// соприкосновение вражины/камня с лазером
 		if ((contact.bodyA.categoryBitMask == Collision.LASER && contact.bodyB.categoryBitMask == Collision.ENEMY_SHIP || contact.bodyB.categoryBitMask == Collision.LASER && contact.bodyA.categoryBitMask == Collision.ENEMY_SHIP) || destructTest){
+			
+			if (!destructTest){
+				playSound("enemy_down")
+			}
 			
 			// любое тело контакта будет удалено со сцены
 			let firstBody = contact.bodyA.node
@@ -717,14 +789,55 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	}
 	
 	
+	func didEnd(_ contact: SKPhysicsContact) { }
 	
-        
 	
-    
-    func didEnd(_ contact: SKPhysicsContact) {
-        
-        
-    }
+	
+	
+	
+	/// Определяем что с чем сталкивается
+	private func contactRate(_ A:UInt32, _ B:UInt32) -> UInt32{
+		
+		var returned:UInt32 = 0
+		
+		// корабль с астероидом 3
+		if (A == Collision.PLAYER_SHIP && B == Collision.ASTEROID || B == Collision.PLAYER_SHIP && A == Collision.ASTEROID){
+			returned = A + B
+		}
+		// корабль с врагом 5
+		else if (A == Collision.PLAYER_SHIP && B == Collision.ENEMY_SHIP || B == Collision.PLAYER_SHIP && A == Collision.ENEMY_SHIP){
+			
+		}
+		// корабль с бонусом 17
+		else if (A == Collision.PLAYER_SHIP && B == Collision.FEATURE || B == Collision.PLAYER_SHIP && A == Collision.FEATURE){
+			
+		}
+			
+			
+			
+		// лазер с врагом 12
+		else if (A == Collision.LASER && B == Collision.ENEMY_SHIP || B == Collision.LASER && A == Collision.ENEMY_SHIP){
+			
+		}
+		// лазер с астероидом 10
+		else if (A == Collision.LASER && B == Collision.ASTEROID || B == Collision.LASER && A == Collision.ASTEROID){
+			
+		}
+
+		
+		
+	}
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
     
     
     

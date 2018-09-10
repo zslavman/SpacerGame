@@ -24,6 +24,10 @@ class StartScreen: UIViewController {
     }
 
 	
+	/// Прячем статусбар
+	override var prefersStatusBarHidden: Bool {
+		return true
+	}
 	
 	
 	

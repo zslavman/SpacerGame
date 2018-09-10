@@ -136,6 +136,7 @@
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" alpha="0.80000000000000004" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lifes" translatesAutoresizingMaskIntoConstraints="NO" id="kja-Dl-B7w">
                                         <rect key="frame" x="48" y="0.0" width="20" height="20"/>
+                                        <color key="tintColor" red="0.0" green="0.3803921569" blue="0.51372549020000002" alpha="0.68375880280000001" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="kja-Dl-B7w" secondAttribute="height" multiplier="1:1" id="L85-vf-19I"/>
                                         </constraints>

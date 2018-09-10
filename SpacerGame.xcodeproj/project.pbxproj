@@ -11,6 +11,12 @@
 		5630711D2132132500FD8DA3 /* createPop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5630711C2132132500FD8DA3 /* createPop.mp3 */; };
 		5630711F2132146800FD8DA3 /* robocop4.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5630711E2132146800FD8DA3 /* robocop4.mp3 */; };
 		56347B8621307E04004D46E0 /* PauseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56347B8521307E04004D46E0 /* PauseView.swift */; };
+		5634861F2146CDD6006183A4 /* red_laser_sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5634861A2146CDD6006183A4 /* red_laser_sound.mp3 */; };
+		563486202146CDD6006183A4 /* asteroid_down.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5634861B2146CDD6006183A4 /* asteroid_down.mp3 */; };
+		563486212146CDD6006183A4 /* rail_gun.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5634861C2146CDD6006183A4 /* rail_gun.mp3 */; };
+		563486222146CDD6006183A4 /* rail_gun2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5634861D2146CDD6006183A4 /* rail_gun2.mp3 */; };
+		563486232146CDD6006183A4 /* enemy_down.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5634861E2146CDD6006183A4 /* enemy_down.mp3 */; };
+		563486252146DB38006183A4 /* Feature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563486242146DB38006183A4 /* Feature.swift */; };
 		56367869213033E800CD9B9C /* fireParticles.sks in Resources */ = {isa = PBXBuildFile; fileRef = 56367868213033E800CD9B9C /* fireParticles.sks */; };
 		5636B21C2133387E00F97CBA /* GameOverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5636B21B2133387E00F97CBA /* GameOverView.swift */; };
 		563E4A082142C2C7003140D3 /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563E4A072142C2C7003140D3 /* Enemy.swift */; };
@@ -32,6 +38,12 @@
 		5630711C2132132500FD8DA3 /* createPop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = createPop.mp3; sourceTree = "<group>"; };
 		5630711E2132146800FD8DA3 /* robocop4.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = robocop4.mp3; sourceTree = "<group>"; };
 		56347B8521307E04004D46E0 /* PauseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PauseView.swift; sourceTree = "<group>"; };
+		5634861A2146CDD6006183A4 /* red_laser_sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = red_laser_sound.mp3; sourceTree = "<group>"; };
+		5634861B2146CDD6006183A4 /* asteroid_down.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = asteroid_down.mp3; sourceTree = "<group>"; };
+		5634861C2146CDD6006183A4 /* rail_gun.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = rail_gun.mp3; sourceTree = "<group>"; };
+		5634861D2146CDD6006183A4 /* rail_gun2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = rail_gun2.mp3; sourceTree = "<group>"; };
+		5634861E2146CDD6006183A4 /* enemy_down.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = enemy_down.mp3; sourceTree = "<group>"; };
+		563486242146DB38006183A4 /* Feature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.swift; sourceTree = "<group>"; };
 		56367868213033E800CD9B9C /* fireParticles.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fireParticles.sks; sourceTree = "<group>"; };
 		5636B21B2133387E00F97CBA /* GameOverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverView.swift; sourceTree = "<group>"; };
 		563E4A072142C2C7003140D3 /* Enemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
@@ -86,6 +98,7 @@
 				5678337A20F170A100B4520A /* AppDelegate.swift */,
 				5678338220F170A100B4520A /* GameViewController.swift */,
 				5678338020F170A100B4520A /* GameScene.swift */,
+				563486242146DB38006183A4 /* Feature.swift */,
 				563E4A072142C2C7003140D3 /* Enemy.swift */,
 				56347B8521307E04004D46E0 /* PauseView.swift */,
 				5636B21B2133387E00F97CBA /* GameOverView.swift */,
@@ -111,6 +124,11 @@
 		56FB56982130B647003B8743 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
+				5634861B2146CDD6006183A4 /* asteroid_down.mp3 */,
+				5634861E2146CDD6006183A4 /* enemy_down.mp3 */,
+				5634861C2146CDD6006183A4 /* rail_gun.mp3 */,
+				5634861D2146CDD6006183A4 /* rail_gun2.mp3 */,
+				5634861A2146CDD6006183A4 /* red_laser_sound.mp3 */,
 				56FB569C2130B7B4003B8743 /* backgroundMusic.m4a */,
 				5630711E2132146800FD8DA3 /* robocop4.mp3 */,
 				5630711C2132132500FD8DA3 /* createPop.mp3 */,
@@ -180,14 +198,19 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				563486222146CDD6006183A4 /* rail_gun2.mp3 in Resources */,
 				5630711D2132132500FD8DA3 /* createPop.mp3 in Resources */,
 				5678338620F170A100B4520A /* Main.storyboard in Resources */,
 				56367869213033E800CD9B9C /* fireParticles.sks in Resources */,
 				5678337D20F170A100B4520A /* GameScene.sks in Resources */,
+				563486212146CDD6006183A4 /* rail_gun.mp3 in Resources */,
 				5630711F2132146800FD8DA3 /* robocop4.mp3 in Resources */,
 				5678338820F170A100B4520A /* Assets.xcassets in Resources */,
+				563486232146CDD6006183A4 /* enemy_down.mp3 in Resources */,
+				5634861F2146CDD6006183A4 /* red_laser_sound.mp3 in Resources */,
 				56FB569E2130B7B4003B8743 /* backgroundMusic.m4a in Resources */,
 				5670CFED2130123A003B708C /* stars.sks in Resources */,
+				563486202146CDD6006183A4 /* asteroid_down.mp3 in Resources */,
 				56C27E962130CEDC008B4438 /* hitSound.wav in Resources */,
 				5678338B20F170A100B4520A /* LaunchScreen.storyboard in Resources */,
 			);
@@ -206,6 +229,7 @@
 				5636B21C2133387E00F97CBA /* GameOverView.swift in Sources */,
 				5678338120F170A100B4520A /* GameScene.swift in Sources */,
 				56347B8621307E04004D46E0 /* PauseView.swift in Sources */,
+				563486252146DB38006183A4 /* Feature.swift in Sources */,
 				5678338320F170A100B4520A /* GameViewController.swift in Sources */,
 				5678337B20F170A100B4520A /* AppDelegate.swift in Sources */,
 			);
