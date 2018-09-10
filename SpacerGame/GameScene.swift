@@ -39,6 +39,14 @@ struct Collision {
 //}
 
 
+struct Bonus {
+	public static let health:String 		= "health"
+	public static let red_laser:String 		= "red_laser"
+	public static let green_laser:String 	= "green_laser"
+	public static let immortal:String 		= "immortal"
+	
+}
+
 
 
 
@@ -97,7 +105,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
 
 	
-	private var playerImmortable:Bool 		= true 		// неуязвимость
+	private var playerImmortable:Bool 		= false 		// неуязвимость
 	private var asteroidDestructible:Bool 	= true 			// астероиды разрушаются лазером
     private let allFeatures:Array 			= ["health", "immortal", "red_laser", "green_laser"] // виды выпадающей амуниции
     
@@ -201,7 +209,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         spaceShip.physicsBody?.categoryBitMask = Collision.PLAYER_SHIP
         spaceShip.physicsBody?.collisionBitMask = Collision.ASTEROID
         spaceShip.physicsBody?.contactTestBitMask = Collision.ASTEROID // на что мы должны получать уведомление
-        
+        spaceShip.name = "personage"
         addChild(spaceShip)
         
         // левый двигатель
@@ -286,7 +294,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		// таймер стрелялки лазером
 		// selector - метод который хотим вызвать
-//		_ = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
+		_ = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
 		
     }
     
@@ -658,7 +666,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	public static func randArrElemen<T>(array arr:Array<T>) -> T{
 		
 		let randomIndex = Int(arc4random_uniform(UInt32(arr.count)))
-		print("Рандомный элемент: \(arr[randomIndex])")
 		return arr[randomIndex]
 	}
     
@@ -679,6 +686,100 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	
 	
 	
+	/// мигание + ожидание
+	private func blinking() -> SKAction{
+		// определяем анимаюци столкновения с астероидом
+		let fadeOutAction = SKAction.fadeOut(withDuration: 0.1) // исчезает
+		fadeOutAction.timingMode = SKActionTimingMode.easeOut
+		
+		let fadeInAction = SKAction.fadeIn(withDuration: 0.1) // появляется
+		fadeInAction.timingMode = SKActionTimingMode.easeOut
+		
+		let blinkAction = SKAction.sequence([fadeOutAction, fadeInAction]) // одно моргание на основе действий выше
+		let blinkRepeatAction = SKAction.repeat(blinkAction, count: 4) // 3 моргания
+		
+		let delayAction = SKAction.wait(forDuration: 0.3) // ожидание 0,2с
+		
+		return SKAction.sequence([blinkRepeatAction, delayAction])
+	}
+	
+	
+	
+	
+	
+	
+	/// Отнимание жизней
+	private func minusLives(){
+		
+		if flashingShip || playerImmortable || gameFinished {
+			return
+		}
+		
+		// отнимаем жизни сразу а не в кложере, который запускается с задержкой delayAction
+		if (settings.lives > 0){
+			settings.lives -= 1
+			pgameDelegate?.gameDelegateDidUpdateLives()
+			flashingShip = true
+		}
+		else {
+			let gameOverAction = SKAction.run {
+				self.gameFinished = true
+				// передаем очки классу Settings
+				self.settings.recordScores(score: self.settings.currentScore)
+				// передаем очки экрану геймовер
+				self.pgameDelegate?.gameDelegateGameOver(score: self.settings.currentScore)
+				self.pgameDelegate?.gameDelegateDidUpdateLives()
+				self.pauseGame()
+			}
+			
+			let gameOverSequance = SKAction.sequence([blinking(), gameOverAction])
+			spaceShip.run(gameOverSequance)
+		}
+	}
+	
+	
+	
+
+	
+	private func useMaterial(_ target:Feature){
+		
+//		switch target.type {
+//		case Bonus.health:
+//			<#code#>
+//		case Bonus.red_laser:
+//			<#code#>
+//		case Bonus.green_laser:
+//			<#code#>
+//		case Bonus.immortal:
+//			<#code#>
+//		default: ()
+//		}
+		
+		let newPoint: CGPoint!
+		if (target.type == Bonus.health){
+			newPoint = CGPoint(x: 20, y: 20)
+		}
+		else {
+			newPoint = CGPoint(x: frame.size.width - target.size.width / 2 - 10, y: frame.size.height - target.size.height / 2 - 60)
+		}
+		
+		
+		let moveAct = SKAction.move(to: newPoint, duration: 1)
+		moveAct.timingMode = .easeOut
+		
+		target.run(moveAct) {
+			target.alpha = 0.65
+			if (target.type == Bonus.health){
+				target.removeFromParent()
+				if (self.settings.lives < self.settings.startingLives) {
+					self.settings.lives += 1
+					self.pgameDelegate?.gameDelegateDidUpdateLives()
+				}
+			}
+		}
+
+	}
+	
 	
 	
 	
@@ -693,100 +794,72 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     ///
     func didBegin(_ contact: SKPhysicsContact) {
 
-		let rate = contactRate(contact.bodyA.categoryBitMask, contact.bodyB.categoryBitMask)
+		let contactRate = contact.bodyA.categoryBitMask + contact.bodyB.categoryBitMask
+		let  bodies:Array = [contact.bodyA, contact.bodyB]
 		
+		// 3  - корабль с астероидом
+		// 5  - корабль с врагом
+		// 17 - корабль с бонусом
+		// 12 - лазер с врагом
+		// 10 - лазер с астероидом
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		// контакт корабля с астероидом
-        if (contact.bodyA.categoryBitMask == Collision.PLAYER_SHIP && contact.bodyB.categoryBitMask == Collision.ASTEROID || contact.bodyB.categoryBitMask == Collision.PLAYER_SHIP && contact.bodyA.categoryBitMask == Collision.ASTEROID){
-			
-			// устраняем множественные косания
-			if (contact.bodyA.node?.name == "asteroid_out_marker"){
-				contact.bodyA.categoryBitMask = Collision.NONE
-			}
-			else if (contact.bodyB.node?.name == "asteroid_out_marker"){
-				contact.bodyB.categoryBitMask = Collision.NONE
-			}
-			
-			if !flashingShip && !playerImmortable {
-				
-                flashingShip = true
-				
-				if (!gameFinished){
-					// определяем анимаюци столкновения с астероидом
-					let fadeOutAction = SKAction.fadeOut(withDuration: 0.1) // исчезает
-					fadeOutAction.timingMode = SKActionTimingMode.easeOut
-					
-					let fadeInAction = SKAction.fadeIn(withDuration: 0.1) // появляется
-					fadeInAction.timingMode = SKActionTimingMode.easeOut
-					
-					let blinkAction = SKAction.sequence([fadeOutAction, fadeInAction]) // одно моргание на основе действий выше
-					let blinkRepeatAction = SKAction.repeat(blinkAction, count: 4) // 3 моргания
-					
-					let delayAction = SKAction.wait(forDuration: 0.3) // ожидание 0,2с
-					
-					// отнимаем жизни сразу а не в кложере, который запускается с задержкой delayAction
-					if (settings.lives > 0){
-						settings.lives -= 1
-						pgameDelegate?.gameDelegateDidUpdateLives()
-						print("lives = \(settings.lives)")
-					}
-					
-					let gameOverAction = SKAction.run {
-						
-						if (self.settings.lives == 0){
-							self.gameFinished = true
-							// передаем очки классу Settings
-							self.settings.recordScores(score: self.settings.currentScore)
-							// передаем очки экрану геймовер
-							self.pgameDelegate?.gameDelegateGameOver(score: self.settings.currentScore)
-							self.pgameDelegate?.gameDelegateDidUpdateLives()
-							self.pauseGame()
-						}
-					}
-					let gameOverSequance = SKAction.sequence([blinkRepeatAction, delayAction, gameOverAction])
-					spaceShip.run(gameOverSequance)
+		switch contactRate {
+		case 3:
+			// устраняем множественные касания
+			for item in bodies {
+				if (item.node?.name != "personage"){
+					item.categoryBitMask = Collision.NONE
+					break
 				}
-            }
+			}
 			playSound("hitSound")
-		}
-		
-		// проверка на столкновение лазера с камнем (если задан флаг)
-		var destructTest:Bool = false
-		if (asteroidDestructible && (contact.bodyA.categoryBitMask == Collision.LASER && contact.bodyB.categoryBitMask == Collision.ASTEROID || contact.bodyB.categoryBitMask == Collision.LASER && contact.bodyA.categoryBitMask == Collision.ASTEROID)){
-			destructTest = true
-			playSound("asteroid_down")
-		}
-
-		// соприкосновение вражины/камня с лазером
-		if ((contact.bodyA.categoryBitMask == Collision.LASER && contact.bodyB.categoryBitMask == Collision.ENEMY_SHIP || contact.bodyB.categoryBitMask == Collision.LASER && contact.bodyA.categoryBitMask == Collision.ENEMY_SHIP) || destructTest){
+			minusLives()
 			
-			if (!destructTest){
-				playSound("enemy_down")
+		case 5:
+			for item in bodies {
+				if (item.node?.name != "personage"){
+					item.categoryBitMask = Collision.NONE
+					item.node?.removeFromParent()
+					break
+				}
+			}
+			playSound("hitSound")
+			minusLives()
+			
+		case 17:
+			for item in bodies {
+				if (item.node?.name != "personage"){
+					item.categoryBitMask = Collision.NONE
+					item.node?.removeAction(forKey: "bonusFly")
+					useMaterial(item.node as! Feature)
+					break
+				}
+				print("Словил бонус!")
 			}
 			
-			// любое тело контакта будет удалено со сцены
-			let firstBody = contact.bodyA.node
-			let secondBody = contact.bodyB.node
-
-			// для устранения множественного контакта
-			firstBody?.physicsBody?.categoryBitMask = Collision.NONE
-			secondBody?.physicsBody?.categoryBitMask = Collision.NONE
-			
-			firstBody!.removeFromParent()
-			secondBody!.removeFromParent()
+		case 12:
+			for item in bodies {
+				item.categoryBitMask = Collision.NONE
+				item.node?.removeFromParent()
+			}
+			playSound("enemy_down")
 			addPoints(points: 5)
+			
+		case 10:
+			for item in bodies {
+				item.categoryBitMask = Collision.NONE
+				item.node?.removeFromParent()
+			}
+			playSound("asteroid_down")
+			addPoints(points: 1)
+			
+		default: ()
 		}
+
+
 	}
+	
+	
 	
 	
 	func didEnd(_ contact: SKPhysicsContact) { }
@@ -794,39 +867,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	
 	
 	
-	
-	/// Определяем что с чем сталкивается
-	private func contactRate(_ A:UInt32, _ B:UInt32) -> UInt32{
-		
-		var returned:UInt32 = 0
-		
-		// корабль с астероидом 3
-		if (A == Collision.PLAYER_SHIP && B == Collision.ASTEROID || B == Collision.PLAYER_SHIP && A == Collision.ASTEROID){
-			returned = A + B
-		}
-		// корабль с врагом 5
-		else if (A == Collision.PLAYER_SHIP && B == Collision.ENEMY_SHIP || B == Collision.PLAYER_SHIP && A == Collision.ENEMY_SHIP){
-			
-		}
-		// корабль с бонусом 17
-		else if (A == Collision.PLAYER_SHIP && B == Collision.FEATURE || B == Collision.PLAYER_SHIP && A == Collision.FEATURE){
-			
-		}
-			
-			
-			
-		// лазер с врагом 12
-		else if (A == Collision.LASER && B == Collision.ENEMY_SHIP || B == Collision.LASER && A == Collision.ENEMY_SHIP){
-			
-		}
-		// лазер с астероидом 10
-		else if (A == Collision.LASER && B == Collision.ASTEROID || B == Collision.LASER && A == Collision.ASTEROID){
-			
-		}
 
-		
-		
-	}
 	
 	
 

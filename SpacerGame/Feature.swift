@@ -11,19 +11,23 @@ import SpriteKit
 
 class Feature: SKSpriteNode {
 
-
+	public var type:String
+	
+	
 	init(_ type:String) {
+		
+		self.type = type
 		
 		var str:String = ""
 		
 		switch type {
-		case "health":
+		case Bonus.health:
 			str = "feature_live"
-		case "immortal":
+		case Bonus.immortal:
 			str = "feature_immortal"
-		case "red_laser":
+		case Bonus.red_laser:
 			str = "feature_red_laser"
-		case "green_laser":
+		case Bonus.green_laser:
 			str = "feature_green_laser"
 		default:
 			()
@@ -66,7 +70,6 @@ class Feature: SKSpriteNode {
 		if let scene = scene {
 			
 			position.x = CGFloat(arc4random_uniform(UInt32(scene.size.width - size.width))) + size.width / 2
-			print("Координаты подарка: \(position.x)")
 			// по y спавним сверху (за пределами экрана)
 			position.y = scene.size.height + size.height / 2
 			
@@ -74,8 +77,7 @@ class Feature: SKSpriteNode {
 			let removeAction = SKAction.removeFromParent()
 			let sequence = SKAction.sequence([moveDown, removeAction])
 
-			run(sequence)
-			
+			run(sequence, withKey: "bonusFly")
 		}
 	}
 	

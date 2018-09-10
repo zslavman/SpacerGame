@@ -66,7 +66,6 @@ class Enemy: SKSpriteNode {
 			
 			run(groupMovment)
 			
-			
 		}
 	}
 
