@@ -15,28 +15,20 @@ class Feature: SKSpriteNode {
 	
 	public var type:String
 	public var timer:Timer!
-	private var timerCount:Int = 10
+	private var timerCount:Int = 10 // длительность действия бонуса
 	private var time_TF:SKLabelNode!
+	public var weapon:Bool = false
 	
 	init(_ type:String, _ parentInstance: GameScene) {
 		
 		self.type = type
 		self.parentInstance = parentInstance
 		
-		var str:String = ""
-		
-		switch type {
-		case Bonus.health:
-			str = "feature_live"
-		case Bonus.immortal:
-			str = "feature_immortal"
-		case Bonus.red_laser:
-			str = "feature_red_laser"
-		case Bonus.green_laser:
-			str = "feature_green_laser"
-		default:
-			()
-		}
+		// перетягиваем данные о бонусе из словаря
+		let str:String 	= Bonus.data[type]!["texture"] as! String
+		timerCount 		= Bonus.data[type]!["duration"] as! Int
+		weapon 			= Bonus.data[type]!["isWeapon"] as! Bool
+	
 		
 		
 		let thisTexture = SKTexture(imageNamed: str)
@@ -96,7 +88,7 @@ class Feature: SKSpriteNode {
 		// лейбла оставшегося времени
 		time_TF = SKLabelNode(text: timeFormatted(timerCount))
 		//time_TF.calculateAccumulatedFrame().height - собственная высота лейбла
-		// сверху слева - начало координат
+		// сверху слева - начало координат, пивоты по центру спрайта
 		time_TF.position = CGPoint(x: 0, y: -frame.size.height - time_TF.frame.size.height / 2 - 10)
 		time_TF.fontName = "Arial"
 		time_TF.fontSize = 23
@@ -149,6 +141,8 @@ class Feature: SKSpriteNode {
 		let remove = SKAction.run {
 			// удаляем себя из массива
 			self.parentInstance.takenFeatures = self.parentInstance.takenFeatures.filter{$0 != self}
+			// выключаем бонус
+			self.parentInstance.turnFeature(target: self, launching: false)
 			self.removeFromParent()
 		}
 		

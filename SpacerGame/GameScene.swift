@@ -45,13 +45,48 @@ struct Bonus {
 	public static let green_laser:String 	= "green_laser"
 	public static let immortal:String 		= "immortal"
 	
+	
+	public static let data:Dictionary = [
+		red_laser:[
+			"fireRate"	: 0.2,
+			"duration"	: 10,
+			"texture"	: "feature_red_laser",
+			"type"		: "red_laser",
+			"isWeapon"	: true
+		],
+		green_laser:[
+			"fireRate"	: 0.5,
+			"duration"	: 15,
+			"texture"	: "feature_green_laser",
+			"type"		: "green_laser",
+			"isWeapon"	: true
+		],
+		immortal:[
+			"fireRate"	: 0.5,
+			"duration"	: 15,
+			"texture"	: "feature_immortal",
+			"type"		: "immortal",
+			"isWeapon"	: false
+		],
+		health:[
+			"fireRate"	: 0,
+			"duration"	: 0,
+			"texture"	: "feature_live",
+			"type"		: "health",
+			"isWeapon"	: false
+		]
+	]
+	
+	
 }
 
 
 
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
-    
+	
+	private let allFeatures:Array 			= ["health", "immortal", "red_laser", "green_laser"] // виды выпадающей амуниции
+	
 	public var pgameDelegate:PGameDelegate? // делегат протокола PGameDelegate
     public var soundChanel:AVAudioPlayer!
 	private var spaceShipOnFinger:Bool = false // флаг, что тач прикоснувшись попали на корабль
@@ -62,8 +97,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private let w 							= UIScreen.main.bounds.size.width
     private let h							= UIScreen.main.bounds.size.height
 
-    private let ship_speed:CGFloat			= 600// поинтов в секунду
-    private let asterPerSecond:Double		= 2// кол-во астероидов в сек
+    private let ship_speed:CGFloat			= 600 // поинтов в секунду
+    private let asterPerSecond:Double		= 2 // кол-во астероидов в сек
 
     private var _score:Int					= 0
 	private var gameFinished:Bool			= false // gameOver
@@ -103,11 +138,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-
+	private var weaponTimer:Timer!
 	public var takenFeatures:Array<Feature> = [] 			// массив взятых финтиклюшек (жизнь сюда не входит)
 	private var playerImmortable:Bool 		= false 		// неуязвимость
 	private var asteroidDestructible:Bool 	= true 			// астероиды разрушаются лазером
-    private let allFeatures:Array 			= ["health", "immortal", "red_laser", "green_laser"] // виды выпадающей амуниции
+	
     
 	
 	
@@ -281,11 +316,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if GameScene.music_flag {
             playBackMusic()
         }
-		
-		
-		// таймер стрелялки лазером
-		// selector - метод который хотим вызвать
-		_ = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
 		
     }
     
@@ -744,6 +774,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			for eachElement in takenFeatures{
 				if eachElement.type == target.type{
 					replTarget = eachElement
+					turnFeature(target: replTarget, launching: false)
 					break
 				}
 			}
@@ -752,17 +783,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		let defaultPoint = CGPoint(x: frame.size.width - target.size.width / 2 - 10, y: frame.size.height - target.size.height / 2 - 60)
 
-//		switch target.type {
-//		case Bonus.health:
-//			<#code#>
-//		case Bonus.red_laser:
-//			<#code#>
-//		case Bonus.green_laser:
-//			<#code#>
-//		case Bonus.immortal:
-//			<#code#>
-//		default: ()
-//		}
+		turnFeature(target: target, launching: true)
 		
 		let newPoint: CGPoint!
 		if (target.type == Bonus.health){
@@ -801,8 +822,49 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				print("lives = \(self.settings.lives)")
 			}
 		}
-
 	}
+
+	
+	
+	
+	
+	/// Вкл/Выкл пойманых бонусов
+	///
+	/// - Parameters:
+	///   - target: бонус
+	///   - launching: флаг включать или выключать
+	public func turnFeature(target:Feature, launching:Bool){
+		
+		switch target.type {
+		case Bonus.immortal:
+			if (launching){
+				playerImmortable = true
+			}
+			else{
+				playerImmortable = false
+			}
+		case Bonus.red_laser:
+			if (launching){
+				// таймер стрелялки лазером
+				weaponTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
+			}
+			else{
+				weaponTimer.invalidate()
+			}
+		case Bonus.green_laser:
+			if (launching){
+				weaponTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
+			}
+			else{
+				weaponTimer.invalidate()
+			}
+		default: ()
+		}
+		
+	}
+	
+	
+	
 	
 	
 	
@@ -829,15 +891,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		switch contactRate {
 		case 3:
-			// устраняем множественные касания
-			for item in bodies {
-				if (item.node?.name != "personage"){
-					item.categoryBitMask = Collision.NONE
-					break
+			if (playerImmortable){
+				for item in bodies {
+					if (item.node?.name != "personage"){
+						item.categoryBitMask = Collision.NONE
+						item.node?.removeFromParent()
+						break
+					}
 				}
+				playSound("asteroid_down")
 			}
-			playSound("hitSound")
-			minusLives()
+			else{
+				for item in bodies {
+					if (item.node?.name != "personage"){
+						item.categoryBitMask = Collision.NONE
+						break
+					}
+				}
+				playSound("hitSound")
+				minusLives()
+			}
 			
 		case 5:
 			for item in bodies {
@@ -858,7 +931,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 					useMaterial(item.node as! Feature)
 					break
 				}
-				print("Словил бонус!")
 			}
 			
 		case 12:

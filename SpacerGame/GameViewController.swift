@@ -232,13 +232,13 @@ extension GameViewController: PGameDelegate {
 				self.live2.alpha = 0.3
 				self.live3.alpha = 0.3
 			case 1:
-				self.live1.alpha = 0.3
+				self.live1.alpha = 1
 				self.live2.alpha = 0.3
-				self.live3.alpha = 1
+				self.live3.alpha = 0.3
 			case 2:
-				self.live1.alpha = 0.3
+				self.live1.alpha = 1
 				self.live2.alpha = 1
-				self.live3.alpha = 1
+				self.live3.alpha = 0.3
 			case 3:
 				self.live1.alpha = 1
 				self.live2.alpha = 1
