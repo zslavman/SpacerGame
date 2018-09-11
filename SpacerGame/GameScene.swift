@@ -48,32 +48,41 @@ struct Bonus {
 	
 	public static let data:Dictionary = [
 		red_laser:[
-			"fireRate"	: 0.2,
 			"duration"	: 10,
 			"texture"	: "feature_red_laser",
 			"type"		: "red_laser",
-			"isWeapon"	: true
+			"isWeapon"	: true,
+			"weaponConf":[
+				"fireRate"		: 0.1,
+				"bulet_texture"	:"redLaser",
+				"sound"			: "red_laser_sound"
+			]
 		],
 		green_laser:[
 			"fireRate"	: 0.5,
 			"duration"	: 15,
 			"texture"	: "feature_green_laser",
 			"type"		: "green_laser",
-			"isWeapon"	: true
+			"isWeapon"	: true,
+			"weaponConf":[
+				"fireRate"		: 0.5,
+				"bulet_texture"	:"redLaser",
+				"sound"			: "rail_gun"
+			]
 		],
 		immortal:[
-			"fireRate"	: 0.5,
 			"duration"	: 15,
 			"texture"	: "feature_immortal",
 			"type"		: "immortal",
-			"isWeapon"	: false
+			"isWeapon"	: false,
+			"weaponConf": []
 		],
 		health:[
-			"fireRate"	: 0,
 			"duration"	: 0,
 			"texture"	: "feature_live",
 			"type"		: "health",
-			"isWeapon"	: false
+			"isWeapon"	: false,
+			"weaponConf": []
 		]
 	]
 	
@@ -143,6 +152,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	private var playerImmortable:Bool 		= false 		// неуязвимость
 	private var asteroidDestructible:Bool 	= true 			// астероиды разрушаются лазером
 	
+	public var activeWeapon:Feature! 						// тут будет храниться активное оружие
     
 	
 	
@@ -164,7 +174,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	// стрелялка лазером
 	@objc func startFire(){
 		
-		let redLaser = SKSpriteNode(imageNamed: "redLaser")
+		let redLaser = SKSpriteNode(imageNamed: activeWeapon.weaponConf["bulet_texture"] as! String)
 		redLaser.zPosition = spaceShip.zPosition - 1
 		redLaser.xScale = 0.5
 		redLaser.yScale = 0.5
@@ -180,7 +190,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		addChild(redLaser)
 		
 		// задаем физическое тело
-		let laserTexture = SKTexture(imageNamed: "redLaser")
+		let laserTexture = SKTexture(imageNamed: activeWeapon.weaponConf["bulet_texture"] as! String)
 		redLaser.physicsBody = SKPhysicsBody(texture: laserTexture, size: redLaser.size)
 		
 		// принебрегаем воздействием гравитации
@@ -193,8 +203,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		
 		redLaser.run(laserSequence)
-//		playSound("red_laser_sound")
-		playSound("rail_gun")
+		playSound(activeWeapon.weaponConf["sound"] as! String)
 		
 	}
 	
@@ -767,27 +776,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	/// - Parameter target: бонус
 	private func useMaterial(_ target:Feature){
 		
+		// считаем где разместить взятый бонус
 		let pointY = CGFloat(takenFeatures.count) * (target.size.height + 15)
 		var replTarget:Feature!
 		
 		if (target.type != Bonus.health){
-			for eachElement in takenFeatures{
-				if eachElement.type == target.type{
-					replTarget = eachElement
-					turnFeature(target: replTarget, launching: false)
-					break
+			if (activeWeapon != nil && target.isWeapon){
+				// ищем в массиве бонусов оружие и направляем бонус на его место
+				for eachElement in takenFeatures{
+					if eachElement.isWeapon {
+						replTarget = eachElement
+						break
+					}
+				}
+			}
+			else {
+				// если массив взятых бонусов уже содержит такой же бонус
+				for eachElement in takenFeatures{
+					if eachElement.type == target.type{
+						replTarget = eachElement
+						break
+					}
 				}
 			}
 			takenFeatures.append(target)
 		}
 		
-		let defaultPoint = CGPoint(x: frame.size.width - target.size.width / 2 - 10, y: frame.size.height - target.size.height / 2 - 60)
-
+		// если до этого оружия небыло
+		if (activeWeapon == nil && target.isWeapon){
+			activeWeapon = target
+		}
+		// включение бонуса
 		turnFeature(target: target, launching: true)
 		
+		let defaultPoint = CGPoint(x: frame.size.width - target.size.width / 2 - 10, y: frame.size.height - target.size.height / 2 - 60)
+
+		// выбираем точку в которую будет лететь бонус
 		let newPoint: CGPoint!
 		if (target.type == Bonus.health){
-			newPoint = CGPoint(x: 20, y: 20)
+			newPoint = CGPoint(x: 30, y: 20)
 		}
 		else {
 			if (replTarget != nil){
@@ -797,21 +824,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				newPoint = CGPoint(x: defaultPoint.x, y: defaultPoint.y - pointY)
 			}
 		}
-		
-		
+		// экшн полета
 		let moveAct = SKAction.move(to: newPoint, duration: 0.6)
 		moveAct.timingMode = .easeOut
 		
+		// по завершению полета
 		target.run(moveAct) {
 			target.alpha = 0.65
 			
 			if (replTarget != nil){
 				// удаляем старый элемент из массива (на место которого хотим поставить новый)
 				self.takenFeatures = self.takenFeatures.filter{$0 != replTarget}
+				if (target.isWeapon){
+					self.turnFeature(target: self.activeWeapon, launching: false)
+					self.activeWeapon = target
+				}
 				replTarget.removeFromParent()
 			}
-			
-			target.runTimer()
 			
 			if (target.type == Bonus.health){
 				target.removeFromParent()
@@ -819,11 +848,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 					self.settings.lives += 1
 					self.pgameDelegate?.gameDelegateDidUpdateLives()
 				}
-				print("lives = \(self.settings.lives)")
+			}
+			else{
+				// запускаем таймер на бонусе
+				target.runTimer()
 			}
 		}
 	}
 
+	
+	
+	
+
+	
 	
 	
 	
@@ -846,17 +883,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		case Bonus.red_laser:
 			if (launching){
 				// таймер стрелялки лазером
-				weaponTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
+				weaponTimer = Timer.scheduledTimer(timeInterval: target.weaponConf["fireRate"] as! TimeInterval, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
 			}
 			else{
+				weaponTimer.fire()
 				weaponTimer.invalidate()
+				activeWeapon = nil
 			}
 		case Bonus.green_laser:
 			if (launching){
-				weaponTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
+				weaponTimer = Timer.scheduledTimer(timeInterval: target.weaponConf["fireRate"] as! TimeInterval, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
 			}
 			else{
+				weaponTimer.fire()
 				weaponTimer.invalidate()
+				activeWeapon = nil
 			}
 		default: ()
 		}

@@ -17,7 +17,11 @@ class Feature: SKSpriteNode {
 	public var timer:Timer!
 	private var timerCount:Int = 10 // длительность действия бонуса
 	private var time_TF:SKLabelNode!
-	public var weapon:Bool = false
+	public var isWeapon:Bool = false
+	public var weaponConf:Dictionary<String, Any>
+	
+	
+	
 	
 	init(_ type:String, _ parentInstance: GameScene) {
 		
@@ -27,8 +31,15 @@ class Feature: SKSpriteNode {
 		// перетягиваем данные о бонусе из словаря
 		let str:String 	= Bonus.data[type]!["texture"] as! String
 		timerCount 		= Bonus.data[type]!["duration"] as! Int
-		weapon 			= Bonus.data[type]!["isWeapon"] as! Bool
-	
+		isWeapon 		= Bonus.data[type]!["isWeapon"] as! Bool
+		if (isWeapon) {
+			weaponConf 	= Bonus.data[type]!["weaponConf"] as! Dictionary
+		}
+		else {
+			weaponConf = ["0":0]
+		}
+
+		
 		
 		
 		let thisTexture = SKTexture(imageNamed: str)
