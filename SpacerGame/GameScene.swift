@@ -65,8 +65,8 @@ struct Bonus {
 			"type"		: "green_laser",
 			"isWeapon"	: true,
 			"weaponConf":[
-				"fireRate"		: 0.5,
-				"bulet_texture"	:"redLaser",
+				"fireRate"		: 0.8,
+				"bulet_texture"	:"greenLaser",
 				"sound"			: "rail_gun"
 			]
 		],
@@ -174,10 +174,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	// стрелялка лазером
 	@objc func startFire(){
 		
+		if (activeWeapon == nil){
+			return
+		}
+		
 		let redLaser = SKSpriteNode(imageNamed: activeWeapon.weaponConf["bulet_texture"] as! String)
 		redLaser.zPosition = spaceShip.zPosition - 1
 		redLaser.xScale = 0.5
-		redLaser.yScale = 0.5
+		redLaser.yScale = 0.2
 		redLaser.name = "laser"
 		
 		redLaser.position = CGPoint(x: spaceShip.position.x, y: spaceShip.position.y + 10)
@@ -607,7 +611,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if stageBacking.position.y < (frame.height - stageBacking.frame.height + 1) {
             stageBacking.position.y = frame.height - stageBacking.frame.height + 1
         }
-        
+		
+		
+		
+		return
+		
+		
         if let acelerometerData = motionManager.accelerometerData {
             
             let force = 25.0 // усиление
@@ -802,9 +811,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			takenFeatures.append(target)
 		}
 		
-		// если до этого оружия небыло
-		if (activeWeapon == nil && target.isWeapon){
-			activeWeapon = target
+		
+		if (target.isWeapon){
+			if (activeWeapon == nil){ // если до этого оружия небыло
+				activeWeapon = target
+			}
+			else{
+				turnFeature(target: activeWeapon, launching: false)
+				activeWeapon = target
+			}
 		}
 		// включение бонуса
 		turnFeature(target: target, launching: true)
@@ -835,10 +850,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			if (replTarget != nil){
 				// удаляем старый элемент из массива (на место которого хотим поставить новый)
 				self.takenFeatures = self.takenFeatures.filter{$0 != replTarget}
-				if (target.isWeapon){
-					self.turnFeature(target: self.activeWeapon, launching: false)
-					self.activeWeapon = target
-				}
 				replTarget.removeFromParent()
 			}
 			
@@ -882,6 +893,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			}
 		case Bonus.red_laser:
 			if (launching){
+//				if (weaponTimer != nil && weaponTimer.isValid){
+//					weaponTimer.fire()
+//					weaponTimer.invalidate()
+//				}
 				// таймер стрелялки лазером
 				weaponTimer = Timer.scheduledTimer(timeInterval: target.weaponConf["fireRate"] as! TimeInterval, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
 			}
@@ -892,6 +907,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			}
 		case Bonus.green_laser:
 			if (launching){
+//				if (weaponTimer != nil && weaponTimer.isValid){
+//					weaponTimer.fire()
+//					weaponTimer.invalidate()
+//				}
 				weaponTimer = Timer.scheduledTimer(timeInterval: target.weaponConf["fireRate"] as! TimeInterval, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
 			}
 			else{
@@ -940,7 +959,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 						break
 					}
 				}
-				playSound("asteroid_down")
+				playSound("enemy_down")
+				addPoints(points: 5)
 			}
 			else{
 				for item in bodies {
@@ -976,18 +996,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			
 		case 12:
 			for item in bodies {
-				item.categoryBitMask = Collision.NONE
-				item.node?.removeFromParent()
+				// зеленый лазер после повержения врага летит дальше
+				if (activeWeapon != nil && activeWeapon.type == Bonus.green_laser){
+					if (item.node?.name != "laser"){
+						item.node?.removeFromParent()
+					}
+				}
+				else {
+					item.categoryBitMask = Collision.NONE
+					item.node?.removeFromParent()
+				}
 			}
 			playSound("enemy_down")
 			addPoints(points: 5)
 			
 		case 10:
 			for item in bodies {
-				item.categoryBitMask = Collision.NONE
-				item.node?.removeFromParent()
+				// зеленый лазер после повержения врага летит дальше
+				if (activeWeapon != nil && activeWeapon.type == Bonus.green_laser){
+					if (item.node?.name != "laser"){
+						item.node?.removeFromParent()
+					}
+				}
+				else{
+					item.categoryBitMask = Collision.NONE
+					item.node?.removeFromParent()
+				}
 			}
-			playSound("asteroid_down")
+			playSound("enemy_down")
 			addPoints(points: 1)
 			
 		default: ()
