@@ -104,7 +104,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
 
-	
+	public var takenFeatures:Array<Feature> = [] 			// массив взятых финтиклюшек (жизнь сюда не входит)
 	private var playerImmortable:Bool 		= false 		// неуязвимость
 	private var asteroidDestructible:Bool 	= true 			// астероиды разрушаются лазером
     private let allFeatures:Array 			= ["health", "immortal", "red_laser", "green_laser"] // виды выпадающей амуниции
@@ -227,15 +227,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         engine2.position = CGPoint(x: 28, y: -spaceShip.frame.height/2 + 5)
         engine2.zPosition = spaceShip.self.zPosition - 1
 //        engine2.targetNode = self // оставляет шлейф за огнем
-        
-        // лейблу очков
-//        scoreLabel = SKLabelNode(text: "Очки: \(score)")
-//        //scoreLabel.calculateAccumulatedFrame().height - собственная высота лейбла
-//        scoreLabel.position = CGPoint(x: frame.size.width / 2, y: frame.size.height - scoreLabel.calculateAccumulatedFrame().height - 15)
-//        scoreLabel.fontName = "Arial"
-//        scoreLabel.fontSize = 17
-//        addChild(scoreLabel)
-		
         
         stageBacking.zPosition = 0
         starsLayer.zPosition = 1
@@ -390,7 +381,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	public func featureSpawn(){
 
 		let featureAction = SKAction.run {
-			let bonus = Feature(GameScene.randArrElemen(array: self.allFeatures))
+			let bonus = Feature(GameScene.randArrElemen(array: self.allFeatures), self)
 			bonus.zPosition = 2
 			self.addChild(bonus)
 			bonus.name = "enemy_clear_marker"
@@ -731,7 +722,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				self.pgameDelegate?.gameDelegateDidUpdateLives()
 				self.pauseGame()
 			}
-			
 			let gameOverSequance = SKAction.sequence([blinking(), gameOverAction])
 			spaceShip.run(gameOverSequance)
 		}
@@ -741,8 +731,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	
 
 	
+	
+	/// Взятие бонуса
+	///
+	/// - Parameter target: бонус
 	private func useMaterial(_ target:Feature){
 		
+		let pointY = CGFloat(takenFeatures.count) * (target.size.height + 15)
+		var replTarget:Feature!
+		
+		if (target.type != Bonus.health){
+			for eachElement in takenFeatures{
+				if eachElement.type == target.type{
+					replTarget = eachElement
+					break
+				}
+			}
+			takenFeatures.append(target)
+		}
+		
+		let defaultPoint = CGPoint(x: frame.size.width - target.size.width / 2 - 10, y: frame.size.height - target.size.height / 2 - 60)
+
 //		switch target.type {
 //		case Bonus.health:
 //			<#code#>
@@ -760,21 +769,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			newPoint = CGPoint(x: 20, y: 20)
 		}
 		else {
-			newPoint = CGPoint(x: frame.size.width - target.size.width / 2 - 10, y: frame.size.height - target.size.height / 2 - 60)
+			if (replTarget != nil){
+				newPoint = replTarget.position
+			}
+			else {
+				newPoint = CGPoint(x: defaultPoint.x, y: defaultPoint.y - pointY)
+			}
 		}
 		
 		
-		let moveAct = SKAction.move(to: newPoint, duration: 1)
+		let moveAct = SKAction.move(to: newPoint, duration: 0.6)
 		moveAct.timingMode = .easeOut
 		
 		target.run(moveAct) {
 			target.alpha = 0.65
+			
+			if (replTarget != nil){
+				// удаляем старый элемент из массива (на место которого хотим поставить новый)
+				self.takenFeatures = self.takenFeatures.filter{$0 != replTarget}
+				replTarget.removeFromParent()
+			}
+			
+			target.runTimer()
+			
 			if (target.type == Bonus.health){
 				target.removeFromParent()
 				if (self.settings.lives < self.settings.startingLives) {
 					self.settings.lives += 1
 					self.pgameDelegate?.gameDelegateDidUpdateLives()
 				}
+				print("lives = \(self.settings.lives)")
 			}
 		}
 

@@ -11,12 +11,17 @@ import SpriteKit
 
 class Feature: SKSpriteNode {
 
+	private var parentInstance:GameScene!
+	
 	public var type:String
+	public var timer:Timer!
+	private var timerCount:Int = 10
+	private var time_TF:SKLabelNode!
 	
-	
-	init(_ type:String) {
+	init(_ type:String, _ parentInstance: GameScene) {
 		
 		self.type = type
+		self.parentInstance = parentInstance
 		
 		var str:String = ""
 		
@@ -84,12 +89,73 @@ class Feature: SKSpriteNode {
 	
 	
 	
+	public func runTimer(){
+		
+		timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerRuningFunc), userInfo: nil, repeats: true)
+		
+		// лейбла оставшегося времени
+		time_TF = SKLabelNode(text: timeFormatted(timerCount))
+		//time_TF.calculateAccumulatedFrame().height - собственная высота лейбла
+		// сверху слева - начало координат
+		time_TF.position = CGPoint(x: 0, y: -frame.size.height - time_TF.frame.size.height / 2 - 10)
+		time_TF.fontName = "Arial"
+		time_TF.fontSize = 23
+		time_TF.horizontalAlignmentMode = .center
+
+
+		
+		addChild(time_TF)
+	}
 	
 	
 	
 	
 	
 	
+	@objc private func timerRuningFunc(){
+		
+		timerCount -= 1
+		if (timerCount == 0){
+			timer.invalidate()
+			fadeAnimation()
+			return
+		}
+		let str:String = timeFormatted(timerCount)
+//		print("time = \(str)")
+		time_TF.text = str
+		
+	}
+	
+	
+	
+	
+	
+	///  Преобразовывает время в привычный формат "00:34"
+	///
+	/// - Parameter totalSeconds: кол-во секунд
+	private func timeFormatted(_ totalSeconds: Int) -> String {
+		
+		//     let hours: Int = totalSeconds / 3600
+		let minutes: Int = (totalSeconds / 60) % 60
+		let seconds: Int = totalSeconds % 60
+		return String(format: "%02d:%02d", minutes, seconds)
+	}
+	
+	
+	private func fadeAnimation(){
+		
+		let fade = SKAction.scale(to: 0, duration: 0.5)
+		fade.timingMode = .easeOut
+		let remove = SKAction.run {
+			// удаляем себя из массива
+			self.parentInstance.takenFeatures = self.parentInstance.takenFeatures.filter{$0 != self}
+			self.removeFromParent()
+		}
+		
+		let sequence = SKAction.sequence([fade, remove])
+		
+		self.run(sequence)
+	}
 	
 	
 	
