@@ -41,10 +41,16 @@ struct Collision {
 
 struct Bonus {
 	public static let health:String 		= "health"
+	public static let immortal:String 		= "immortal"
 	public static let red_laser:String 		= "red_laser"
 	public static let green_laser:String 	= "green_laser"
-	public static let immortal:String 		= "immortal"
 	
+	public static let allFeatures = [  		// все виды выпадающей амуниции
+		Bonus.health,
+		Bonus.immortal,
+		Bonus.red_laser,
+		Bonus.green_laser
+	]
 	
 	public static let data:Dictionary = [
 		red_laser:[
@@ -93,8 +99,7 @@ struct Bonus {
 
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
-	
-	private let allFeatures:Array 			= ["health", "immortal", "red_laser", "green_laser"] // виды выпадающей амуниции
+
 	
 	public var pgameDelegate:PGameDelegate? // делегат протокола PGameDelegate
     public var soundChanel:AVAudioPlayer!
@@ -424,7 +429,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	public func featureSpawn(){
 
 		let featureAction = SKAction.run {
-			let bonus = Feature(GameScene.randArrElemen(array: self.allFeatures), self)
+			let bonus = Feature(GameScene.randArrElemen(array: Bonus.allFeatures), self)
 			bonus.zPosition = 2
 			self.addChild(bonus)
 			bonus.name = "enemy_clear_marker"
@@ -490,6 +495,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				spaceShip.position.y += translation.y
 				lastTouchCoords = touchLocation
 			}
+//			print("корабль Y = \(Int(spaceShip.position.y))")
 		}
 	}
 	
@@ -612,60 +618,63 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             stageBacking.position.y = frame.height - stageBacking.frame.height + 1
         }
 		
+		// acelerometrrControled()
 		
+	}
+	
+	
+	
+	
+	
+	
+    
+    
+    
+    /// Упрпвление кораблем с помощью акселерометра
+	private func acelerometrrControled(){
 		
-		return
-		
-		
-        if let acelerometerData = motionManager.accelerometerData {
-            
-            let force = 25.0 // усиление
-            //let dy_lean_correction = (acelerometerData.acceleration.y + 0.4) * force // коррекция наклона устройства для нормального держания в руках
-            
-            var motionVector:CGVector = CGVector(dx: acelerometerData.acceleration.x * force, dy: (acelerometerData.acceleration.y + abs(dY_lean_correction)) * force)
-            
-            if abs(motionVector.dx) < 0.2 && abs(motionVector.dy) < 0.2 {
-                return
-            }
-            
-            //***********************
-            // ограничения движения *
-            //***********************
-            
-            // влево
-            if (spaceShip.position.x <= 0 && motionVector.dx < 0) {
-                motionVector.dx = 0
-            }
-            // вправо
-            if (spaceShip.position.x >= frame.size.width && motionVector.dx > 0) {
-                motionVector.dx = 0
-            }
-            // вниз
-            if (spaceShip.position.y + spaceShip.frame.height / 2 >= frame.size.height && motionVector.dy > 0) {
-                motionVector.dy = 0
-            }
-            // вверх
-            if (spaceShip.position.y - spaceShip.frame.height / 2 <= 0 && motionVector.dy < 0) {
-                motionVector.dy = 0
-            }
-            
-            
-            let replaceAction = SKAction.move(by: motionVector, duration: 0.1)
-            spaceShip.run(replaceAction)
-            
-            
-            // двигаем фон
-            let newVector:CGVector = CGVector(dx: (motionVector.dx / 10) * -1, dy: (motionVector.dy / 10) * -1)
-            let parallaxAction = SKAction.move(by: newVector, duration: 0.1)
-            stageBacking.run(parallaxAction)
-            
-        }
-    }
-    
-    
-    
-    
-    
+		if let acelerometerData = motionManager.accelerometerData {
+			
+			let force = 25.0 // усиление
+			//let dy_lean_correction = (acelerometerData.acceleration.y + 0.4) * force // коррекция наклона устройства для нормального держания в руках
+			
+			var motionVector:CGVector = CGVector(dx: acelerometerData.acceleration.x * force, dy: (acelerometerData.acceleration.y + abs(dY_lean_correction)) * force)
+			
+			if abs(motionVector.dx) < 0.2 && abs(motionVector.dy) < 0.2 {
+				return
+			}
+			
+			//***********************
+			// ограничения движения *
+			//***********************
+			
+			// влево
+			if (spaceShip.position.x <= 0 && motionVector.dx < 0) {
+				motionVector.dx = 0
+			}
+			// вправо
+			if (spaceShip.position.x >= frame.size.width && motionVector.dx > 0) {
+				motionVector.dx = 0
+			}
+			// вниз
+			if (spaceShip.position.y + spaceShip.frame.height / 2 >= frame.size.height && motionVector.dy > 0) {
+				motionVector.dy = 0
+			}
+			// вверх
+			if (spaceShip.position.y - spaceShip.frame.height / 2 <= 0 && motionVector.dy < 0) {
+				motionVector.dy = 0
+			}
+			
+			let replaceAction = SKAction.move(by: motionVector, duration: 0.1)
+			spaceShip.run(replaceAction)
+			
+			// двигаем фон
+			let newVector:CGVector = CGVector(dx: (motionVector.dx / 10) * -1, dy: (motionVector.dy / 10) * -1)
+			let parallaxAction = SKAction.move(by: newVector, duration: 0.1)
+			stageBacking.run(parallaxAction)
+			
+		}
+	}
     
     
     
@@ -846,7 +855,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		// по завершению полета
 		target.run(moveAct) {
 			target.alpha = 0.65
-			
 			if (replTarget != nil){
 				// удаляем старый элемент из массива (на место которого хотим поставить новый)
 				self.takenFeatures = self.takenFeatures.filter{$0 != replTarget}
@@ -893,10 +901,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			}
 		case Bonus.red_laser:
 			if (launching){
-//				if (weaponTimer != nil && weaponTimer.isValid){
-//					weaponTimer.fire()
-//					weaponTimer.invalidate()
-//				}
 				// таймер стрелялки лазером
 				weaponTimer = Timer.scheduledTimer(timeInterval: target.weaponConf["fireRate"] as! TimeInterval, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
 			}
@@ -907,10 +911,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			}
 		case Bonus.green_laser:
 			if (launching){
-//				if (weaponTimer != nil && weaponTimer.isValid){
-//					weaponTimer.fire()
-//					weaponTimer.invalidate()
-//				}
 				weaponTimer = Timer.scheduledTimer(timeInterval: target.weaponConf["fireRate"] as! TimeInterval, target: self, selector: #selector(startFire), userInfo: nil, repeats: true)
 			}
 			else{
@@ -920,10 +920,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			}
 		default: ()
 		}
+	}
+		
+	
+	
+	
+	
+	
+	/// Перестановка иконок, для устранения пустого места
+	public func resortIcons(){
+		
+		if (takenFeatures.count == 0){
+			return
+		}
+		
+		let defaultPoint = CGPoint(x: frame.size.width - takenFeatures.first!.size.width / 2 - 10, y: frame.size.height - takenFeatures.first!.size.height / 2 - 60)
+		var posY:CGFloat = 0
+		
+		for (index, value) in takenFeatures.enumerated(){
+			// новая Y-координата
+			posY = defaultPoint.y + CGFloat(index) * (value.size.height + 15)
+
+			print("алярм! \(posY)")
+			// экшн сдвига
+			let moveAction = SKAction.move(to: CGPoint(x: defaultPoint.x, y: posY), duration: 0.6)
+			moveAction.timingMode = .easeOut
+
+			value.run(moveAction)
+		}
 		
 	}
-	
-	
 	
 	
 	
@@ -966,6 +992,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				for item in bodies {
 					if (item.node?.name != "personage"){
 						item.categoryBitMask = Collision.NONE
+						item.node?.alpha = 0.45
 						break
 					}
 				}

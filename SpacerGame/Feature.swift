@@ -154,6 +154,7 @@ class Feature: SKSpriteNode {
 			self.parentInstance.takenFeatures = self.parentInstance.takenFeatures.filter{$0 != self}
 			// выключаем бонус
 			self.parentInstance.turnFeature(target: self, launching: false)
+			self.parentInstance.resortIcons()
 			self.removeFromParent()
 		}
 		
