@@ -107,7 +107,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	public var settings: Settings!
 	
 	
-    private var spaceShip:SKSpriteNode!
+    public var spaceShip:SKSpriteNode!
     private let w 							= UIScreen.main.bounds.size.width
     private let h							= UIScreen.main.bounds.size.height
 
@@ -369,6 +369,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			(node:SKNode, nil) in
 			node.removeFromParent()
 		}
+		
+		if (weaponTimer != nil){
+			weaponTimer.fire()
+			weaponTimer.invalidate()
+			activeWeapon = nil
+		}
+		
 		spaceShip.position = CGPoint(x: w/2, y: spaceShip.frame.size.height/2 + 50)
 	}
 
@@ -380,7 +387,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if (soundChanel != nil) {
             soundChanel.pause()
         }
-    }
+		
+		for value in takenFeatures{
+			if value.timer != nil{
+				value.timer.invalidate()
+			}
+		}
+		
+	}
+	
+	
 	
 	
 	
@@ -400,6 +416,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 playBackMusic()
             }
         }
+		
+		for value in takenFeatures{
+			value.runTimer()
+		}
 	}
 	
 
@@ -436,7 +456,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			bonus.fly()
 		}
 
-		let waitDuration = SKAction.wait(forDuration: 7, withRange: 3)
+//		let waitDuration = SKAction.wait(forDuration: 7, withRange: 3)
+		let waitDuration = SKAction.wait(forDuration: 3, withRange: 1)
 		let featureSequence = SKAction.sequence([featureAction, waitDuration])
 		let repeatSpawn	= SKAction.repeatForever(featureSequence)
 		
@@ -820,7 +841,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			takenFeatures.append(target)
 		}
 		
-		
 		if (target.isWeapon){
 			if (activeWeapon == nil){ // если до этого оружия небыло
 				activeWeapon = target
@@ -830,7 +850,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				activeWeapon = target
 			}
 		}
-		// включение бонуса
+
+		// включение бонуса (не оружие)
 		turnFeature(target: target, launching: true)
 		
 		let defaultPoint = CGPoint(x: frame.size.width - target.size.width / 2 - 10, y: frame.size.height - target.size.height / 2 - 60)
@@ -858,6 +879,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			if (replTarget != nil){
 				// удаляем старый элемент из массива (на место которого хотим поставить новый)
 				self.takenFeatures = self.takenFeatures.filter{$0 != replTarget}
+				replTarget.timer.invalidate()
+				self.armorFlickering(true_false: false)
 				replTarget.removeFromParent()
 			}
 			
@@ -895,9 +918,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		case Bonus.immortal:
 			if (launching){
 				playerImmortable = true
+				armor(true_false: true)
 			}
 			else{
 				playerImmortable = false
+				armor(true_false: false)
 			}
 		case Bonus.red_laser:
 			if (launching){
@@ -939,9 +964,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		for (index, value) in takenFeatures.enumerated(){
 			// новая Y-координата
-			posY = defaultPoint.y + CGFloat(index) * (value.size.height + 15)
-
-			print("алярм! \(posY)")
+			posY = defaultPoint.y - CGFloat(index) * (value.size.height + 15)
+			if (posY > defaultPoint.y) { // костыль, потому что иногда выежает выше чем допустимо
+				return
+			}
 			// экшн сдвига
 			let moveAction = SKAction.move(to: CGPoint(x: defaultPoint.x, y: posY), duration: 0.6)
 			moveAction.timingMode = .easeOut
@@ -951,6 +977,63 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 	}
 	
+	
+	
+	
+	
+	// эффект брони за счет копирования слоя
+	public func armor(true_false arg:Bool) {
+		
+		if (arg){
+			// сначала очищаем от мусора
+			spaceShip.enumerateChildNodes(withName: "effect") {
+				(armor:SKNode, nil) in
+				
+				armor.removeAction(forKey: "armorFlickering")
+				armor.run(SKAction.fadeIn(withDuration: 0))
+				armor.removeFromParent()
+			}
+			
+			let copyOfTexture = SKSpriteNode(texture: spaceShip.texture, color: .green, size: spaceShip.size)
+			spaceShip.addChild(copyOfTexture)
+			copyOfTexture.xScale = 1.1
+			copyOfTexture.yScale = 1.1
+			copyOfTexture.position.y = 5
+			copyOfTexture.blendMode = .add
+			copyOfTexture.name = "effect"
+			copyOfTexture.zPosition = -1
+			copyOfTexture.run(SKAction.colorize(with: #colorLiteral(red: 1, green: 0.9880563072, blue: 0.1440601503, alpha: 1), colorBlendFactor: 1, duration: 0))
+		}
+		else{
+			spaceShip.enumerateChildNodes(withName: "effect") {
+				(armor:SKNode, nil) in
+				armor.removeFromParent()
+			}
+		}
+	}
+	
+	
+	/// Мерцание броней (когда пропадает)
+	public func armorFlickering(true_false arg:Bool){
+		
+		spaceShip.enumerateChildNodes(withName: "effect") {
+			(armor:SKNode, nil) in
+			
+			if (arg){
+				let fadeOut = SKAction.fadeOut(withDuration: 0.15)
+				let fadeIn = SKAction.fadeIn(withDuration: 0.15)
+				let sequence = SKAction.sequence([fadeOut, fadeIn])
+				let repeatAct = SKAction.repeatForever(sequence)
+				
+				armor.run(repeatAct, withKey: "armorFlickering")
+			}
+			else {
+				armor.removeAction(forKey: "armorFlickering")
+				armor.run(SKAction.fadeIn(withDuration: 0))
+			}
+			
+		}
+	}
 	
 	
 	
@@ -981,6 +1064,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				for item in bodies {
 					if (item.node?.name != "personage"){
 						item.categoryBitMask = Collision.NONE
+						smallExplosion(tar: item.node!)
 						item.node?.removeFromParent()
 						break
 					}
@@ -1004,6 +1088,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			for item in bodies {
 				if (item.node?.name != "personage"){
 					item.categoryBitMask = Collision.NONE
+					smallExplosion(tar: item.node!)
 					item.node?.removeFromParent()
 					break
 				}
@@ -1026,11 +1111,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				// зеленый лазер после повержения врага летит дальше
 				if (activeWeapon != nil && activeWeapon.type == Bonus.green_laser){
 					if (item.node?.name != "laser"){
+						smallExplosion(tar: item.node!)
 						item.node?.removeFromParent()
 					}
 				}
 				else {
 					item.categoryBitMask = Collision.NONE
+					smallExplosion(tar: item.node!)
 					item.node?.removeFromParent()
 				}
 			}
@@ -1042,11 +1129,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				// зеленый лазер после повержения врага летит дальше
 				if (activeWeapon != nil && activeWeapon.type == Bonus.green_laser){
 					if (item.node?.name != "laser"){
+						smallExplosion(tar: item.node!)
 						item.node?.removeFromParent()
 					}
 				}
 				else{
 					item.categoryBitMask = Collision.NONE
+					smallExplosion(tar: item.node!)
 					item.node?.removeFromParent()
 				}
 			}
@@ -1068,6 +1157,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	
 	
 
+	private func smallExplosion(tar:SKNode){
+		
+		if let explosionFile = Bundle.main.path(forResource: "explosion", ofType: "sks"){
+			let explosion = NSKeyedUnarchiver.unarchiveObject(withFile: explosionFile) as! SKEmitterNode
+			// explosion.advanceSimulationTime(0.1)
+			// explosion.particlePositionRange.dx = tar.frame.size.width / 2
+			// explosion.particleSize.width = tar.frame.size.width
+			explosion.particleScale = 0.2
+			addChild(explosion)
+			explosion.position = tar.position
+			
+			let fade = SKAction.fadeIn(withDuration: 0.3)
+			let remove = SKAction.removeFromParent()
+			
+			let seq = SKAction.sequence([fade, remove])
+			
+			explosion.run(seq)
+		}
+		
+		
+	}
 	
 	
 

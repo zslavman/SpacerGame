@@ -20,7 +20,7 @@ class Feature: SKSpriteNode {
 	public var isWeapon:Bool = false
 	public var weaponConf:Dictionary<String, Any>
 	
-	
+
 	
 	
 	init(_ type:String, _ parentInstance: GameScene) {
@@ -97,6 +97,9 @@ class Feature: SKSpriteNode {
 		timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerRuningFunc), userInfo: nil, repeats: true)
 		
 		// лейбла оставшегося времени
+		if (time_TF != nil){
+			return
+		}
 		time_TF = SKLabelNode(text: timeFormatted(timerCount))
 		//time_TF.calculateAccumulatedFrame().height - собственная высота лейбла
 		// сверху слева - начало координат, пивоты по центру спрайта
@@ -104,8 +107,6 @@ class Feature: SKSpriteNode {
 		time_TF.fontName = "Arial"
 		time_TF.fontSize = 23
 		time_TF.horizontalAlignmentMode = .center
-
-
 		
 		addChild(time_TF)
 	}
@@ -118,15 +119,37 @@ class Feature: SKSpriteNode {
 	@objc private func timerRuningFunc(){
 		
 		timerCount -= 1
-		if (timerCount == 0){
+		
+		if (timerCount == 2){
+			// мигаем иконкой!
+			flickering()
+			if (type == Bonus.immortal){
+				parentInstance.armorFlickering(true_false: true)
+			}
+		}
+		else if (timerCount == 0){
 			timer.invalidate()
-			fadeAnimation()
+			fadeOutAnimation()
 			return
 		}
 		let str:String = timeFormatted(timerCount)
-//		print("time = \(str)")
 		time_TF.text = str
+	}
+	
+	
+	
+	
+	
+	/// Мигание иконкой
+	private func flickering(){
 		
+		let fadeOut = SKAction.fadeOut(withDuration: 0.3)
+		let fadeIn = SKAction.fadeIn(withDuration: 0.3)
+		
+		let sequance = SKAction.sequence([fadeOut, fadeIn])
+		let repeating = SKAction.repeatForever(sequance)
+		
+		self.run(repeating)
 	}
 	
 	
@@ -145,7 +168,9 @@ class Feature: SKSpriteNode {
 	}
 	
 	
-	private func fadeAnimation(){
+	
+	/// Анимация исчезания бонуса
+	private func fadeOutAnimation(){
 		
 		let fade = SKAction.scale(to: 0, duration: 0.5)
 		fade.timingMode = .easeOut
@@ -155,6 +180,10 @@ class Feature: SKSpriteNode {
 			// выключаем бонус
 			self.parentInstance.turnFeature(target: self, launching: false)
 			self.parentInstance.resortIcons()
+//			if (self.type == Bonus.immortal){
+//				// выключаем бронь
+//				self.parentInstance.armor(true_false: false)
+//			}
 			self.removeFromParent()
 		}
 		
@@ -163,6 +192,63 @@ class Feature: SKSpriteNode {
 		self.run(sequence)
 	}
 	
+	
+	
+
+	
+	
+//	private func glowing(true_false arg:Bool){
+//
+//		if (arg){
+//			let fadeToColor = SKAction.colorize(with: .orange, colorBlendFactor: 1, duration: 0.5)
+//			let fadeToNone = SKAction.colorize(with: .orange, colorBlendFactor: 0.6, duration: 0.5)
+//			let sequance = SKAction.sequence([fadeToColor, fadeToNone])
+//			let repeating = SKAction.repeatForever(sequance)
+//
+//			parentInstance.spaceShip.run(repeating, withKey: "glowing")
+//		}
+//		else {
+//			parentInstance.spaceShip.removeAction(forKey: "glowing")
+//			parentInstance.spaceShip.run(SKAction.colorize(with: .white, colorBlendFactor: 0.0, duration: 0.1)) // очищаем корабль от цвета (иногда остается)
+//		}
+//	}
+	
+
+
+	
+	
+	
+//	// эффект свечения за счет блура копии текстуры, которая кладется под объект
+//	private func glowing(true_false arg:Bool) {
+//
+//		if (arg){
+//			let radius: Float = 10 // радиус размытия
+//
+//			let effectNode = SKEffectNode()
+//			effectNode.shouldRasterize = true
+//			parentInstance.spaceShip.addChild(effectNode)
+//			let copyOfTexture = SKSpriteNode(texture: parentInstance.spaceShip.texture, color: .green, size: parentInstance.spaceShip.size)
+//			copyOfTexture.xScale = 1.2
+//			copyOfTexture.yScale = 1.2
+//			copyOfTexture.run(SKAction.colorize(with: #colorLiteral(red: 1, green: 0.9880563072, blue: 0.1440601503, alpha: 1), colorBlendFactor: 1, duration: 0))
+//
+//			effectNode.addChild(copyOfTexture)
+//			effectNode.blendMode = .add
+//
+//			effectNode.name = "effect"
+//			effectNode.zPosition = 0
+//			effectNode.filter = CIFilter(name: "CIGaussianBlur", withInputParameters: ["inputRadius":radius])
+//		}
+//		else{
+//			parentInstance.spaceShip.enumerateChildNodes(withName: "effect") {
+//				(effect:SKNode, nil) in
+//				effect.removeFromParent()
+//			}
+//		}
+//	}
+	
+	
+
 	
 	
 	
