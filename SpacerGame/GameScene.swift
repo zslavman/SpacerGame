@@ -233,15 +233,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         physicsWorld.gravity = CGVector(dx: 0.0, dy: -0.8) // гравитация - вектор, направленный сверху-вниз с ускорением -9,8
-        
-        
-        // бэкграунг сцены
-        stageBacking = SKSpriteNode(imageNamed: "background")
-        stageBacking.anchorPoint = CGPoint(x: 0, y: 0)
-        //stageBacking.size = UIScreen.main.bounds.size
-        stageBacking.size = CGSize(width: frame.size.width * 1.5, height: frame.size.height * 1.5)
-        addChild(stageBacking)
-        
+
+		// бэкграунг сцены
+		let backingContainer = SKNode()
+		addChild(backingContainer)
+//		backingContainer.position.y = -20
+		backingContainer.position = CGPoint(x: frame.midX, y: frame.midY)
+		// бэк1
+        let stageBacking1 = SKSpriteNode(imageNamed: "background")
+//        stageBacking.anchorPoint = CGPoint(x: 0, y: 0)
+        backingContainer.addChild(stageBacking1)
+		// бэк2
+		let stageBacking2 = SKSpriteNode(imageNamed: "background")
+		stageBacking2.position.y = stageBacking2.size.height
+		backingContainer.addChild(stageBacking2)
+		// экшн который будет их двигать
+		let moveDown = SKAction.moveTo(y: -stageBacking2.size.height + 20, duration: 10)
+//		let startPos = SKAction.moveTo(y: frame.midY, duration: 0)
+		
+		let startPos = SKAction.run {
+			backingContainer.position.y = 20
+		}
+		
+		let seq = SKAction.sequence([moveDown, startPos])
+		let repeatAct = SKAction.repeatForever(seq)
+		backingContainer.run(repeatAct)
+		
+		
+		
+		
+		
+		
         // создаем слой звезд
         let starsPath:String = Bundle.main.path(forResource: "stars", ofType: "sks")!
         let starsEmitter = NSKeyedUnarchiver.unarchiveObject(withFile: starsPath) as! SKEmitterNode
@@ -281,10 +303,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         engine2.zPosition = spaceShip.self.zPosition - 1
 //        engine2.targetNode = self // оставляет шлейф за огнем
         
-        stageBacking.zPosition = 0
+		backingContainer.zPosition = 0
+//        stageBacking.zPosition = 0
         starsLayer.zPosition = 1
         spaceShip.zPosition = 2
-//        scoreLabel.zPosition = 3
+
 		
 		// так не работает отслеживание вылета за экран!!!
 		// addChild(asteroidLayer)
@@ -624,20 +647,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if spaceShip.position.y + spaceShip.frame.height / 2 > frame.size.height {
             spaceShip.position.y = frame.size.height - spaceShip.frame.height / 2
         }
-        
+
         // поправка для фона
-        if stageBacking.position.x > -1 {
-            stageBacking.position.x = -1
-        }
-        if stageBacking.position.x < (frame.width - stageBacking.frame.width + 1) {
-            stageBacking.position.x = frame.width - stageBacking.frame.width + 1
-        }
-        if stageBacking.position.y > -1 {
-            stageBacking.position.y = -1
-        }
-        if stageBacking.position.y < (frame.height - stageBacking.frame.height + 1) {
-            stageBacking.position.y = frame.height - stageBacking.frame.height + 1
-        }
+//        if stageBacking.position.x > frame.width / 2 {
+//            stageBacking.position.x = frame.width / 2
+//        }
+//        if stageBacking.position.x < frame.width / 2 {
+//            stageBacking.position.x = frame.width / 2
+//        }
+//        if stageBacking.position.y > -1 {
+//            stageBacking.position.y = -1
+//        }
+//        if stageBacking.position.y < (frame.height - stageBacking.frame.height + 1) {
+//            stageBacking.position.y = frame.height - stageBacking.frame.height + 1
+//        }
 		
 		// acelerometrrControled()
 		
@@ -1065,7 +1088,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 					if (item.node?.name != "personage"){
 						item.categoryBitMask = Collision.NONE
 						smallExplosion(tar: item.node!)
-						item.node?.removeFromParent()
+//						item.node?.removeFromParent()
 						break
 					}
 				}
@@ -1089,7 +1112,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				if (item.node?.name != "personage"){
 					item.categoryBitMask = Collision.NONE
 					smallExplosion(tar: item.node!)
-					item.node?.removeFromParent()
+//					item.node?.removeFromParent()
 					break
 				}
 			}
@@ -1112,13 +1135,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				if (activeWeapon != nil && activeWeapon.type == Bonus.green_laser){
 					if (item.node?.name != "laser"){
 						smallExplosion(tar: item.node!)
-						item.node?.removeFromParent()
+//						item.node?.removeFromParent()
 					}
 				}
 				else {
 					item.categoryBitMask = Collision.NONE
 					smallExplosion(tar: item.node!)
-					item.node?.removeFromParent()
+//					item.node?.removeFromParent()
 				}
 			}
 			playSound("enemy_down")
@@ -1130,13 +1153,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				if (activeWeapon != nil && activeWeapon.type == Bonus.green_laser){
 					if (item.node?.name != "laser"){
 						smallExplosion(tar: item.node!)
-						item.node?.removeFromParent()
+//						item.node?.removeFromParent()
 					}
 				}
 				else{
 					item.categoryBitMask = Collision.NONE
 					smallExplosion(tar: item.node!)
-					item.node?.removeFromParent()
+//					item.node?.removeFromParent()
 				}
 			}
 			playSound("enemy_down")
@@ -1167,12 +1190,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			explosion.particleScale = 0.2
 			addChild(explosion)
 			explosion.position = tar.position
+			tar.removeFromParent()
 			
 			let fade = SKAction.fadeIn(withDuration: 0.3)
 			let remove = SKAction.removeFromParent()
 			
 			let seq = SKAction.sequence([fade, remove])
-			
 			explosion.run(seq)
 		}
 		
