@@ -60,18 +60,19 @@ struct Bonus {
 			"isWeapon"	: true,
 			"weaponConf":[
 				"fireRate"		: 0.1,
+				"bulet_speed"	: 0.5,
 				"bulet_texture"	:"redLaser",
 				"sound"			: "red_laser_sound"
 			]
 		],
 		green_laser:[
-			"fireRate"	: 0.5,
 			"duration"	: 15,
 			"texture"	: "feature_green_laser",
 			"type"		: "green_laser",
 			"isWeapon"	: true,
 			"weaponConf":[
 				"fireRate"		: 0.8,
+				"bulet_speed"	: 0.3,
 				"bulet_texture"	:"greenLaser",
 				"sound"			: "rail_gun"
 			]
@@ -183,35 +184,48 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			return
 		}
 		
-		let redLaser = SKSpriteNode(imageNamed: activeWeapon.weaponConf["bulet_texture"] as! String)
-		redLaser.zPosition = spaceShip.zPosition - 1
-		redLaser.xScale = 0.5
-		redLaser.yScale = 0.2
-		redLaser.name = "laser"
+		let buletTexture = activeWeapon.weaponConf["bulet_texture"] as! String
+		let buletSpeed = activeWeapon.weaponConf["bulet_speed"] as! Double
 		
-		redLaser.position = CGPoint(x: spaceShip.position.x, y: spaceShip.position.y + 10)
 		
-		let moveAction = SKAction.move(by: CGVector(dx: 0, dy: self.frame.height + redLaser.frame.height), duration: 0.5)
+		let bulet = SKSpriteNode(imageNamed: buletTexture)
+		bulet.zPosition = spaceShip.zPosition - 1
+		bulet.xScale = 0.5
+		bulet.yScale = 0.2
+		bulet.name = "laser"
+		
+		bulet.position = CGPoint(x: spaceShip.position.x, y: spaceShip.position.y + 10)
+		
+		let moveAction = SKAction.move(by: CGVector(dx: 0, dy: self.frame.height + bulet.frame.height), duration: buletSpeed)
 		let removeAction = SKAction.removeFromParent()
+		let buletSequence = SKAction.sequence([moveAction, removeAction])
 		
-		let laserSequence = SKAction.sequence([moveAction, removeAction])
-		
-		addChild(redLaser)
+		addChild(bulet)
 		
 		// задаем физическое тело
-		let laserTexture = SKTexture(imageNamed: activeWeapon.weaponConf["bulet_texture"] as! String)
-		redLaser.physicsBody = SKPhysicsBody(texture: laserTexture, size: redLaser.size)
+		let laserTexture = SKTexture(imageNamed: buletTexture)
+		bulet.physicsBody = SKPhysicsBody(texture: laserTexture, size: bulet.size)
 		
 		// принебрегаем воздействием гравитации
-		redLaser.physicsBody?.affectedByGravity 	= false
-		redLaser.physicsBody?.isDynamic 			= false
-	
-		redLaser.physicsBody?.categoryBitMask 		= Collision.LASER 								// устанавливаем битмаску столкновений
-		redLaser.physicsBody?.contactTestBitMask 	= Collision.ENEMY_SHIP | Collision.ASTEROID 	// от каких столкновений хотим получать уведомления (триггер столкновений)
-//		redLaser.physicsBody?.collisionBitMask 		= Collision.ENEMY_SHIP							// при каких столкновениях мы хотим чтоб лазер вел себя как физическое тело
+		bulet.physicsBody?.affectedByGravity 	= false
+		bulet.physicsBody?.isDynamic 			= false
+		
+		bulet.physicsBody?.categoryBitMask 		= Collision.LASER 								// устанавливаем битмаску столкновений
+		bulet.physicsBody?.contactTestBitMask 	= Collision.ENEMY_SHIP | Collision.ASTEROID 	// от каких столкновений хотим получать уведомления (триггер столкновений)
+		
+		if (buletTexture == "greenLaser"){
+			let tailFile = Bundle.main.path(forResource: "rail_tail", ofType: "sks")!
+			let tail = NSKeyedUnarchiver.unarchiveObject(withFile: tailFile) as! SKEmitterNode
+			tail.position = CGPoint(x: 0, y: bulet.frame.height / 2)
+			tail.zPosition = -1
+			tail.targetNode = self
+			tail.particleScale = 0.05
+			tail.particleAlpha = 0.05
+			bulet.addChild(tail)
+		}
 		
 		
-		redLaser.run(laserSequence)
+		bulet.run(buletSequence)
 		playSound(activeWeapon.weaponConf["sound"] as! String)
 		
 	}
@@ -226,8 +240,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		enemySpawn()
 		featureSpawn()
 		
-//        self.removeAllChildren() // очистка сцены от всего
-		
         // любой рандомайзер всегда на что-то операется, в данном случае на время, потому при каждом запуске оно будет разное
         srand48(time(nil)) // "для того чтоб сид был разный"
         
@@ -237,11 +249,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		// бэкграунг сцены
 		let backingContainer = SKNode()
 		addChild(backingContainer)
-//		backingContainer.position.y = -20
 		backingContainer.position = CGPoint(x: frame.midX, y: frame.midY)
 		// бэк1
         let stageBacking1 = SKSpriteNode(imageNamed: "background")
-//        stageBacking.anchorPoint = CGPoint(x: 0, y: 0)
         backingContainer.addChild(stageBacking1)
 		// бэк2
 		let stageBacking2 = SKSpriteNode(imageNamed: "background")
@@ -249,8 +259,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		backingContainer.addChild(stageBacking2)
 		// экшн который будет их двигать
 		let moveDown = SKAction.moveTo(y: -stageBacking2.size.height + 20, duration: 10)
-//		let startPos = SKAction.moveTo(y: frame.midY, duration: 0)
-		
 		let startPos = SKAction.run {
 			backingContainer.position.y = 20
 		}
@@ -258,9 +266,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		let seq = SKAction.sequence([moveDown, startPos])
 		let repeatAct = SKAction.repeatForever(seq)
 		backingContainer.run(repeatAct)
-		
-		
-		
 		
 		
 		
@@ -674,7 +679,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     
-    /// Упрпвление кораблем с помощью акселерометра
+    /// Управление кораблем с помощью акселерометра
 	private func acelerometrrControled(){
 		
 		if let acelerometerData = motionManager.accelerometerData {
@@ -1167,9 +1172,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			
 		default: ()
 		}
-
-
 	}
+
+
 	
 	
 	
@@ -1184,9 +1189,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		if let explosionFile = Bundle.main.path(forResource: "explosion", ofType: "sks"){
 			let explosion = NSKeyedUnarchiver.unarchiveObject(withFile: explosionFile) as! SKEmitterNode
-			// explosion.advanceSimulationTime(0.1)
-			// explosion.particlePositionRange.dx = tar.frame.size.width / 2
-			// explosion.particleSize.width = tar.frame.size.width
 			explosion.particleScale = 0.2
 			addChild(explosion)
 			explosion.position = tar.position
@@ -1198,9 +1200,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			let seq = SKAction.sequence([fade, remove])
 			explosion.run(seq)
 		}
-		
-		
 	}
+	
+	
 	
 	
 

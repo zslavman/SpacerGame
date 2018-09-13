@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		562A3404214ADC2900BE6194 /* spark_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 562A3403214ADC2900BE6194 /* spark_1.png */; };
+		562A3406214AECA100BE6194 /* rail_tail.sks in Resources */ = {isa = PBXBuildFile; fileRef = 562A3405214AECA100BE6194 /* rail_tail.sks */; };
 		562E41E92149CA160084CDE1 /* explosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 562E41E82149CA160084CDE1 /* explosion.sks */; };
 		562E4EF421458475009B2CF6 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562E4EF321458475009B2CF6 /* StartScreen.swift */; };
 		5630711D2132132500FD8DA3 /* createPop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5630711C2132132500FD8DA3 /* createPop.mp3 */; };
@@ -35,6 +37,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		562A3403214ADC2900BE6194 /* spark_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spark_1.png; path = ../../../../../../Volumes/Work/App/spark_1.png; sourceTree = "<group>"; };
+		562A3405214AECA100BE6194 /* rail_tail.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = rail_tail.sks; sourceTree = "<group>"; };
 		562E41E82149CA160084CDE1 /* explosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = explosion.sks; sourceTree = "<group>"; };
 		562E4EF321458475009B2CF6 /* StartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
 		5630711C2132132500FD8DA3 /* createPop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = createPop.mp3; sourceTree = "<group>"; };
@@ -117,7 +121,9 @@
 		56836F852107E3CC002F2FCD /* Particles */ = {
 			isa = PBXGroup;
 			children = (
+				562A3405214AECA100BE6194 /* rail_tail.sks */,
 				562E41E82149CA160084CDE1 /* explosion.sks */,
+				562A3403214ADC2900BE6194 /* spark_1.png */,
 				56367868213033E800CD9B9C /* fireParticles.sks */,
 				5670CFEC2130123A003B708C /* stars.sks */,
 			);
@@ -207,6 +213,8 @@
 				56367869213033E800CD9B9C /* fireParticles.sks in Resources */,
 				5678337D20F170A100B4520A /* GameScene.sks in Resources */,
 				563486212146CDD6006183A4 /* rail_gun.mp3 in Resources */,
+				562A3404214ADC2900BE6194 /* spark_1.png in Resources */,
+				562A3406214AECA100BE6194 /* rail_tail.sks in Resources */,
 				5630711F2132146800FD8DA3 /* robocop4.mp3 in Resources */,
 				5678338820F170A100B4520A /* Assets.xcassets in Resources */,
 				563486232146CDD6006183A4 /* enemy_down.mp3 in Resources */,
