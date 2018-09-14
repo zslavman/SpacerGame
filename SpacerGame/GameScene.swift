@@ -113,7 +113,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private let h							= UIScreen.main.bounds.size.height
 
     private let ship_speed:CGFloat			= 600 // поинтов в секунду
-    private let asterPerSecond:Double		= 2 // кол-во астероидов в сек
+    private let asterPerSecond:Double		= 5 // кол-во астероидов в сек
 
     private var _score:Int					= 0
 	private var gameFinished:Bool			= false // gameOver
@@ -150,8 +150,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 _flashingShip = false
             }
         }
-        
-    }
+	}
+	
     
 	private var weaponTimer:Timer!
 	public var takenFeatures:Array<Feature> = [] 			// массив взятых финтиклюшек (жизнь сюда не входит)
@@ -159,7 +159,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	private var asteroidDestructible:Bool 	= true 			// астероиды разрушаются лазером
 	
 	public var activeWeapon:Feature! 						// тут будет храниться активное оружие
-    
+    private let backingContainer = SKNode()					// контейнер для фонов
 	
 	
 	
@@ -171,7 +171,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let musicURL = Bundle.main.url(forResource: "backgroundMusic", withExtension: "m4a")!
         soundChanel = try! AVAudioPlayer(contentsOf: musicURL, fileTypeHint: nil)
         soundChanel.numberOfLoops = -1
-        soundChanel.volume = 0.02
+        soundChanel.volume = 0.05
         soundChanel.play()
     }
     
@@ -224,7 +224,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			bulet.addChild(tail)
 		}
 		
-		
 		bulet.run(buletSequence)
 		playSound(activeWeapon.weaponConf["sound"] as! String)
 		
@@ -247,7 +246,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         physicsWorld.gravity = CGVector(dx: 0.0, dy: -0.8) // гравитация - вектор, направленный сверху-вниз с ускорением -9,8
 
 		// бэкграунг сцены
-		let backingContainer = SKNode()
 		addChild(backingContainer)
 		backingContainer.position = CGPoint(x: frame.midX, y: frame.midY)
 		// бэк1
@@ -260,7 +258,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		// экшн который будет их двигать
 		let moveDown = SKAction.moveTo(y: -stageBacking2.size.height + 20, duration: 10)
 		let startPos = SKAction.run {
-			backingContainer.position.y = 20
+			self.backingContainer.position.y = 20
 		}
 		
 		let seq = SKAction.sequence([moveDown, startPos])
@@ -375,6 +373,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     public func resetGame(){
 		
+		spaceShip.removeAction(forKey: "gameOverSequance") // фикс обездвиженого корабля после ресета
 		isPaused = false
 		gameFinished = false
 		if (settings != nil){
@@ -410,7 +409,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	
     
     public func pauseGame(){
-        isPaused = true
+		
+		isPaused = true
         spaceShip.removeAction(forKey: "move")
         if (soundChanel != nil) {
             soundChanel.pause()
@@ -420,6 +420,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			if value.timer != nil{
 				value.timer.invalidate()
 			}
+		}
+		
+		if (activeWeapon != nil){
+			weaponTimer.invalidate()
 		}
 		
 	}
@@ -447,6 +451,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		for value in takenFeatures{
 			value.runTimer()
+		}
+		
+		if (activeWeapon != nil){
+			turnFeature(target: activeWeapon, launching: true)
 		}
 	}
 	
@@ -526,6 +534,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				// коррекция дёргания при косании
 				lastTouchCoords = touchLocation
 				
+				// чтоб палец не закрывал корабль
+				let sTouch = touch.location(in: spaceShip)
+				if (sTouch.y >= -10){
+					let newY = touchLocation.y + spaceShip.frame.height / 2
+					let newX = touchLocation.x
+					let corectionAct = SKAction.move(to: CGPoint(x: newX, y: newY), duration: 0.1)
+					spaceShip.run(corectionAct, withKey: "corectionAct")
+				}
+				
 				spaceShipOnFinger = true
 				
 			}
@@ -542,17 +559,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				let translation = CGPoint(x: touchLocation.x - lastTouchCoords.x, y: touchLocation.y - lastTouchCoords.y)
 				spaceShip.position.x += translation.x
 				spaceShip.position.y += translation.y
+				
+				// параллакс для фона
+				backingContainer.position.x -= translation.x / 8
+				
 				lastTouchCoords = touchLocation
 			}
-//			print("корабль Y = \(Int(spaceShip.position.y))")
 		}
 	}
 	
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		spaceShip.removeAction(forKey: "corectionAct")
 		spaceShipOnFinger = false
 	}
 	
 	override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+		spaceShip.removeAction(forKey: "corectionAct")
 		spaceShipOnFinger = false
 	}
     
@@ -829,7 +851,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				self.pauseGame()
 			}
 			let gameOverSequance = SKAction.sequence([blinking(), gameOverAction])
-			spaceShip.run(gameOverSequance)
+			spaceShip.run(gameOverSequance, withKey: "gameOverSequance")
 		}
 	}
 	
@@ -983,7 +1005,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	/// Перестановка иконок, для устранения пустого места
 	public func resortIcons(){
 		
-		if (takenFeatures.count == 0){
+		if (takenFeatures.isEmpty){
 			return
 		}
 		
@@ -993,8 +1015,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		for (index, value) in takenFeatures.enumerated(){
 			// новая Y-координата
 			posY = defaultPoint.y - CGFloat(index) * (value.size.height + 15)
-			if (posY > defaultPoint.y) { // костыль, потому что иногда выежает выше чем допустимо
-				return
+			if (posY > defaultPoint.y) { // костыль, потому что иногда выезжает выше чем допустимо
+				posY = defaultPoint.y
+			}
+			// проверка, не будет ли наезжать на предыдущий
+			if (index > 0){
+				if (posY == takenFeatures[index - 1].position.y){
+					posY = takenFeatures[index - 1].position.y - (value.size.height + 15)
+				}
 			}
 			// экшн сдвига
 			let moveAction = SKAction.move(to: CGPoint(x: defaultPoint.x, y: posY), duration: 0.6)
@@ -1078,7 +1106,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func didBegin(_ contact: SKPhysicsContact) {
 
 		let contactRate = contact.bodyA.categoryBitMask + contact.bodyB.categoryBitMask
-		let  bodies:Array = [contact.bodyA, contact.bodyB]
+		let bodies:Array = [contact.bodyA, contact.bodyB]
+		
+		// на реальных устройтвах бывают странные косания, между телом и nil!!
+		if (contact.bodyA.node == nil || contact.bodyB.node == nil){
+			return
+		}
 		
 		// 3  - корабль с астероидом
 		// 5  - корабль с врагом
@@ -1093,7 +1126,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 					if (item.node?.name != "personage"){
 						item.categoryBitMask = Collision.NONE
 						smallExplosion(tar: item.node!)
-//						item.node?.removeFromParent()
 						break
 					}
 				}
@@ -1117,7 +1149,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				if (item.node?.name != "personage"){
 					item.categoryBitMask = Collision.NONE
 					smallExplosion(tar: item.node!)
-//					item.node?.removeFromParent()
 					break
 				}
 			}
@@ -1133,6 +1164,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 					break
 				}
 			}
+			playSound("take_bonus")
 			
 		case 12:
 			for item in bodies {
@@ -1140,13 +1172,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				if (activeWeapon != nil && activeWeapon.type == Bonus.green_laser){
 					if (item.node?.name != "laser"){
 						smallExplosion(tar: item.node!)
-//						item.node?.removeFromParent()
 					}
 				}
 				else {
 					item.categoryBitMask = Collision.NONE
 					smallExplosion(tar: item.node!)
-//					item.node?.removeFromParent()
 				}
 			}
 			playSound("enemy_down")
@@ -1156,15 +1186,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			for item in bodies {
 				// зеленый лазер после повержения врага летит дальше
 				if (activeWeapon != nil && activeWeapon.type == Bonus.green_laser){
-					if (item.node?.name != "laser"){
+					if (item.node?.name != "laser"){ // странный НИЛ на телефоне з!!!
 						smallExplosion(tar: item.node!)
-//						item.node?.removeFromParent()
 					}
 				}
 				else{
 					item.categoryBitMask = Collision.NONE
 					smallExplosion(tar: item.node!)
-//					item.node?.removeFromParent()
 				}
 			}
 			playSound("enemy_down")
