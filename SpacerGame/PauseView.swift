@@ -36,6 +36,14 @@ class PauseView: UIViewController {
 	var audioPlayerBack 	= AVAudioPlayer()
 	
 	
+	
+	
+	// сюда будут возвращаться из других экранов
+	@IBAction func unwindToViewController (segue: UIStoryboardSegue){
+		
+		
+	}
+	
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -91,12 +99,13 @@ class PauseView: UIViewController {
 		UIApplication.shared.isIdleTimerDisabled = true
 		getClickSound()
     }
-    @IBAction func onMenuClick(_ sender: UIButton) {
-        delegate.pauseView_MenuClicked(self)
-		getClickSound()
-    }
+//    @IBAction func onMenuClick(_ sender: UIButton) {
+//        delegate.pauseView_MenuClicked(self)
+//		getClickSound()
+//    }
     @IBAction func onStoreClick(_ sender: UIButton) {
         delegate.pauseView_StoreClicked(self)
+		inNextUpdate(str: "Покупки")
 		getClickSound()
     }
     
@@ -120,7 +129,18 @@ class PauseView: UIViewController {
 		getClickSound()
     }
     
-    
+	
+	
+	
+	private func inNextUpdate(str:String){
+		
+		let ac = UIAlertController(title: str, message: "Доступно в будущих обновлениях", preferredStyle: .alert)
+		let ok = UIAlertAction(title: "OK", style: .default)
+		ac.addAction(ok)
+		present(ac, animated: true, completion: nil)
+	}
+	
+	
     
     
     // установка картинки кнопки в зависимости от режима - включено/выключено

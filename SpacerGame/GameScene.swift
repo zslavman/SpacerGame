@@ -560,6 +560,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				// параллакс для фона
 				backingContainer.position.x -= translation.x / 8
 				
+				// параллакс для звезд
+				starsEmitter.position.x -= translation.x / 12
+				
 				lastTouchCoords = touchLocation
 			}
 		}
