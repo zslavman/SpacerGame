@@ -11,7 +11,7 @@ import SpriteKit
 
 class Feature: SKSpriteNode {
 
-	private var parentInstance:GameScene!
+
 	
 	public var type:String
 	public var timer:Timer!
@@ -23,10 +23,9 @@ class Feature: SKSpriteNode {
 
 	
 	
-	init(_ type:String, _ parentInstance: GameScene) {
+	init(_ type:String) {
 		
 		self.type = type
-		self.parentInstance = parentInstance
 		
 		// перетягиваем данные о бонусе из словаря
 		let str:String 	= Bonus.data[type]!["texture"] as! String
@@ -124,7 +123,7 @@ class Feature: SKSpriteNode {
 			// мигаем иконкой!
 			flickering()
 			if (type == Bonus.immortal){
-				parentInstance.armorFlickering(true_false: true)
+				GameScene.selF.armorFlickering(true_false: true)
 			}
 		}
 		else if (timerCount == 0){
@@ -176,14 +175,10 @@ class Feature: SKSpriteNode {
 		fade.timingMode = .easeOut
 		let remove = SKAction.run {
 			// удаляем себя из массива
-			self.parentInstance.takenFeatures = self.parentInstance.takenFeatures.filter{$0 != self}
+			GameScene.selF.takenFeatures = GameScene.selF.takenFeatures.filter{$0 != self}
 			// выключаем бонус
-			self.parentInstance.turnFeature(target: self, launching: false)
-			self.parentInstance.resortIcons()
-//			if (self.type == Bonus.immortal){
-//				// выключаем бронь
-//				self.parentInstance.armor(true_false: false)
-//			}
+			GameScene.selF.turnFeature(target: self, launching: false)
+			GameScene.selF.resortIcons()
 			self.removeFromParent()
 		}
 		

@@ -20,10 +20,9 @@
 		5636B21C2133387E00F97CBA /* GameOverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5636B21B2133387E00F97CBA /* GameOverView.swift */; };
 		563B66E3214BDE4B008A47B5 /* take_bonus.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 563B66DD214BDE4A008A47B5 /* take_bonus.mp3 */; };
 		563B66E4214BDE4B008A47B5 /* red_laser_sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 563B66DE214BDE4A008A47B5 /* red_laser_sound.mp3 */; };
-		563B66E5214BDE4B008A47B5 /* asteroid_down.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 563B66DF214BDE4B008A47B5 /* asteroid_down.mp3 */; };
 		563B66E6214BDE4B008A47B5 /* rail_gun.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 563B66E0214BDE4B008A47B5 /* rail_gun.mp3 */; };
 		563B66E7214BDE4B008A47B5 /* rail_gun2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 563B66E1214BDE4B008A47B5 /* rail_gun2.mp3 */; };
-		563B66E8214BDE4B008A47B5 /* enemy_down.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 563B66E2214BDE4B008A47B5 /* enemy_down.mp3 */; };
+		563B66ED214BEA62008A47B5 /* enemy_down.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 563B66EC214BEA62008A47B5 /* enemy_down.mp3 */; };
 		563E4A082142C2C7003140D3 /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563E4A072142C2C7003140D3 /* Enemy.swift */; };
 		5670CFED2130123A003B708C /* stars.sks in Resources */ = {isa = PBXBuildFile; fileRef = 5670CFEC2130123A003B708C /* stars.sks */; };
 		5678337B20F170A100B4520A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5678337A20F170A100B4520A /* AppDelegate.swift */; };
@@ -52,10 +51,9 @@
 		5636B21B2133387E00F97CBA /* GameOverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverView.swift; sourceTree = "<group>"; };
 		563B66DD214BDE4A008A47B5 /* take_bonus.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = take_bonus.mp3; sourceTree = "<group>"; };
 		563B66DE214BDE4A008A47B5 /* red_laser_sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = red_laser_sound.mp3; sourceTree = "<group>"; };
-		563B66DF214BDE4B008A47B5 /* asteroid_down.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = asteroid_down.mp3; path = ../../../../../../Volumes/Work/App/sounds/asteroid_down.mp3; sourceTree = "<group>"; };
 		563B66E0214BDE4B008A47B5 /* rail_gun.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = rail_gun.mp3; sourceTree = "<group>"; };
 		563B66E1214BDE4B008A47B5 /* rail_gun2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = rail_gun2.mp3; sourceTree = "<group>"; };
-		563B66E2214BDE4B008A47B5 /* enemy_down.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = enemy_down.mp3; sourceTree = "<group>"; };
+		563B66EC214BEA62008A47B5 /* enemy_down.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = enemy_down.mp3; path = ../../../../../../Volumes/Work/App/sounds/enemy_down.mp3; sourceTree = "<group>"; };
 		563E4A072142C2C7003140D3 /* Enemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
 		5670CFEC2130123A003B708C /* stars.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = stars.sks; sourceTree = "<group>"; };
 		5678337720F170A100B4520A /* SpacerGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpacerGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -138,10 +136,9 @@
 			isa = PBXGroup;
 			children = (
 				5634861B2146CDD6006183A4 /* asteroid_down.mp3 */,
-				563B66DF214BDE4B008A47B5 /* asteroid_down.mp3 */,
-				563B66E2214BDE4B008A47B5 /* enemy_down.mp3 */,
 				563B66E0214BDE4B008A47B5 /* rail_gun.mp3 */,
 				563B66E1214BDE4B008A47B5 /* rail_gun2.mp3 */,
+				563B66EC214BEA62008A47B5 /* enemy_down.mp3 */,
 				563B66DE214BDE4A008A47B5 /* red_laser_sound.mp3 */,
 				563B66DD214BDE4A008A47B5 /* take_bonus.mp3 */,
 				56FB569C2130B7B4003B8743 /* backgroundMusic.m4a */,
@@ -215,9 +212,9 @@
 			files = (
 				5630711D2132132500FD8DA3 /* createPop.mp3 in Resources */,
 				5678338620F170A100B4520A /* Main.storyboard in Resources */,
+				563B66ED214BEA62008A47B5 /* enemy_down.mp3 in Resources */,
 				56367869213033E800CD9B9C /* fireParticles.sks in Resources */,
 				5678337D20F170A100B4520A /* GameScene.sks in Resources */,
-				563B66E5214BDE4B008A47B5 /* asteroid_down.mp3 in Resources */,
 				562A3404214ADC2900BE6194 /* spark_1.png in Resources */,
 				562A3406214AECA100BE6194 /* rail_tail.sks in Resources */,
 				563B66E7214BDE4B008A47B5 /* rail_gun2.mp3 in Resources */,
@@ -226,7 +223,6 @@
 				56FB569E2130B7B4003B8743 /* backgroundMusic.m4a in Resources */,
 				563B66E3214BDE4B008A47B5 /* take_bonus.mp3 in Resources */,
 				563B66E6214BDE4B008A47B5 /* rail_gun.mp3 in Resources */,
-				563B66E8214BDE4B008A47B5 /* enemy_down.mp3 in Resources */,
 				563B66E4214BDE4B008A47B5 /* red_laser_sound.mp3 in Resources */,
 				5670CFED2130123A003B708C /* stars.sks in Resources */,
 				563486202146CDD6006183A4 /* asteroid_down.mp3 in Resources */,

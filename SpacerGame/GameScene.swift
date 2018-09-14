@@ -119,7 +119,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	private var gameFinished:Bool			= false // gameOver
 
 	private var motionManager: CMMotionManager!
-	private var starsLayer:SKNode!              // слой звезд
 	private var asteroidLayer:SKNode = SKNode() // слой астероидов
 	private var dY_lean_correction:Double	= 0.4// коррекция на наклон устройства
 
@@ -153,29 +152,168 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	}
 	
     
-	private var weaponTimer:Timer!
 	public var takenFeatures:Array<Feature> = [] 			// массив взятых финтиклюшек (жизнь сюда не входит)
+	public var activeWeapon:Feature! 						// тут будет храниться активное оружие
+	private var weaponTimer:Timer!
+    private let backingContainer = SKNode()					// контейнер для фонов
+	private var starsEmitter:SKEmitterNode!					// слой звезд
+
 	private var playerImmortable:Bool 		= false 		// неуязвимость
 	private var asteroidDestructible:Bool 	= true 			// астероиды разрушаются лазером
 	
-	public var activeWeapon:Feature! 						// тут будет храниться активное оружие
-    private let backingContainer = SKNode()					// контейнер для фонов
+	
+	public static var selF:GameScene!
 	
 	
+
 	
+
 	
+    
 	
-	
-    /// Включение фоновой музыки
-    private func playBackMusic(){
-        let musicURL = Bundle.main.url(forResource: "backgroundMusic", withExtension: "m4a")!
-        soundChanel = try! AVAudioPlayer(contentsOf: musicURL, fileTypeHint: nil)
-        soundChanel.numberOfLoops = -1
-        soundChanel.volume = 0.05
-        soundChanel.play()
+    override func didMove(to view: SKView) {
+		
+		enemySpawn()
+		featureSpawn()
+		
+        // любой рандомайзер всегда на что-то операется, в данном случае на время, потому при каждом запуске оно будет разное
+        srand48(time(nil)) // "для того чтоб сид был разный"
+        
+        physicsWorld.contactDelegate = self
+        physicsWorld.gravity = CGVector(dx: 0.0, dy: -0.8) // гравитация - вектор, направленный сверху-вниз с ускорением -9,8
+
+		// бэкграунг сцены
+		addChild(backingContainer)
+		backingContainer.position = CGPoint(x: frame.midX, y: frame.midY)
+		// бэк1
+        let stageBacking1 = SKSpriteNode(imageNamed: "background")
+        backingContainer.addChild(stageBacking1)
+		// бэк2
+		let stageBacking2 = SKSpriteNode(imageNamed: "background")
+		stageBacking2.position.y = stageBacking2.size.height
+		backingContainer.addChild(stageBacking2)
+		// экшн который будет их двигать
+		let offsetPosY:Int = Int(abs((stageBacking2.size.height - self.frame.size.height) / 2) + 1)
+		print("offsetPosY = \(offsetPosY)")
+		let moveDown = SKAction.moveTo(y: -stageBacking2.size.height + CGFloat(offsetPosY), duration: 10)
+		let startPos = SKAction.run {
+			self.backingContainer.position.y = CGFloat(offsetPosY)
+		}
+		
+		let seq = SKAction.sequence([moveDown, startPos])
+		let repeatAct = SKAction.repeatForever(seq)
+		backingContainer.run(repeatAct)
+		
+		
+		
+        // создаем слой звезд
+        let starsPath:String = Bundle.main.path(forResource: "stars", ofType: "sks")!
+		starsEmitter = NSKeyedUnarchiver.unarchiveObject(withFile: starsPath) as! SKEmitterNode
+        starsEmitter.particlePositionRange.dx = frame.size.width
+        starsEmitter.advanceSimulationTime(20) // сколько должна уже идти симуляция до запуска приложения
+		starsEmitter.position = CGPoint(x: frame.midX, y: frame.size.height) // странное размещение в симуляторе слоев, но иначе не работает
+		addChild(starsEmitter)
+		
+        // космич. корабль
+        spaceShip = SKSpriteNode(imageNamed: "picSpaceShip")
+        spaceShip.physicsBody = SKPhysicsBody(texture: spaceShip.texture!, size: spaceShip.size)
+        spaceShip.physicsBody?.isDynamic = false // гравитация не должна утягивать корабль вниз
+        
+        // определяем с кем корабль будет сталкиваться
+        spaceShip.physicsBody?.categoryBitMask = Collision.PLAYER_SHIP
+        spaceShip.physicsBody?.collisionBitMask = Collision.ASTEROID
+        spaceShip.physicsBody?.contactTestBitMask = Collision.ASTEROID // на что мы должны получать уведомление
+        spaceShip.name = "personage"
+        addChild(spaceShip)
+        
+        // левый двигатель
+        let enginePath:String = Bundle.main.path(forResource: "fireParticles", ofType: "sks")!
+        let engine1 = NSKeyedUnarchiver.unarchiveObject(withFile: enginePath) as! SKEmitterNode
+        engine1.advanceSimulationTime(5)
+        spaceShip.addChild(engine1)
+        engine1.position = CGPoint(x: -28, y: -spaceShip.frame.height/2 + 5)
+        engine1.zPosition = spaceShip.self.zPosition - 1
+        
+        // правый двигатель
+        let engine2 = NSKeyedUnarchiver.unarchiveObject(withFile: enginePath) as! SKEmitterNode
+        engine2.advanceSimulationTime(5)
+        spaceShip.addChild(engine2)
+        engine2.position = CGPoint(x: 28, y: -spaceShip.frame.height/2 + 5)
+        engine2.zPosition = spaceShip.self.zPosition - 1
+//        engine2.targetNode = self // оставляет шлейф за огнем
+        
+		backingContainer.zPosition = 0
+//        stageBacking.zPosition = 0
+        starsEmitter.zPosition = 1
+        spaceShip.zPosition = 2
+
+		
+		// так не работает отслеживание вылета за экран!!!
+		// addChild(asteroidLayer)
+		// self.asteroidLayer.zPosition = 2
+		
+        // генерируем астероиды
+        let asteroidCreateAction = SKAction.run { 
+            let asteroid = self.createAsteroid()
+            asteroid.zPosition = 2
+            self.addChild(asteroid)
+        }
+        
+        
+        // будет генерировать астероиды с задержкой от 1с до 1,5с
+        let asteroidCreationDelay = SKAction.wait(forDuration: 1.0 / asterPerSecond, withRange: 0.25)
+        
+        // последовательность действий
+        let asteroidSequenceAction = SKAction.sequence([asteroidCreateAction, asteroidCreationDelay])
+        
+        // зацикливаем создание астероидов
+        let asteroidRunAction = SKAction.repeatForever(asteroidSequenceAction)
+        
+        // запускаем всю эту шнягу
+        run(asteroidRunAction)
+        
+        // запускаем считывание акселерометра
+        motionManager = CMMotionManager()
+        motionManager.accelerometerUpdateInterval = 0.15
+        motionManager.startAccelerometerUpdates()
+        
+        
+        // для мигания корабля
+        let colorAct1 = SKAction.colorize(with: #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1), colorBlendFactor: 1, duration: 0.2)
+        let colorAct2 = SKAction.colorize(with: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), colorBlendFactor: 0, duration: 0.2)
+        let colorSequenceAnimation = SKAction.sequence([colorAct1, colorAct2])
+        colorActionRepeat = SKAction.repeat(colorSequenceAnimation, count: 4)
+		
+		// проверяем, включена ли музыка
+		let s_flag = UserDefaults.standard.object(forKey: "music")
+		GameScene.music_flag = (s_flag == nil) ? true : s_flag as! Bool
+		// проверяем, включены ли звуки
+		let m_flag = UserDefaults.standard.object(forKey: "sound")
+		GameScene.sound_flag = (m_flag == nil) ? true : m_flag as! Bool
+		
+		resetGame()
+		
+        if GameScene.music_flag {
+            playBackMusic()
+        }
+		GameScene.selF = self
     }
     
-
+    
+	
+	
+	
+	/// Включение фоновой музыки
+	private func playBackMusic(){
+		let musicURL = Bundle.main.url(forResource: "backgroundMusic", withExtension: "m4a")!
+		soundChanel = try! AVAudioPlayer(contentsOf: musicURL, fileTypeHint: nil)
+		soundChanel.numberOfLoops = -1
+		soundChanel.volume = 0.08
+		soundChanel.play()
+	}
+	
+	
+	
 	
 	// стрелялка лазером
 	@objc func startFire(){
@@ -228,145 +366,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		playSound(activeWeapon.weaponConf["sound"] as! String)
 		
 	}
-	
-	
-	
-	
-    
-	
-    override func didMove(to view: SKView) {
-		
-		enemySpawn()
-		featureSpawn()
-		
-        // любой рандомайзер всегда на что-то операется, в данном случае на время, потому при каждом запуске оно будет разное
-        srand48(time(nil)) // "для того чтоб сид был разный"
-        
-        physicsWorld.contactDelegate = self
-        physicsWorld.gravity = CGVector(dx: 0.0, dy: -0.8) // гравитация - вектор, направленный сверху-вниз с ускорением -9,8
-
-		// бэкграунг сцены
-		addChild(backingContainer)
-		backingContainer.position = CGPoint(x: frame.midX, y: frame.midY)
-		// бэк1
-        let stageBacking1 = SKSpriteNode(imageNamed: "background")
-        backingContainer.addChild(stageBacking1)
-		// бэк2
-		let stageBacking2 = SKSpriteNode(imageNamed: "background")
-		stageBacking2.position.y = stageBacking2.size.height
-		backingContainer.addChild(stageBacking2)
-		// экшн который будет их двигать
-		let moveDown = SKAction.moveTo(y: -stageBacking2.size.height + 20, duration: 10)
-		let startPos = SKAction.run {
-			self.backingContainer.position.y = 20
-		}
-		
-		let seq = SKAction.sequence([moveDown, startPos])
-		let repeatAct = SKAction.repeatForever(seq)
-		backingContainer.run(repeatAct)
-		
-		
-		
-        // создаем слой звезд
-        let starsPath:String = Bundle.main.path(forResource: "stars", ofType: "sks")!
-        let starsEmitter = NSKeyedUnarchiver.unarchiveObject(withFile: starsPath) as! SKEmitterNode
-        starsEmitter.position = CGPoint(x: self.frame.midX, y: self.frame.height)
-        starsEmitter.particlePositionRange.dx = self.frame.width
-        starsEmitter.advanceSimulationTime(20) // сколько должна уже идти симуляция до запуска приложения
-        
-        starsLayer = SKNode()
-        addChild(starsLayer)
-        starsLayer.addChild(starsEmitter)
-        
-        // космич. корабль
-        spaceShip = SKSpriteNode(imageNamed: "picSpaceShip")
-        spaceShip.physicsBody = SKPhysicsBody(texture: spaceShip.texture!, size: spaceShip.size)
-        spaceShip.physicsBody?.isDynamic = false // гравитация не должна утягивать корабль вниз
-        
-        // определяем с кем корабль будет сталкиваться
-        spaceShip.physicsBody?.categoryBitMask = Collision.PLAYER_SHIP
-        spaceShip.physicsBody?.collisionBitMask = Collision.ASTEROID
-        spaceShip.physicsBody?.contactTestBitMask = Collision.ASTEROID // на что мы должны получать уведомление
-        spaceShip.name = "personage"
-        addChild(spaceShip)
-        
-        // левый двигатель
-        let enginePath:String = Bundle.main.path(forResource: "fireParticles", ofType: "sks")!
-        let engine1 = NSKeyedUnarchiver.unarchiveObject(withFile: enginePath) as! SKEmitterNode
-        engine1.advanceSimulationTime(5)
-        spaceShip.addChild(engine1)
-        engine1.position = CGPoint(x: -28, y: -spaceShip.frame.height/2 + 5)
-        engine1.zPosition = spaceShip.self.zPosition - 1
-        
-        // правый двигатель
-        let engine2 = NSKeyedUnarchiver.unarchiveObject(withFile: enginePath) as! SKEmitterNode
-        engine2.advanceSimulationTime(5)
-        spaceShip.addChild(engine2)
-        engine2.position = CGPoint(x: 28, y: -spaceShip.frame.height/2 + 5)
-        engine2.zPosition = spaceShip.self.zPosition - 1
-//        engine2.targetNode = self // оставляет шлейф за огнем
-        
-		backingContainer.zPosition = 0
-//        stageBacking.zPosition = 0
-        starsLayer.zPosition = 1
-        spaceShip.zPosition = 2
-
-		
-		// так не работает отслеживание вылета за экран!!!
-		// addChild(asteroidLayer)
-		// self.asteroidLayer.zPosition = 2
-		
-        // генерируем астероиды
-        let asteroidCreateAction = SKAction.run { 
-            let asteroid = self.createAsteroid()
-            asteroid.zPosition = 2
-            self.addChild(asteroid)
-        }
-        
-        
-        // будет генерировать астероиды с задержкой от 1с до 1,5с
-        let asteroidCreationDelay = SKAction.wait(forDuration: 1.0 / asterPerSecond, withRange: 0.25)
-        
-        // последовательность действий
-        let asteroidSequenceAction = SKAction.sequence([asteroidCreateAction, asteroidCreationDelay])
-        
-        // зацикливаем создание астероидов
-        let asteroidRunAction = SKAction.repeatForever(asteroidSequenceAction)
-        
-        // запускаем всю эту шнягу
-        run(asteroidRunAction)
-        
-        // запускаем считывание акселерометра
-        motionManager = CMMotionManager()
-        motionManager.accelerometerUpdateInterval = 0.15
-        motionManager.startAccelerometerUpdates()
-        
-        
-        // для мигания корабля
-        let colorAct1 = SKAction.colorize(with: #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1), colorBlendFactor: 1, duration: 0.2)
-        let colorAct2 = SKAction.colorize(with: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), colorBlendFactor: 0, duration: 0.2)
-        let colorSequenceAnimation = SKAction.sequence([colorAct1, colorAct2])
-        colorActionRepeat = SKAction.repeat(colorSequenceAnimation, count: 4)
-		
-		// проверяем, включена ли музыка
-		let s_flag = UserDefaults.standard.object(forKey: "music")
-		GameScene.music_flag = (s_flag == nil) ? true : s_flag as! Bool
-		// проверяем, включены ли звуки
-		let m_flag = UserDefaults.standard.object(forKey: "sound")
-		GameScene.sound_flag = (m_flag == nil) ? true : m_flag as! Bool
-		
-		resetGame()
-		
-        if GameScene.music_flag {
-            playBackMusic()
-        }
-		
-    }
-    
-    
-	
-	
-	
 	
 	
     
@@ -485,7 +484,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	public func featureSpawn(){
 
 		let featureAction = SKAction.run {
-			let bonus = Feature(GameScene.randArrElemen(array: Bonus.allFeatures), self)
+			let bonus = Feature(GameScene.randArrElemen(array: Bonus.allFeatures))
 			bonus.zPosition = 2
 			self.addChild(bonus)
 			bonus.name = "enemy_clear_marker"
@@ -542,13 +541,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 					let corectionAct = SKAction.move(to: CGPoint(x: newX, y: newY), duration: 0.1)
 					spaceShip.run(corectionAct, withKey: "corectionAct")
 				}
-				
 				spaceShipOnFinger = true
-				
 			}
-			
 		}
     }
+	
 	
 	
 	// таскание нашего корабля пальцем
@@ -593,9 +590,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
 		let randFloat = CGFloat(Float(GameScene.random(3, 5)) / 10.0)
 
-        //asteroid.xScale = CGFloat(randFloatX)
-        //asteroid.yScale = CGFloat(randFloatY)
-        
         asteroid.setScale(randFloat)
         
         // назначаем астероиду физическое тело для взаимодействия. Метод ниже определяет физ.тело на основе прозрачности слоя
@@ -616,7 +610,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         return asteroid
     }
     
-    
+	
+	
+	
     // метод, срабатываемый после просчета физики в каждом кадре ENTERFRAME
     // метод перебирает все ноды сцены c указанным именем;
     // stop - прекращает работу метода/перебора нодов
