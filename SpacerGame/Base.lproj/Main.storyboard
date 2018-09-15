@@ -221,7 +221,7 @@
         <!--Настройки игры-->
         <scene sceneID="aAR-er-0Sf">
             <objects>
-                <tableViewController id="UXB-AI-bGk" sceneMemberID="viewController">
+                <tableViewController id="UXB-AI-bGk" customClass="ConfigurationTable" customModule="SpacerGame" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" sectionIndexMinimumDisplayRowCount="2" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="4tW-cw-EyG">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="507"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -246,6 +246,9 @@
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cgo-aS-ksM">
                                                     <rect key="frame" x="255" y="9" width="49" height="31"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <connections>
+                                                        <action selector="onSwitcherChange:" destination="UXB-AI-bGk" eventType="valueChanged" id="jgI-Ye-Udx"/>
+                                                    </connections>
                                                 </switch>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -268,9 +271,12 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L3r-rF-1ab">
+                                                <switch opaque="NO" tag="1" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L3r-rF-1ab">
                                                     <rect key="frame" x="255" y="9" width="49" height="31"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <connections>
+                                                        <action selector="onSwitcherChange:" destination="UXB-AI-bGk" eventType="valueChanged" id="5nP-Ey-vAQ"/>
+                                                    </connections>
                                                 </switch>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -289,9 +295,12 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1tS-k1-jMq">
+                                                <switch opaque="NO" tag="2" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1tS-k1-jMq">
                                                     <rect key="frame" x="255" y="9" width="49" height="31"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <connections>
+                                                        <action selector="onSwitcherChange:" destination="UXB-AI-bGk" eventType="valueChanged" id="TVD-2i-TNV"/>
+                                                    </connections>
                                                 </switch>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -307,16 +316,19 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="49.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Режим брони" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pr9-fl-vMP">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Режим Бога" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pr9-fl-vMP">
                                                     <rect key="frame" x="16" y="4" width="231" height="40"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HHo-Gw-5S0">
+                                                <switch opaque="NO" tag="3" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HHo-Gw-5S0">
                                                     <rect key="frame" x="255" y="9" width="49" height="31"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <connections>
+                                                        <action selector="onSwitcherChange:" destination="UXB-AI-bGk" eventType="valueChanged" id="cEA-Y7-4g7"/>
+                                                    </connections>
                                                 </switch>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -335,9 +347,12 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="KUQ-da-4uf">
+                                                <stepper opaque="NO" tag="100" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="7" translatesAutoresizingMaskIntoConstraints="NO" id="KUQ-da-4uf">
                                                     <rect key="frame" x="141" y="16" width="94" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <connections>
+                                                        <action selector="onStepperChange:" destination="UXB-AI-bGk" eventType="valueChanged" id="SC0-TK-MsQ"/>
+                                                    </connections>
                                                 </stepper>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="4" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="azH-qy-ue5">
                                                     <rect key="frame" x="249" y="13" width="55" height="34"/>
@@ -356,16 +371,19 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="7" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XkO-tI-VFI">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="7" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.59999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="XkO-tI-VFI">
                                                     <rect key="frame" x="249" y="13" width="55" height="34"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="20"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="Uzb-CW-4Yy">
+                                                <stepper opaque="NO" tag="101" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="Uzb-CW-4Yy">
                                                     <rect key="frame" x="141" y="16" width="94" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <connections>
+                                                        <action selector="onStepperChange:" destination="UXB-AI-bGk" eventType="valueChanged" id="qFa-2X-eQt"/>
+                                                    </connections>
                                                 </stepper>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Интервал бонусов" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ao8-tT-zoE">
                                                     <rect key="frame" x="16" y="4" width="116" height="51"/>
@@ -393,6 +411,16 @@
                     <navigationItem key="navigationItem" title="Настройки игры" id="MkD-lb-Ci9">
                         <barButtonItem key="backBarButtonItem" title="Назад1" id="NdT-1a-ddM"/>
                     </navigationItem>
+                    <connections>
+                        <outlet property="bonuses_count_TF" destination="XkO-tI-VFI" id="bKq-C4-06i"/>
+                        <outlet property="meteorits_count_TF" destination="azH-qy-ue5" id="8AA-CP-7ob"/>
+                        <outlet property="stepper1" destination="KUQ-da-4uf" id="QBP-mm-d7X"/>
+                        <outlet property="stepper2" destination="Uzb-CW-4Yy" id="uGY-9N-Dmz"/>
+                        <outlet property="switcher_accelerometer" destination="Cgo-aS-ksM" id="0oX-Nh-VLE"/>
+                        <outlet property="switcher_immortal" destination="HHo-Gw-5S0" id="o4t-iv-Qb0"/>
+                        <outlet property="switcher_music" destination="L3r-rF-1ab" id="g5k-yP-rvv"/>
+                        <outlet property="switcher_sound" destination="1tS-k1-jMq" id="b5s-FB-lGq"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bQ1-nZ-Jcn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -439,7 +467,8 @@
                                         </constraints>
                                         <state key="normal" image="menu_MenuBttn"/>
                                         <connections>
-                                            <segue destination="Ebd-Nd-407" kind="showDetail" id="VcK-TF-vTy"/>
+                                            <action selector="onMenuClick:" destination="KSn-n4-Exp" eventType="touchUpInside" id="ZeK-AF-0Nf"/>
+                                            <segue destination="Ebd-Nd-407" kind="show" id="VcK-TF-vTy"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kcS-f1-d63">
@@ -463,14 +492,14 @@
                                 <rect key="frame" x="22" y="379" width="276" height="27"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="menu_sound" translatesAutoresizingMaskIntoConstraints="NO" id="SRo-J6-dGn">
-                                        <rect key="frame" x="0.0" y="0.0" width="113.5" height="27"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="113" height="27"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="113" id="YwX-e7-ub9"/>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="27" id="tQi-xP-m4v"/>
                                         </constraints>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jSf-y4-8xJ">
-                                        <rect key="frame" x="233.5" y="0.0" width="42.5" height="27"/>
+                                        <rect key="frame" x="233" y="0.0" width="43" height="27"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="43" id="Scm-Uz-XOQ"/>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="27" id="jII-gU-sp2"/>
@@ -490,7 +519,7 @@
                                 <rect key="frame" x="22" y="430" width="276" height="27"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="menu_music" translatesAutoresizingMaskIntoConstraints="NO" id="N3F-j3-vAN">
-                                        <rect key="frame" x="0.0" y="2" width="88.5" height="23"/>
+                                        <rect key="frame" x="0.0" y="2" width="88" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="88" id="4rF-Vl-nsZ"/>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="23" id="YMy-LP-JiK"/>
@@ -498,7 +527,7 @@
                                         </constraints>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XoV-Lf-qsB">
-                                        <rect key="frame" x="233.5" y="0.0" width="42.5" height="27"/>
+                                        <rect key="frame" x="233" y="0.0" width="43" height="27"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="XoV-Lf-qsB" secondAttribute="height" multiplier="43:27" id="Tbc-FH-2VJ"/>
                                         </constraints>

@@ -35,6 +35,7 @@
 		567FE6D1214174B000ABA768 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 567FE6D0214174B000ABA768 /* Settings.swift */; };
 		568E5D53214C72730033932C /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 568E5D52214C72730033932C /* Configuration.swift */; };
 		56C27E962130CEDC008B4438 /* hitSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 56C27E952130CEDB008B4438 /* hitSound.wav */; };
+		56CC82DE214D1E35001253B5 /* ConfigurationTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56CC82DD214D1E35001253B5 /* ConfigurationTable.swift */; };
 		56FB569E2130B7B4003B8743 /* backgroundMusic.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 56FB569C2130B7B4003B8743 /* backgroundMusic.m4a */; };
 /* End PBXBuildFile section */
 
@@ -69,6 +70,7 @@
 		567FE6D0214174B000ABA768 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		568E5D52214C72730033932C /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		56C27E952130CEDB008B4438 /* hitSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hitSound.wav; sourceTree = "<group>"; };
+		56CC82DD214D1E35001253B5 /* ConfigurationTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationTable.swift; sourceTree = "<group>"; };
 		56FB569C2130B7B4003B8743 /* backgroundMusic.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = backgroundMusic.m4a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -103,21 +105,22 @@
 			isa = PBXGroup;
 			children = (
 				5678338420F170A100B4520A /* Main.storyboard */,
-				5678337C20F170A100B4520A /* GameScene.sks */,
-				562E4EF321458475009B2CF6 /* StartScreen.swift */,
 				5678337A20F170A100B4520A /* AppDelegate.swift */,
-				5678338220F170A100B4520A /* GameViewController.swift */,
+				562E4EF321458475009B2CF6 /* StartScreen.swift */,
 				5678338020F170A100B4520A /* GameScene.swift */,
+				5678338220F170A100B4520A /* GameViewController.swift */,
 				563486242146DB38006183A4 /* Feature.swift */,
 				563E4A072142C2C7003140D3 /* Enemy.swift */,
 				56347B8521307E04004D46E0 /* PauseView.swift */,
 				5636B21B2133387E00F97CBA /* GameOverView.swift */,
 				567FE6D0214174B000ABA768 /* Settings.swift */,
 				568E5D52214C72730033932C /* Configuration.swift */,
+				56CC82DD214D1E35001253B5 /* ConfigurationTable.swift */,
 				5678338720F170A100B4520A /* Assets.xcassets */,
 				56FB56982130B647003B8743 /* Sounds */,
 				56836F852107E3CC002F2FCD /* Particles */,
 				5678338920F170A100B4520A /* LaunchScreen.storyboard */,
+				5678337C20F170A100B4520A /* GameScene.sks */,
 				5678338C20F170A100B4520A /* Info.plist */,
 			);
 			path = SpacerGame;
@@ -247,6 +250,7 @@
 				562E4EF421458475009B2CF6 /* StartScreen.swift in Sources */,
 				5636B21C2133387E00F97CBA /* GameOverView.swift in Sources */,
 				5678338120F170A100B4520A /* GameScene.swift in Sources */,
+				56CC82DE214D1E35001253B5 /* ConfigurationTable.swift in Sources */,
 				56347B8621307E04004D46E0 /* PauseView.swift in Sources */,
 				568E5D53214C72730033932C /* Configuration.swift in Sources */,
 				563486252146DB38006183A4 /* Feature.swift in Sources */,

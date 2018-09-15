@@ -113,7 +113,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private let h							= UIScreen.main.bounds.size.height
 
     private let ship_speed:CGFloat			= 600 // поинтов в секунду
-    private let asterPerSecond:Double		= 5 // кол-во астероидов в сек
+	
 
     private var _score:Int					= 0
 	private var gameFinished:Bool			= false // gameOver
@@ -122,10 +122,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	private var asteroidLayer:SKNode = SKNode() // слой астероидов
 	private var dY_lean_correction:Double	= 0.4// коррекция на наклон устройства
 
-    public static var music_flag:Bool		= true
-	public static var sound_flag:Bool		= true
-
-    public var stageBacking:SKSpriteNode!
 	private var lastTouchCoords:CGPoint 	= CGPoint.zero 	// тут будут координаты корабля в момент касания = начало координат
 
     // мигание корабля
@@ -164,12 +160,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	
 	public static var selF:GameScene!
 	
-	
+	public static var music_flag:Bool			= true
+	public static var sound_flag:Bool			= true
+	public static var accelerometer_flag:Bool 	= false
+	public static var god_flag:Bool 			= false
+	public static var asterPerSecond:Double		= 5 	// кол-во астероидов в сек
+	public static var featureSpawnInterval: TimeInterval = 3
 
 	
-
 	
-    
+	
+	public var asteroidRunAction:SKAction!
 	
     override func didMove(to view: SKView) {
 		
@@ -261,16 +262,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         // будет генерировать астероиды с задержкой от 1с до 1,5с
-        let asteroidCreationDelay = SKAction.wait(forDuration: 1.0 / asterPerSecond, withRange: 0.25)
+        let asteroidCreationDelay = SKAction.wait(forDuration: 1.0 / GameScene.asterPerSecond, withRange: 0.25)
         
         // последовательность действий
         let asteroidSequenceAction = SKAction.sequence([asteroidCreateAction, asteroidCreationDelay])
         
         // зацикливаем создание астероидов
-        let asteroidRunAction = SKAction.repeatForever(asteroidSequenceAction)
+        asteroidRunAction = SKAction.repeatForever(asteroidSequenceAction)
         
         // запускаем всю эту шнягу
-        run(asteroidRunAction)
+		run(asteroidRunAction, withKey: "asteroidRunAction")
         
         // запускаем считывание акселерометра
         motionManager = CMMotionManager()
@@ -492,7 +493,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		}
 
 //		let waitDuration = SKAction.wait(forDuration: 7, withRange: 3)
-		let waitDuration = SKAction.wait(forDuration: 3, withRange: 1)
+		let waitDuration = SKAction.wait(forDuration: GameScene.featureSpawnInterval, withRange: 1)
 		let featureSequence = SKAction.sequence([featureAction, waitDuration])
 		let repeatSpawn	= SKAction.repeatForever(featureSequence)
 		
@@ -688,7 +689,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //            stageBacking.position.y = frame.height - stageBacking.frame.height + 1
 //        }
 		
-		// acelerometrrControled()
+		if (GameScene.accelerometer_flag) {
+			acelerometrrControled()
+		}
 		
 	}
 	
@@ -726,14 +729,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			if (spaceShip.position.x >= frame.size.width && motionVector.dx > 0) {
 				motionVector.dx = 0
 			}
-			// вниз
-			if (spaceShip.position.y + spaceShip.frame.height / 2 >= frame.size.height && motionVector.dy > 0) {
-				motionVector.dy = 0
-			}
-			// вверх
-			if (spaceShip.position.y - spaceShip.frame.height / 2 <= 0 && motionVector.dy < 0) {
-				motionVector.dy = 0
-			}
+//			// вниз
+//			if (spaceShip.position.y + spaceShip.frame.height / 2 >= frame.size.height && motionVector.dy > 0) {
+//				motionVector.dy = 0
+//			}
+//			// вверх
+//			if (spaceShip.position.y - spaceShip.frame.height / 2 <= 0 && motionVector.dy < 0) {
+//				motionVector.dy = 0
+//			}
 			
 			let replaceAction = SKAction.move(by: motionVector, duration: 0.1)
 			spaceShip.run(replaceAction)
@@ -741,7 +744,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			// двигаем фон
 			let newVector:CGVector = CGVector(dx: (motionVector.dx / 10) * -1, dy: (motionVector.dy / 10) * -1)
 			let parallaxAction = SKAction.move(by: newVector, duration: 0.1)
-			stageBacking.run(parallaxAction)
+			backingContainer.run(parallaxAction)
 			
 		}
 	}
@@ -829,7 +832,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	/// Отнимание жизней
 	private func minusLives(){
 		
-		if flashingShip || playerImmortable || gameFinished {
+		if flashingShip || playerImmortable || gameFinished || GameScene.god_flag {
 			return
 		}
 		

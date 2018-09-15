@@ -11,7 +11,7 @@ import UIKit
 class Configuration: UIViewController {
 
 	
-	@IBOutlet weak var tableView: UITableView!
+	
 	
 	
     override func viewDidLoad() {

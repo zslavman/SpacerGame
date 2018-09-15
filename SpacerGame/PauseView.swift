@@ -69,16 +69,31 @@ class PauseView: UIViewController {
             opened = true
 			UIApplication.shared.isIdleTimerDisabled = false
 			
-			audioPlayerBack = try! AVAudioPlayer(contentsOf: robocopSound!)
-			audioPlayerBack.volume = 0.3
-			audioPlayerBack.numberOfLoops = -1
-			audioPlayerBack.play()
+			loadBackMusic()
         }
     }
     
 	
 	
+	/// Включаем фоновую музыку
+	private func loadBackMusic(){
+		
+		do {
+			audioPlayerBack = try AVAudioPlayer(contentsOf: robocopSound!)
+			audioPlayerBack.volume = 0.3
+			audioPlayerBack.numberOfLoops = -1
+			if (GameScene.music_flag){
+				audioPlayerBack.play()
+			}
+		}
+		catch {
+			print("couldn't load sound file")
+		}
+	}
 	
+	
+	
+	/// звук клика кнопок
 	private func getClickSound(){
 		do {
 			audioPlayer = try AVAudioPlayer(contentsOf: clickSound!)
@@ -99,10 +114,10 @@ class PauseView: UIViewController {
 		UIApplication.shared.isIdleTimerDisabled = true
 		getClickSound()
     }
-//    @IBAction func onMenuClick(_ sender: UIButton) {
-//        delegate.pauseView_MenuClicked(self)
-//		getClickSound()
-//    }
+    @IBAction func onMenuClick(_ sender: UIButton) {
+        delegate.pauseView_MenuClicked(self)
+		getClickSound()
+    }
     @IBAction func onStoreClick(_ sender: UIButton) {
         delegate.pauseView_StoreClicked(self)
 		inNextUpdate(str: "Покупки")
@@ -123,10 +138,16 @@ class PauseView: UIViewController {
     @IBAction func onMusicClick(_ sender: UIButton) {
         GameScene.music_flag = !GameScene.music_flag
         changeButtonView_music(sender)
-        
+		if (GameScene.music_flag){
+			audioPlayerBack.play()
+		}
+		else {
+			audioPlayerBack.stop()
+		}
+		
+		getClickSound()
         UserDefaults.standard.set(GameScene.music_flag, forKey: "music")
         UserDefaults.standard.synchronize()
-		getClickSound()
     }
     
 	
