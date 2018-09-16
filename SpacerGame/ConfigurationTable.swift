@@ -102,12 +102,22 @@ class ConfigurationTable: UITableViewController {
 		super.viewWillDisappear(animated)
 		
 		// перезапускаем спавн метеоритов
-		GameScene.selF.removeAction(forKey: "asteroidRunAction")
-		GameScene.selF.run(GameScene.selF.asteroidRunAction, withKey: "asteroidRunAction")
+		GameScene.selF.asteroidSpawn()
 		
 		// перезапускаем спавн подарков
-		GameScene.selF.removeAction(forKey: "featureSpawn")
 		GameScene.selF.featureSpawn()
+		
+		// обновляем вьюшку PauseView
+		if isMovingFromParentViewController {
+			if let viewControllers = self.navigationController?.viewControllers {
+				if (viewControllers.count >= 1) {
+					let previousViewController = viewControllers[viewControllers.count - 1] as! PauseView
+					// вызываем метод из предыдущего вьюконтроллера
+					previousViewController.viewDidLoad()
+				}
+			}
+		}
+		
 		
 	}
 	

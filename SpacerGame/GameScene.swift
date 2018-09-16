@@ -169,13 +169,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
 	
 	
-	
-	public var asteroidRunAction:SKAction!
-	
     override func didMove(to view: SKView) {
 		
 		enemySpawn()
 		featureSpawn()
+		asteroidSpawn()
 		
         // любой рандомайзер всегда на что-то операется, в данном случае на время, потому при каждом запуске оно будет разное
         srand48(time(nil)) // "для того чтоб сид был разный"
@@ -253,25 +251,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		// addChild(asteroidLayer)
 		// self.asteroidLayer.zPosition = 2
 		
-        // генерируем астероиды
-        let asteroidCreateAction = SKAction.run { 
-            let asteroid = self.createAsteroid()
-            asteroid.zPosition = 2
-            self.addChild(asteroid)
-        }
-        
-        
-        // будет генерировать астероиды с задержкой от 1с до 1,5с
-        let asteroidCreationDelay = SKAction.wait(forDuration: 1.0 / GameScene.asterPerSecond, withRange: 0.25)
-        
-        // последовательность действий
-        let asteroidSequenceAction = SKAction.sequence([asteroidCreateAction, asteroidCreationDelay])
-        
-        // зацикливаем создание астероидов
-        asteroidRunAction = SKAction.repeatForever(asteroidSequenceAction)
-        
-        // запускаем всю эту шнягу
-		run(asteroidRunAction, withKey: "asteroidRunAction")
         
         // запускаем считывание акселерометра
         motionManager = CMMotionManager()
@@ -483,6 +462,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	
 	
 	public func featureSpawn(){
+		
+		self.removeAction(forKey: "featureSpawn")
 
 		let featureAction = SKAction.run {
 			let bonus = Feature(GameScene.randArrElemen(array: Bonus.allFeatures))
@@ -492,14 +473,35 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			bonus.fly()
 		}
 
-//		let waitDuration = SKAction.wait(forDuration: 7, withRange: 3)
-		let waitDuration = SKAction.wait(forDuration: GameScene.featureSpawnInterval, withRange: 1)
+		let waitDuration = SKAction.wait(forDuration: GameScene.featureSpawnInterval, withRange: 2)
 		let featureSequence = SKAction.sequence([featureAction, waitDuration])
 		let repeatSpawn	= SKAction.repeatForever(featureSequence)
 		
 		run(repeatSpawn, withKey: "featureSpawn")
 	}
 	
+	
+	
+	
+	
+	// генерируем астероиды
+	public func asteroidSpawn(){
+		
+		self.removeAction(forKey: "asteroidRunAction")
+		
+		let asteroidCreateAction = SKAction.run {
+			let asteroid = self.createAsteroid()
+			asteroid.zPosition = 2
+			self.addChild(asteroid)
+		}
+		
+		let asteroidCreationDelay = SKAction.wait(forDuration: 1.0 / GameScene.asterPerSecond, withRange: 0.5)
+		let asteroidSequenceAction = SKAction.sequence([asteroidCreateAction, asteroidCreationDelay])
+		let asteroidRunAction = SKAction.repeatForever(asteroidSequenceAction)
+		
+		// запускаем всю эту шнягу
+		run(asteroidRunAction, withKey: "asteroidRunAction")
+	}
 	
 	
 	

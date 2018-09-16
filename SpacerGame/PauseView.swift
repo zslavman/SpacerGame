@@ -95,6 +95,10 @@ class PauseView: UIViewController {
 	
 	/// звук клика кнопок
 	private func getClickSound(){
+		
+		if (!GameScene.sound_flag){
+			return
+		}
 		do {
 			audioPlayer = try AVAudioPlayer(contentsOf: clickSound!)
 			audioPlayer.volume = 0.5
