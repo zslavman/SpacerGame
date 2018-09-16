@@ -27,7 +27,7 @@ class PauseView: UIViewController {
 
     @IBOutlet weak var sounds_bttn: UIButton!
     @IBOutlet weak var music_bttn: UIButton!
-    private var opened:Bool = false
+    public var opened:Bool = false
 
     let clickSound          = Bundle.main.url(forResource: "createPop", withExtension: "mp3")
     let robocopSound        = Bundle.main.url(forResource: "robocop4", withExtension: "mp3")
@@ -44,6 +44,8 @@ class PauseView: UIViewController {
 		
 	}
 	
+	
+
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -52,9 +54,10 @@ class PauseView: UIViewController {
         changeButtonView_music(sounds_bttn)
         changeButtonView_music(music_bttn)
         
-        let buttonArray = [resumePlay_bttn, menu_bttn, store_bttn]
-        
         if (!opened){ // анимация будет лишь при заходе сюда из другого контроллера
+			
+			let buttonArray = [resumePlay_bttn, menu_bttn, store_bttn]
+			
             for (index, button) in buttonArray.enumerated() {
                 button?.transform = CGAffineTransform(scaleX: 0, y: 0) // определяем начальные значения кнопок
                 
@@ -73,6 +76,16 @@ class PauseView: UIViewController {
         }
     }
     
+	
+	
+	public func update(){
+		
+		loadBackMusic()
+		changeButtonView_music(sounds_bttn)
+		changeButtonView_music(music_bttn)
+	}
+	
+	
 	
 	
 	/// Включаем фоновую музыку
@@ -118,10 +131,18 @@ class PauseView: UIViewController {
 		UIApplication.shared.isIdleTimerDisabled = true
 		getClickSound()
     }
+	
+	
+	/// Клик по кнопке меню
     @IBAction func onMenuClick(_ sender: UIButton) {
-        delegate.pauseView_MenuClicked(self)
+		
+		delegate.pauseView_MenuClicked(self)
 		getClickSound()
     }
+	
+	
+	
+	
     @IBAction func onStoreClick(_ sender: UIButton) {
         delegate.pauseView_StoreClicked(self)
 		inNextUpdate(str: "Покупки")

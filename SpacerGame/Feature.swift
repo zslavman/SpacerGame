@@ -184,7 +184,7 @@ class Feature: SKSpriteNode {
 		
 		let sequence = SKAction.sequence([fade, remove])
 		
-		self.run(sequence)
+		self.run(sequence) 
 	}
 	
 	

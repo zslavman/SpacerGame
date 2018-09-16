@@ -18,11 +18,13 @@ class ConfigurationTable: UITableViewController {
 	@IBOutlet weak var switcher_immortal: UISwitch! 		// tag 3
 	
 	@IBOutlet weak var meteorits_count_TF: UILabel!
+	@IBOutlet weak var enemys_count_TF: UILabel!
 	@IBOutlet weak var bonuses_count_TF: UILabel!
 	
 	
 	@IBOutlet weak var stepper1: UIStepper!
 	@IBOutlet weak var stepper2: UIStepper!
+	@IBOutlet weak var slider1: UISlider!
 	
 
 	
@@ -32,8 +34,11 @@ class ConfigurationTable: UITableViewController {
 
 		setSwitchers()
 		setTextToLabels()
+		
+		// Значения по дефолту для степперов и слайдера
 		stepper1.value = GameScene.asterPerSecond
-		stepper2.value = GameScene.featureSpawnInterval
+		stepper2.value = GameScene.enemySpawnInterval
+		slider1.value = Float(GameScene.featureSpawnInterval)
 		
 		// let io = #keyPath(switcher_accelerometer)
 	}
@@ -52,8 +57,12 @@ class ConfigurationTable: UITableViewController {
 			GameScene.accelerometer_flag = sender.isOn
 		case 1:
 			GameScene.music_flag = sender.isOn
+			UserDefaults.standard.set(GameScene.music_flag, forKey: "music")
+			UserDefaults.standard.synchronize()
 		case 2:
 			GameScene.sound_flag = sender.isOn
+			UserDefaults.standard.set(GameScene.music_flag, forKey: "sound")
+			UserDefaults.standard.synchronize()
 		case 3:
 			GameScene.god_flag = sender.isOn
 		default: ()
@@ -61,19 +70,33 @@ class ConfigurationTable: UITableViewController {
 	}
 	
 	
+	
+	
+	// степпер
 	@IBAction func onStepperChange(_ sender: UIStepper) {
 	
 		switch sender.tag {
 		case 100:
 			GameScene.asterPerSecond = Double(sender.value)
 		case 101:
-			GameScene.featureSpawnInterval = TimeInterval(sender.value)
+			GameScene.enemySpawnInterval = TimeInterval(sender.value)
 		default: ()
 		}
-		
 		setTextToLabels()
 	}
 	
+	
+	
+	// слайдер
+	@IBAction func onSliderChange(_ sender: UISlider) {
+		
+		switch sender.tag {
+		case 101:
+			GameScene.featureSpawnInterval = TimeInterval(sender.value)
+		default: ()
+		}
+		setTextToLabels()
+	}
 	
 	
 	
@@ -91,9 +114,10 @@ class ConfigurationTable: UITableViewController {
 	private func setTextToLabels(){
 		
 		meteorits_count_TF.text = String(Int(GameScene.asterPerSecond))
+		enemys_count_TF.text = String(Int(GameScene.enemySpawnInterval))
 		bonuses_count_TF.text = String(Int(GameScene.featureSpawnInterval))
-
 	}
+
 	
 	
 	
@@ -107,19 +131,11 @@ class ConfigurationTable: UITableViewController {
 		// перезапускаем спавн подарков
 		GameScene.selF.featureSpawn()
 		
-		// обновляем вьюшку PauseView
-		if isMovingFromParentViewController {
-			if let viewControllers = self.navigationController?.viewControllers {
-				if (viewControllers.count >= 1) {
-					let previousViewController = viewControllers[viewControllers.count - 1] as! PauseView
-					// вызываем метод из предыдущего вьюконтроллера
-					previousViewController.viewDidLoad()
-				}
-			}
-		}
-		
-		
+		// перезапускаем спавн врагов
+		GameScene.selF.enemySpawn()
 	}
+	
+	
 	
 	
 	

@@ -164,8 +164,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	public static var sound_flag:Bool			= true
 	public static var accelerometer_flag:Bool 	= false
 	public static var god_flag:Bool 			= false
-	public static var asterPerSecond:Double		= 5 	// кол-во астероидов в сек
-	public static var featureSpawnInterval: TimeInterval = 3
+	public static var asterPerSecond:Double		= 3 				// кол-во астероидов в сек
+	public static var enemySpawnInterval:TimeInterval		= 6
+	public static var featureSpawnInterval: TimeInterval 	= 12
 
 	
 	
@@ -442,6 +443,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	
 	public func enemySpawn(){
 		
+		self.removeAction(forKey: "enemySpawn")
+		
 		let enemyAction = SKAction.run {
 			let enemy = Enemy()
 			enemy.zPosition = 2
@@ -450,7 +453,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			enemy.fly()
 		}
 		
-		let waitDuration = SKAction.wait(forDuration: 7, withRange: 3)
+		let waitDuration = SKAction.wait(forDuration: GameScene.enemySpawnInterval, withRange: 3)
 		let enemySequence = SKAction.sequence([enemyAction, waitDuration])
 		let repeatSpawn	= SKAction.repeatForever(enemySequence)
 		
