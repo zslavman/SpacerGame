@@ -117,6 +117,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     private var _score:Int					= 0
 	private var gameFinished:Bool			= false // gameOver
+	
+	public var isGameOver:Bool{
+		get {
+			return gameFinished
+		}
+		set { }
+	}
 
 	private var motionManager: CMMotionManager!
 	private var asteroidLayer:SKNode = SKNode() // слой астероидов
@@ -194,7 +201,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		backingContainer.addChild(stageBacking2)
 		// экшн который будет их двигать
 		let offsetPosY:Int = Int(abs((stageBacking2.size.height - self.frame.size.height) / 2) + 1)
-		print("offsetPosY = \(offsetPosY)")
 		let moveDown = SKAction.moveTo(y: -stageBacking2.size.height + CGFloat(offsetPosY), duration: 10)
 		let startPos = SKAction.run {
 			self.backingContainer.position.y = CGFloat(offsetPosY)
@@ -417,7 +423,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if motionManager.accelerometerData != nil {
             dY_lean_correction = (motionManager.accelerometerData?.acceleration.y)!
         }
-        print("dy_lean_correction = \(dY_lean_correction)")
         isPaused = false
         
         if (GameScene.music_flag){
@@ -846,6 +851,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			settings.lives -= 1
 			pgameDelegate?.gameDelegateDidUpdateLives()
 			flashingShip = true
+			// вибрация
+			AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
 		}
 		else {
 			let gameOverAction = SKAction.run {
@@ -856,6 +863,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				self.pgameDelegate?.gameDelegateGameOver(score: self.settings.currentScore)
 				self.pgameDelegate?.gameDelegateDidUpdateLives()
 				self.pauseGame()
+				// вибрация
+				AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
 			}
 			let gameOverSequance = SKAction.sequence([blinking(), gameOverAction])
 			spaceShip.run(gameOverSequance, withKey: "gameOverSequance")

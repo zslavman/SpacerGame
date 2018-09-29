@@ -17,7 +17,9 @@ import GameplayKit
 
 class GameViewController: UIViewController {
     
-    
+	
+	public static var selF:GameViewController!
+	
 	@IBOutlet weak var scoreLabel_TF: UILabel! // лейбл очков
 	@IBOutlet weak var ppBttn: UIButton! // кнопка для упрпвления ее видом
 	
@@ -30,7 +32,8 @@ class GameViewController: UIViewController {
 	public var pauseView:PauseView!
     public var gameOverView:GameOverView!
 	public var settingsInstance:Settings!
-    
+	
+	
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,6 +58,8 @@ class GameViewController: UIViewController {
 		gameOverView.settings = settingsInstance
 		
         onLoad()
+		
+		GameViewController.selF = self
     }
     
 
@@ -186,7 +191,7 @@ class GameViewController: UIViewController {
 //MARK: расширение, чтоб добратся до этого класса из PauseView
 extension GameViewController: PauseViewDelegate {
 	
-	func pauseView_ResumeClicked(_ vc:PauseView){
+	func pauseView_ResumeClicked(){
 		hideXScreen(pauseView)
 	}
 	func pauseView_MenuClicked(_ vc:PauseView){ }

@@ -10,7 +10,7 @@ import UIKit
 import AVFoundation
 
 protocol PauseViewDelegate {
-    func pauseView_ResumeClicked(_ vc:PauseView)
+    func pauseView_ResumeClicked()
     func pauseView_MenuClicked(_ vc:PauseView)
     func pauseView_StoreClicked(_ vc:PauseView)
 }
@@ -127,7 +127,7 @@ class PauseView: UIViewController {
 	
     
     @IBAction func onResumeClick(_ sender: UIButton) {
-        delegate.pauseView_ResumeClicked(self)
+        delegate.pauseView_ResumeClicked()
 		UIApplication.shared.isIdleTimerDisabled = true
 		getClickSound()
     }
