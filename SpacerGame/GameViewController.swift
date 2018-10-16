@@ -19,6 +19,7 @@ class GameViewController: UIViewController {
     
 	
 	public static var selF:GameViewController!
+	public var backScene:UIViewController!
 	
 	@IBOutlet weak var scoreLabel_TF: UILabel! // лейбл очков
 	@IBOutlet weak var ppBttn: UIButton! // кнопка для упрпвления ее видом
@@ -214,7 +215,6 @@ extension GameViewController: PGameDelegate {
 	
 
 	func gameDelegateGameOver(score:Int){
-		print("Ты попал!")
 		showXScreen(gameOverView)
 	}
 	

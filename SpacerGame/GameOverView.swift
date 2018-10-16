@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SpriteKit
 
 
 protocol GameOverDelegate {
@@ -31,6 +32,10 @@ class GameOverView: UIViewController {
 
     }
 
+
+	
+	
+	
 	
 	override func viewDidAppear(_ animated: Bool) {
 		scoreTF.text = String(settings.currentScore)
@@ -44,11 +49,21 @@ class GameOverView: UIViewController {
 	
 	@IBAction func onMenuClick(_ sender: UIButton) {
 		delegate.gameOver_onMenuClick()
+		// переход осуществляется через StoryBoard
 	}
 	
 	
 	@IBAction func onTopClick(_ sender: UIButton) {
 		delegate.gameOver_onTopClick()
+		
+//		let transition = SKTransition.push(with: .right, duration: 0.3)
+//		let destination = BestScene(size: UIScreen.main.bounds.size)
+//		destination.scaleMode = .aspectFill
+//
+//		self.view = SKView()
+//		let viewS = (self.view as! SKView?)!
+//		viewS.presentScene(destination, transition: transition)
+		
 	}
 	
 	

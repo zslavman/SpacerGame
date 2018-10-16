@@ -16,6 +16,7 @@ class ConfigurationTable: UITableViewController {
 	@IBOutlet weak var switcher_music: UISwitch! 			// tag 1
 	@IBOutlet weak var switcher_sound: UISwitch! 			// tag 2
 	@IBOutlet weak var switcher_immortal: UISwitch! 		// tag 3
+	@IBOutlet weak var switcher_vibro: UISwitch! 			// tag 4
 	
 	@IBOutlet weak var meteorits_count_TF: UILabel!
 	@IBOutlet weak var enemys_count_TF: UILabel!
@@ -65,6 +66,10 @@ class ConfigurationTable: UITableViewController {
 			UserDefaults.standard.synchronize()
 		case 3:
 			GameScene.god_flag = sender.isOn
+		case 4:
+			GameScene.vibro_flag = sender.isOn
+			UserDefaults.standard.set(GameScene.vibro_flag, forKey: "vibro")
+			UserDefaults.standard.synchronize()
 		default: ()
 		}
 	}
@@ -107,7 +112,10 @@ class ConfigurationTable: UITableViewController {
 		switcher_music.isOn			= GameScene.music_flag
 		switcher_sound.isOn			= GameScene.sound_flag
 		switcher_immortal.isOn		= GameScene.god_flag
+		switcher_vibro.isOn			= GameScene.vibro_flag
 	}
+	
+	
 	
 	
 	

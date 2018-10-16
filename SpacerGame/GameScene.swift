@@ -171,6 +171,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	public static var sound_flag:Bool			= true
 	public static var accelerometer_flag:Bool 	= false
 	public static var god_flag:Bool 			= false
+	public static var vibro_flag:Bool 				= true
 	public static var asterPerSecond:Double		= 3 				// кол-во астероидов в сек
 	public static var enemySpawnInterval:TimeInterval		= 6
 	public static var featureSpawnInterval: TimeInterval 	= 12
@@ -277,6 +278,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		// проверяем, включены ли звуки
 		let m_flag = UserDefaults.standard.object(forKey: "sound")
 		GameScene.sound_flag = (m_flag == nil) ? true : m_flag as! Bool
+		
+		// проверяем, включен ли виброрежим
+		let v_flag = UserDefaults.standard.object(forKey: "vibro")
+		GameScene.vibro_flag = (v_flag == nil) ? false : v_flag as! Bool
 		
 		resetGame()
 		
@@ -766,12 +771,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     
-    /// Рандом генератор
+    /// Возвращает рандомное число между min и max
     ///
     /// - Parameters:
     ///   - min: минимальное значение
     ///   - max: максимальное значение
-    /// - Returns: число между min и max
     public static func random(_ min: Int, _ max: Int) -> Int {
         guard min < max else {return min}
         return Int(arc4random_uniform(UInt32(1 + max - min))) + min
@@ -852,11 +856,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			pgameDelegate?.gameDelegateDidUpdateLives()
 			flashingShip = true
 			// вибрация
-			AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+			if GameScene.vibro_flag{
+				AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+			}
 		}
 		else {
+			gameFinished = true
 			let gameOverAction = SKAction.run {
-				self.gameFinished = true
 				// передаем очки классу Settings
 				self.settings.recordScores(score: self.settings.currentScore)
 				// передаем очки экрану геймовер
@@ -1120,6 +1126,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /// Столкновения (начало контакта)
     ///
     func didBegin(_ contact: SKPhysicsContact) {
+		
+		if gameFinished {
+			return
+		}
 
 		let contactRate = contact.bodyA.categoryBitMask + contact.bodyB.categoryBitMask
 		let bodies:Array = [contact.bodyA, contact.bodyB]
@@ -1136,7 +1146,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		// 10 - лазер с астероидом
 		
 		switch contactRate {
-		case 3:
+			
+		case Collision.PLAYER_SHIP + Collision.ASTEROID:
 			if (playerImmortable){
 				for item in bodies {
 					if (item.node?.name != "personage"){
@@ -1160,7 +1171,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				minusLives()
 			}
 			
-		case 5:
+		case Collision.PLAYER_SHIP + Collision.ENEMY_SHIP:
 			for item in bodies {
 				if (item.node?.name != "personage"){
 					item.categoryBitMask = Collision.NONE
@@ -1171,7 +1182,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			playSound("hitSound")
 			minusLives()
 			
-		case 17:
+		case Collision.PLAYER_SHIP + Collision.FEATURE:
 			for item in bodies {
 				if (item.node?.name != "personage"){
 					item.categoryBitMask = Collision.NONE
@@ -1182,23 +1193,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			}
 			playSound("take_bonus")
 			
-		case 12:
+		case Collision.LASER + Collision.ENEMY_SHIP:
 			for item in bodies {
 				// зеленый лазер после повержения врага летит дальше
 				if (activeWeapon != nil && activeWeapon.type == Bonus.green_laser){
 					if (item.node?.name != "laser"){
 						smallExplosion(tar: item.node!)
+						continue
 					}
 				}
 				else {
-					item.categoryBitMask = Collision.NONE
-					smallExplosion(tar: item.node!)
+					if (item.node?.name != "laser"){
+						item.categoryBitMask = Collision.NONE
+						smallExplosion(tar: item.node!)
+						continue
+					}
 				}
 			}
 			playSound("enemy_down")
 			addPoints(points: 5)
 			
-		case 10:
+		case Collision.LASER + Collision.ASTEROID:
 			for item in bodies {
 				// зеленый лазер после повержения врага летит дальше
 				if (activeWeapon != nil && activeWeapon.type == Bonus.green_laser){

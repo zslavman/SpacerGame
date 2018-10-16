@@ -36,6 +36,8 @@
 		568E5D53214C72730033932C /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 568E5D52214C72730033932C /* Configuration.swift */; };
 		56C27E962130CEDC008B4438 /* hitSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 56C27E952130CEDB008B4438 /* hitSound.wav */; };
 		56CC82DE214D1E35001253B5 /* ConfigurationTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56CC82DD214D1E35001253B5 /* ConfigurationTable.swift */; };
+		56E0B2302175ED7C0021BBCF /* BestScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E0B22F2175ED7C0021BBCF /* BestScene.swift */; };
+		56E0B2322175F56B0021BBCF /* ButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E0B2312175F56B0021BBCF /* ButtonNode.swift */; };
 		56FB569E2130B7B4003B8743 /* backgroundMusic.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 56FB569C2130B7B4003B8743 /* backgroundMusic.m4a */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +73,8 @@
 		568E5D52214C72730033932C /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		56C27E952130CEDB008B4438 /* hitSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hitSound.wav; sourceTree = "<group>"; };
 		56CC82DD214D1E35001253B5 /* ConfigurationTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationTable.swift; sourceTree = "<group>"; };
+		56E0B22F2175ED7C0021BBCF /* BestScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestScene.swift; sourceTree = "<group>"; };
+		56E0B2312175F56B0021BBCF /* ButtonNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonNode.swift; sourceTree = "<group>"; };
 		56FB569C2130B7B4003B8743 /* backgroundMusic.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = backgroundMusic.m4a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -108,14 +112,13 @@
 				5678337A20F170A100B4520A /* AppDelegate.swift */,
 				562E4EF321458475009B2CF6 /* StartScreen.swift */,
 				5678338220F170A100B4520A /* GameViewController.swift */,
-				5678338020F170A100B4520A /* GameScene.swift */,
 				563486242146DB38006183A4 /* Feature.swift */,
 				563E4A072142C2C7003140D3 /* Enemy.swift */,
-				56347B8521307E04004D46E0 /* PauseView.swift */,
-				5636B21B2133387E00F97CBA /* GameOverView.swift */,
+				56E0B22E2175ECD60021BBCF /* Scenes */,
 				567FE6D0214174B000ABA768 /* Settings.swift */,
 				568E5D52214C72730033932C /* Configuration.swift */,
 				56CC82DD214D1E35001253B5 /* ConfigurationTable.swift */,
+				56E0B2312175F56B0021BBCF /* ButtonNode.swift */,
 				5678338720F170A100B4520A /* Assets.xcassets */,
 				56FB56982130B647003B8743 /* Sounds */,
 				56836F852107E3CC002F2FCD /* Particles */,
@@ -136,6 +139,17 @@
 				5670CFEC2130123A003B708C /* stars.sks */,
 			);
 			name = Particles;
+			sourceTree = "<group>";
+		};
+		56E0B22E2175ECD60021BBCF /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				5678338020F170A100B4520A /* GameScene.swift */,
+				56347B8521307E04004D46E0 /* PauseView.swift */,
+				5636B21B2133387E00F97CBA /* GameOverView.swift */,
+				56E0B22F2175ED7C0021BBCF /* BestScene.swift */,
+			);
+			name = Scenes;
 			sourceTree = "<group>";
 		};
 		56FB56982130B647003B8743 /* Sounds */ = {
@@ -247,6 +261,7 @@
 			files = (
 				563E4A082142C2C7003140D3 /* Enemy.swift in Sources */,
 				567FE6D1214174B000ABA768 /* Settings.swift in Sources */,
+				56E0B2302175ED7C0021BBCF /* BestScene.swift in Sources */,
 				562E4EF421458475009B2CF6 /* StartScreen.swift in Sources */,
 				5636B21C2133387E00F97CBA /* GameOverView.swift in Sources */,
 				5678338120F170A100B4520A /* GameScene.swift in Sources */,
@@ -256,6 +271,7 @@
 				563486252146DB38006183A4 /* Feature.swift in Sources */,
 				5678338320F170A100B4520A /* GameViewController.swift in Sources */,
 				5678337B20F170A100B4520A /* AppDelegate.swift in Sources */,
+				56E0B2322175F56B0021BBCF /* ButtonNode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -399,7 +415,7 @@
 				INFOPLIST_FILE = SpacerGame/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = zslavman.SpacerGame;
+				PRODUCT_BUNDLE_IDENTIFIER = organic.SpacerGame;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
@@ -414,7 +430,7 @@
 				INFOPLIST_FILE = SpacerGame/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = zslavman.SpacerGame;
+				PRODUCT_BUNDLE_IDENTIFIER = organic.SpacerGame;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;

@@ -34,8 +34,10 @@ class Configuration: UIViewController {
 		self.dismiss(animated: true){
 			// обновляем вьюшку PauseView
 			let topController = self.getTopController() as! GameViewController // т.к. PauseView открыт модально, он не является presentedViewController
-			topController.pauseView.opened = true
-			topController.pauseView.update()
+			if topController.pauseView.isViewLoaded{
+				topController.pauseView.opened = true
+				topController.pauseView.update()
+			}
 		}
 		// 1)
 //		let storyBoard = UIStoryboard(name: "Main", bundle:nil)

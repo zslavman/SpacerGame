@@ -49,9 +49,9 @@ class Enemy: SKSpriteNode {
 			let wagDistance = GameScene.random(50, 200)
 			
 			// движения
-			let moveDown = SKAction.moveBy(x: 0, y: -100, duration: 2.0)
-			let moveLeft = SKAction.moveBy(x: CGFloat(-wagDistance), y: 0, duration: 2.0)
-			let moveRight = SKAction.moveBy(x: CGFloat(wagDistance), y: 0, duration: 2.0)
+			let moveDown = SKAction.moveBy(x: 0, y: -100, duration: 1.2)
+			let moveLeft = SKAction.moveBy(x: CGFloat(-wagDistance), y: 0, duration: 1.2)
+			let moveRight = SKAction.moveBy(x: CGFloat(wagDistance), y: 0, duration: 2.2)
 			
 			// сглаживаем движения влево, вправо
 			moveLeft.timingMode = SKActionTimingMode.easeInEaseOut

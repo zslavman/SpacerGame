@@ -242,7 +242,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GYY-yp-SCY" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1560" y="-673.94366197183103"/>
+            <point key="canvasLocation" x="1560" y="-674"/>
         </scene>
         <!--Настройки игры-->
         <scene sceneID="aAR-er-0Sf">
@@ -343,12 +343,40 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationLevel="4" indentationWidth="10" rowHeight="50" id="Qkz-y0-14e">
+                                        <rect key="frame" x="0.0" y="289.5" width="320" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Qkz-y0-14e" id="eL6-3b-xnC">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="49.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Вибрация" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lHE-1J-GUN">
+                                                    <rect key="frame" x="16" y="4" width="158" height="40"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" tag="4" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zX9-aV-71m">
+                                                    <rect key="frame" x="253" y="9" width="51" height="31"/>
+                                                    <color key="onTintColor" red="1" green="0.51372549020000002" blue="0.0078431372550000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <connections>
+                                                        <action selector="onSwitcherChange:" destination="UXB-AI-bGk" eventType="valueChanged" id="qzv-tg-qYv"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="zX9-aV-71m" firstAttribute="centerY" secondItem="eL6-3b-xnC" secondAttribute="centerY" id="OY7-GK-jeQ"/>
+                                                <constraint firstAttribute="trailing" secondItem="zX9-aV-71m" secondAttribute="trailing" constant="18" id="ak1-Ue-AUp"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="Разное" footerTitle="Кол-вол метиоритов, выпадаемое в 1 с, интервал врагов - время генерации врага, интервал бонусов - время генерации нового бонуса" id="Gp6-Tl-Lzy">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationLevel="4" indentationWidth="10" rowHeight="50" id="o7b-Ee-3bB">
-                                        <rect key="frame" x="0.0" y="353" width="320" height="50"/>
+                                        <rect key="frame" x="0.0" y="403" width="320" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="o7b-Ee-3bB" id="sQJ-en-neg">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="49.5"/>
@@ -376,7 +404,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationLevel="4" indentationWidth="10" rowHeight="60" id="g0x-K1-Uqu">
-                                        <rect key="frame" x="0.0" y="403" width="320" height="60"/>
+                                        <rect key="frame" x="0.0" y="453" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="g0x-K1-Uqu" id="MN3-WP-fa5">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="59.5"/>
@@ -416,7 +444,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationLevel="4" indentationWidth="10" rowHeight="60" id="Z2S-na-Cnx">
-                                        <rect key="frame" x="0.0" y="463" width="320" height="60"/>
+                                        <rect key="frame" x="0.0" y="513" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Z2S-na-Cnx" id="U0M-pQ-tIS">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="59.5"/>
@@ -456,7 +484,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationLevel="4" indentationWidth="10" rowHeight="60" id="zgN-fN-oQT">
-                                        <rect key="frame" x="0.0" y="523" width="320" height="60"/>
+                                        <rect key="frame" x="0.0" y="573" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zgN-fN-oQT" id="3Ea-4N-ty8">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="59.5"/>
@@ -526,11 +554,12 @@
                         <outlet property="switcher_immortal" destination="HHo-Gw-5S0" id="o4t-iv-Qb0"/>
                         <outlet property="switcher_music" destination="L3r-rF-1ab" id="g5k-yP-rvv"/>
                         <outlet property="switcher_sound" destination="1tS-k1-jMq" id="b5s-FB-lGq"/>
+                        <outlet property="switcher_vibro" destination="zX9-aV-71m" id="ZGA-lh-NRD"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bQ1-nZ-Jcn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2347.5" y="-642.78169014084506"/>
+            <point key="canvasLocation" x="2349" y="-643"/>
         </scene>
         <!--Pause View-->
         <scene sceneID="FgS-bX-Cp5">
@@ -745,6 +774,7 @@
                                         <state key="normal" image="menu_MenuBttn"/>
                                         <connections>
                                             <action selector="onMenuClick:" destination="PIz-pv-snW" eventType="touchUpInside" id="PeN-dL-ulu"/>
+                                            <segue destination="Ebd-Nd-407" kind="show" id="yKi-bM-Zjs"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mLm-Iw-gnp">
@@ -808,4 +838,7 @@
         <image name="pauseBttn" width="40" height="40"/>
         <image name="tap" width="200" height="200"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="yaw-Nv-NvA"/>
+    </inferredMetricsTieBreakers>
 </document>
