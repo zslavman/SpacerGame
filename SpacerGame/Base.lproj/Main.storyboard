@@ -175,7 +175,7 @@
         <!--Configuration-->
         <scene sceneID="uwU-6g-k0A">
             <objects>
-                <viewController id="Ebd-Nd-407" customClass="Configuration" customModule="SpacerGame" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="configVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Ebd-Nd-407" customClass="Configuration" customModule="SpacerGame" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="G7s-cg-4ZL"/>
                         <viewControllerLayoutGuide type="bottom" id="9tZ-UZ-aMt"/>
@@ -603,7 +603,7 @@
                                         <state key="normal" image="menu_MenuBttn"/>
                                         <connections>
                                             <action selector="onMenuClick:" destination="KSn-n4-Exp" eventType="touchUpInside" id="ZeK-AF-0Nf"/>
-                                            <segue destination="Ebd-Nd-407" kind="show" id="yaw-Nv-NvA"/>
+                                            <segue destination="Ebd-Nd-407" kind="show" id="7AI-c5-ZHy"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kcS-f1-d63">
@@ -774,7 +774,6 @@
                                         <state key="normal" image="menu_MenuBttn"/>
                                         <connections>
                                             <action selector="onMenuClick:" destination="PIz-pv-snW" eventType="touchUpInside" id="PeN-dL-ulu"/>
-                                            <segue destination="Ebd-Nd-407" kind="show" id="yKi-bM-Zjs"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mLm-Iw-gnp">
@@ -838,7 +837,4 @@
         <image name="pauseBttn" width="40" height="40"/>
         <image name="tap" width="200" height="200"/>
     </resources>
-    <inferredMetricsTieBreakers>
-        <segue reference="yaw-Nv-NvA"/>
-    </inferredMetricsTieBreakers>
 </document>

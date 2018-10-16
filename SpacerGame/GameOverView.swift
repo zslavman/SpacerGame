@@ -49,12 +49,17 @@ class GameOverView: UIViewController {
 	
 	@IBAction func onMenuClick(_ sender: UIButton) {
 		delegate.gameOver_onMenuClick()
-		// переход осуществляется через StoryBoard
+		// переход кодом
+		if let configView = storyboard?.instantiateViewController(withIdentifier: "configVC") as? Configuration{
+			present(configView, animated: true, completion: nil)
+		}
 	}
 	
 	
 	@IBAction func onTopClick(_ sender: UIButton) {
 		delegate.gameOver_onTopClick()
+		
+		PauseView.inNextUpdate(str: "Highscores", currentVC: self)
 		
 //		let transition = SKTransition.push(with: .right, duration: 0.3)
 //		let destination = BestScene(size: UIScreen.main.bounds.size)

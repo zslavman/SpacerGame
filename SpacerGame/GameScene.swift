@@ -690,20 +690,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             spaceShip.position.y = frame.size.height - spaceShip.frame.height / 2
         }
 
-        // поправка для фона
-//        if stageBacking.position.x > frame.width / 2 {
-//            stageBacking.position.x = frame.width / 2
-//        }
-//        if stageBacking.position.x < frame.width / 2 {
-//            stageBacking.position.x = frame.width / 2
-//        }
-//        if stageBacking.position.y > -1 {
-//            stageBacking.position.y = -1
-//        }
-//        if stageBacking.position.y < (frame.height - stageBacking.frame.height + 1) {
-//            stageBacking.position.y = frame.height - stageBacking.frame.height + 1
-//        }
-		
 		if (GameScene.accelerometer_flag) {
 			acelerometrrControled()
 		}
@@ -713,9 +699,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	
 	
 	
-	
-	
-    
     
     
     /// Управление кораблем с помощью акселерометра
@@ -725,8 +708,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			
 			let force = 25.0 // усиление
 			//let dy_lean_correction = (acelerometerData.acceleration.y + 0.4) * force // коррекция наклона устройства для нормального держания в руках
-			
 			var motionVector:CGVector = CGVector(dx: acelerometerData.acceleration.x * force, dy: (acelerometerData.acceleration.y + abs(dY_lean_correction)) * force)
+			
 			
 			if abs(motionVector.dx) < 0.2 && abs(motionVector.dy) < 0.2 {
 				return
@@ -870,7 +853,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				self.pgameDelegate?.gameDelegateDidUpdateLives()
 				self.pauseGame()
 				// вибрация
-				AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+				if GameScene.vibro_flag{
+					AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+				}
 			}
 			let gameOverSequance = SKAction.sequence([blinking(), gameOverAction])
 			spaceShip.run(gameOverSequance, withKey: "gameOverSequance")

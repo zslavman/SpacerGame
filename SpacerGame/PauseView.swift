@@ -39,10 +39,20 @@ class PauseView: UIViewController {
 	
 	
 	// сюда будут возвращаться из других экранов
-	@IBAction func unwindToViewController (segue: UIStoryboardSegue){
+	@IBAction func unwindToViewController (segue: UIStoryboardSegue){ 	}
+	
+	
+	
+	public static func inNextUpdate(str:String, currentVC:UIViewController){
 		
-		
+		let ac = UIAlertController(title: str, message: "Available in next updates", preferredStyle: .alert)
+		let ok = UIAlertAction(title: "OK", style: .default)
+		ac.addAction(ok)
+		currentVC.present(ac, animated: false, completion: nil)
 	}
+	
+	
+	
 	
 	
 
@@ -138,14 +148,17 @@ class PauseView: UIViewController {
 		
 		delegate.pauseView_MenuClicked(self)
 		getClickSound()
-    }
+		
+		// переход в StotyBoard
+	}
+	
 	
 	
 	
 	
     @IBAction func onStoreClick(_ sender: UIButton) {
         delegate.pauseView_StoreClicked(self)
-		inNextUpdate(str: "Покупки")
+		PauseView.inNextUpdate(str: "Purchases", currentVC: self)
 		getClickSound()
     }
     
@@ -177,16 +190,7 @@ class PauseView: UIViewController {
     
 	
 	
-	
-	private func inNextUpdate(str:String){
-		
-		let ac = UIAlertController(title: str, message: "Доступно в будущих обновлениях", preferredStyle: .alert)
-		let ok = UIAlertAction(title: "OK", style: .default)
-		ac.addAction(ok)
-		present(ac, animated: true, completion: nil)
-	}
-	
-	
+
     
     
     // установка картинки кнопки в зависимости от режима - включено/выключено

@@ -10,15 +10,6 @@ import UIKit
 
 class Configuration: UIViewController {
 
-	
-	
-	
-	
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-    }
-
 
 	
 	/// Прячем статусбар
